@@ -85,19 +85,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Tadman Homes & Properties" },
+      { title: "Tadman Homes And Properties" },
       {
         name: "description",
-        content: "Buy, sell & rent premium properties worldwide with Tadman Homes & Properties.",
+        content: "Tadman Homes & Properties is a premium Real Estate Marketplace SaaS for buying, selling, and renting properties globally.",
       },
       { name: "author", content: "Tadman Homes & Properties" },
-      { property: "og:title", content: "Tadman Homes & Properties" },
+      { property: "og:title", content: "Tadman Homes And Properties" },
       {
         property: "og:description",
-        content: "Buy, sell & rent premium properties worldwide.",
+        content: "Tadman Homes & Properties is a premium Real Estate Marketplace SaaS for buying, selling, and renting properties globally.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Tadman Homes And Properties" },
+      { name: "twitter:description", content: "Tadman Homes & Properties is a premium Real Estate Marketplace SaaS for buying, selling, and renting properties globally." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/04f4a159-cbc1-41b4-8991-c45cd222b72e/id-preview-fa3924f6--45b76812-5caf-4e80-8570-2c4249363f12.lovable.app-1785408435079.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/04f4a159-cbc1-41b4-8991-c45cd222b72e/id-preview-fa3924f6--45b76812-5caf-4e80-8570-2c4249363f12.lovable.app-1785408435079.png" },
     ],
     links: [
       {
@@ -110,7 +114,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
   }),
   shellComponent: RootShell,

@@ -28,16 +28,16 @@ import ctaBeach from "@/assets/cta-beach.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Tadman Homes & Properties | Premium Property Marketplace" },
+      { title: "Tadman Homes And Properties" },
       {
         name: "description",
         content:
-          "Find your perfect property anywhere in the world. Buy, sell and rent premium homes, villas, apartments and land with verified agents.",
+          "Tadman Homes & Properties is a premium Real Estate Marketplace SaaS for buying, selling, and renting properties globally.",
       },
-      { property: "og:title", content: "Tadman Homes & Properties" },
+      { property: "og:title", content: "Tadman Homes And Properties" },
       {
         property: "og:description",
-        content: "Buy, Sell & Rent Premium Properties Worldwide.",
+        content: "Tadman Homes & Properties is a premium Real Estate Marketplace SaaS for buying, selling, and renting properties globally.",
       },
     ],
   }),
