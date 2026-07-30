@@ -10,12 +10,36 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AgentsRouteImport } from './routes/agents'
+import { Route as BuyRouteImport } from './routes/buy'
+import { Route as RentRouteImport } from './routes/rent'
+import { Route as SellRouteImport } from './routes/sell'
 import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
 import { Route as PropertiesPropertyIdRouteImport } from './routes/properties.$propertyId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgentsRoute = AgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyRoute = BuyRouteImport.update({
+  id: '/buy',
+  path: '/buy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RentRoute = RentRouteImport.update({
+  id: '/rent',
+  path: '/rent',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellRoute = SellRouteImport.update({
+  id: '/sell',
+  path: '/sell',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PropertiesIndexRoute = PropertiesIndexRouteImport.update({
@@ -31,30 +55,68 @@ const PropertiesPropertyIdRoute = PropertiesPropertyIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/agents': typeof AgentsRoute
+  '/buy': typeof BuyRoute
+  '/rent': typeof RentRoute
+  '/sell': typeof SellRoute
   '/properties/$propertyId': typeof PropertiesPropertyIdRoute
   '/properties/': typeof PropertiesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/agents': typeof AgentsRoute
+  '/buy': typeof BuyRoute
+  '/rent': typeof RentRoute
+  '/sell': typeof SellRoute
   '/properties/$propertyId': typeof PropertiesPropertyIdRoute
   '/properties': typeof PropertiesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/agents': typeof AgentsRoute
+  '/buy': typeof BuyRoute
+  '/rent': typeof RentRoute
+  '/sell': typeof SellRoute
   '/properties/$propertyId': typeof PropertiesPropertyIdRoute
   '/properties/': typeof PropertiesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/properties/$propertyId' | '/properties/'
+  fullPaths:
+    | '/'
+    | '/agents'
+    | '/buy'
+    | '/rent'
+    | '/sell'
+    | '/properties/$propertyId'
+    | '/properties/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/properties/$propertyId' | '/properties'
-  id: '__root__' | '/' | '/properties/$propertyId' | '/properties/'
+  to:
+    | '/'
+    | '/agents'
+    | '/buy'
+    | '/rent'
+    | '/sell'
+    | '/properties/$propertyId'
+    | '/properties'
+  id:
+    | '__root__'
+    | '/'
+    | '/agents'
+    | '/buy'
+    | '/rent'
+    | '/sell'
+    | '/properties/$propertyId'
+    | '/properties/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AgentsRoute: typeof AgentsRoute
+  BuyRoute: typeof BuyRoute
+  RentRoute: typeof RentRoute
+  SellRoute: typeof SellRoute
   PropertiesPropertyIdRoute: typeof PropertiesPropertyIdRoute
   PropertiesIndexRoute: typeof PropertiesIndexRoute
 }
@@ -66,6 +128,34 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agents': {
+      id: '/agents'
+      path: '/agents'
+      fullPath: '/agents'
+      preLoaderRoute: typeof AgentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buy': {
+      id: '/buy'
+      path: '/buy'
+      fullPath: '/buy'
+      preLoaderRoute: typeof BuyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rent': {
+      id: '/rent'
+      path: '/rent'
+      fullPath: '/rent'
+      preLoaderRoute: typeof RentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sell': {
+      id: '/sell'
+      path: '/sell'
+      fullPath: '/sell'
+      preLoaderRoute: typeof SellRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/properties/': {
@@ -87,6 +177,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AgentsRoute: AgentsRoute,
+  BuyRoute: BuyRoute,
+  RentRoute: RentRoute,
+  SellRoute: SellRoute,
   PropertiesPropertyIdRoute: PropertiesPropertyIdRoute,
   PropertiesIndexRoute: PropertiesIndexRoute,
 }
