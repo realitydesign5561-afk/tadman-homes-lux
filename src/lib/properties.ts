@@ -95,6 +95,16 @@ export async function fetchProperties(options: {
   rent?: boolean;
   featured?: boolean;
   limit?: number;
+  country?: string;
+  state?: string;
+  city?: string;
+  area?: string;
+  keyword?: string;
+  propertyType?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  minBeds?: number;
+  minBaths?: number;
 } = {}): Promise<Property[]> {
   let query = supabase
     .from("properties")
@@ -105,6 +115,19 @@ export async function fetchProperties(options: {
   if (options.rent) query = query.in("listing_type", ["rent", "shortlet"]);
   else if (options.listingType) query = query.eq("listing_type", options.listingType);
   if (options.featured) query = query.eq("is_featured", true);
+  if (options.country) query = query.ilike("country", `%${options.country}%`);
+  if (options.state) query = query.ilike("state", `%${options.state}%`);
+  if (options.city) query = query.ilike("city", `%${options.city}%`);
+  if (options.area) query = query.ilike("address", `%${options.area}%`);
+  if (options.propertyType) query = query.eq("property_type", options.propertyType);
+  if (options.minPrice != null) query = query.gte("price", options.minPrice);
+  if (options.maxPrice != null) query = query.lte("price", options.maxPrice);
+  if (options.minBeds != null) query = query.gte("bedrooms", options.minBeds);
+  if (options.minBaths != null) query = query.gte("bathrooms", options.minBaths);
+  if (options.keyword) {
+    const k = options.keyword.replace(/[,%]/g, " ");
+    query = query.or(`title.ilike.%${k}%,description.ilike.%${k}%`);
+  }
   if (options.limit) query = query.limit(options.limit);
 
   const { data, error } = await query;

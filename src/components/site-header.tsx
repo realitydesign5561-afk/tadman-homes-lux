@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X, Search, UserRound, LayoutDashboard } from "lucide-react";
+import { Menu, X, Search, UserRound, LayoutDashboard, Heart } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import logo from "@/assets/tadman-logo.jpg.asset.json";
 
@@ -59,6 +59,15 @@ export function SiteHeader() {
           >
             <Search className="size-4" />
           </Link>
+          {session && (
+            <Link
+              to="/favourites"
+              aria-label="Saved properties"
+              className="hidden size-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:text-primary sm:flex"
+            >
+              <Heart className="size-4" />
+            </Link>
+          )}
           {session ? (
             <Link
               to={isAdmin ? "/admin" : "/dashboard"}

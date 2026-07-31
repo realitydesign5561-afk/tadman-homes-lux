@@ -1,10 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader, Section } from "@/components/page-shell";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPosts } from "@/lib/content";
 import { propertyImages } from "@/data/properties";
 
-export const Route = createFileRoute("/blog")({
+export const Route = createFileRoute("/blog/")({
   head: () => ({
     meta: [
       { title: "Property Journal & Market Insight | Tadman Homes" },
@@ -41,7 +41,12 @@ function BlogPage() {
         ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (
-            <article key={post.id} className="surface-card overflow-hidden rounded-[1.6rem]">
+            <Link
+              key={post.id}
+              to="/blog/$slug"
+              params={{ slug: post.slug }}
+              className="surface-card block overflow-hidden rounded-[1.6rem] transition-transform hover:-translate-y-1"
+            >
               <img
                 src={post.cover_image || propertyImages.prop2}
                 alt={post.title}
@@ -63,7 +68,7 @@ function BlogPage() {
                 <h2 className="mt-2 text-base font-semibold text-foreground">{post.title}</h2>
                 <p className="mt-2 text-sm text-muted-foreground">{post.excerpt}</p>
               </div>
-            </article>
+            </Link>
           ))}
         </div>
         )}

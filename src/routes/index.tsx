@@ -18,8 +18,9 @@ import {
 import { Section } from "@/components/page-shell";
 import { SearchPanel } from "@/components/search-panel";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { PropertyGrid } from "@/components/property-grid";
-import { fetchLocations, fetchPosts, fetchTestimonials } from "@/lib/content";
+import { fetchLocations, fetchPosts, fetchTestimonials, subscribeNewsletter } from "@/lib/content";
 import { propertyImages } from "@/data/properties";
 import heroVilla from "@/assets/hero-villa.jpg";
 import prop1 from "@/assets/prop-1.jpg";
@@ -75,6 +76,21 @@ const reasons = [
 ];
 
 function Index() {
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterState, setNewsletterState] = useState<"idle" | "busy" | "done" | "error">("idle");
+
+  async function handleSubscribe(e: React.FormEvent) {
+    e.preventDefault();
+    setNewsletterState("busy");
+    try {
+      await subscribeNewsletter(newsletterEmail);
+      setNewsletterEmail("");
+      setNewsletterState("done");
+    } catch {
+      setNewsletterState("error");
+    }
+  }
+
   const locationsQuery = useQuery({ queryKey: ["locations"], queryFn: fetchLocations });
   const testimonialsQuery = useQuery({ queryKey: ["testimonials"], queryFn: fetchTestimonials });
   const postsQuery = useQuery({ queryKey: ["home-posts"], queryFn: fetchPosts });
@@ -470,7 +486,7 @@ function Index() {
               to your search.
             </p>
             <form
-              onSubmit={(e) => e.preventDefault()}
+              onSubmit={handleSubscribe}
               className="glass-panel mt-7 flex w-full max-w-md items-center gap-2 rounded-full p-1.5"
             >
               <span className="pl-3 text-muted-foreground">
@@ -481,15 +497,26 @@ function Index() {
                 required
                 placeholder="Enter your email"
                 aria-label="Email address"
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
                 className="h-10 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
               />
               <button
                 type="submit"
-                className="h-10 rounded-full bg-ink px-5 text-sm font-semibold text-ink-foreground"
+                disabled={newsletterState === "busy"}
+                className="h-10 rounded-full bg-ink px-5 text-sm font-semibold text-ink-foreground disabled:opacity-60"
               >
-                Get Started
+                {newsletterState === "busy" ? "Joining…" : "Get Started"}
               </button>
             </form>
+            {newsletterState === "done" && (
+              <p className="mt-3 text-sm text-ink-foreground">You are subscribed — welcome aboard.</p>
+            )}
+            {newsletterState === "error" && (
+              <p className="mt-3 text-sm text-ink-foreground">
+                We could not save your email. Please try again.
+              </p>
+            )}
           </div>
         </div>
       </Section>

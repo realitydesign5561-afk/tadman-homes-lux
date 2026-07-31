@@ -774,3 +774,9 @@ Set these locally in `.env` and in Vercel (Project → Settings → Environment 
 
 All mock listing, agent, blog and testimonial arrays have been removed;
 `src/data/properties.ts` now only holds static design assets and type options.
+
+## Migration 0006 — favourites & newsletter
+
+`supabase/migrations/0006_favorites_newsletter.sql` adds the `favorites` and
+`newsletter_subscribers` tables (with grants and RLS). Run it in the Supabase
+SQL editor so the "Saved properties" page and homepage newsletter form work.

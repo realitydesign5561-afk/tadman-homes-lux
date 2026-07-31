@@ -110,3 +110,35 @@ export async function fetchPlans(): Promise<SubscriptionPlan[]> {
   if (error) throw error;
   return (data ?? []) as SubscriptionPlan[];
 }
+
+export type FaqRow = { id: string; question: string; answer: string; category: string | null };
+
+export async function fetchFaqs(category?: string): Promise<FaqRow[]> {
+  let query = supabase
+    .from("faq")
+    .select("id, question, answer, category")
+    .eq("is_published", true)
+    .order("sort_order", { ascending: true });
+  if (category) query = query.eq("category", category);
+  const { data, error } = await query;
+  if (error) throw error;
+  return (data ?? []) as FaqRow[];
+}
+
+export type BlogPostDetail = BlogPostRow & { content: string | null };
+
+export async function fetchPostBySlug(slug: string): Promise<BlogPostDetail | null> {
+  const { data, error } = await supabase
+    .from("blog_posts")
+    .select("id, title, slug, excerpt, content, cover_image, published_at")
+    .eq("slug", slug)
+    .eq("is_published", true)
+    .maybeSingle();
+  if (error) throw error;
+  return (data as BlogPostDetail) ?? null;
+}
+
+export async function subscribeNewsletter(email: string, source = "homepage") {
+  const { error } = await supabase.from("newsletter_subscribers").insert({ email, source });
+  if (error && !error.message.toLowerCase().includes("duplicate")) throw error;
+}

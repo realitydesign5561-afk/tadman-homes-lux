@@ -13,10 +13,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AgentsRouteImport } from './routes/agents'
-import { Route as BlogRouteImport } from './routes/blog'
 import { Route as BuyRouteImport } from './routes/buy'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as FavouritesRouteImport } from './routes/favourites'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MerchantRouteImport } from './routes/merchant'
@@ -27,6 +27,8 @@ import { Route as RentRouteImport } from './routes/rent'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SellRouteImport } from './routes/sell'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
 import { Route as PropertiesPropertyIdRouteImport } from './routes/properties.$propertyId'
 
@@ -50,11 +52,6 @@ const AgentsRoute = AgentsRouteImport.update({
   path: '/agents',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogRoute = BlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const BuyRoute = BuyRouteImport.update({
   id: '/buy',
   path: '/buy',
@@ -68,6 +65,11 @@ const ContactRoute = ContactRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavouritesRoute = FavouritesRouteImport.update({
+  id: '/favourites',
+  path: '/favourites',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
@@ -120,6 +122,16 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PropertiesIndexRoute = PropertiesIndexRouteImport.update({
   id: '/properties/',
   path: '/properties/',
@@ -136,10 +148,10 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/agents': typeof AgentsRoute
-  '/blog': typeof BlogRoute
   '/buy': typeof BuyRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/favourites': typeof FavouritesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/merchant': typeof MerchantRoute
@@ -150,7 +162,9 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/sell': typeof SellRoute
   '/terms': typeof TermsRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/properties/$propertyId': typeof PropertiesPropertyIdRoute
+  '/blog/': typeof BlogIndexRoute
   '/properties/': typeof PropertiesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -158,10 +172,10 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/agents': typeof AgentsRoute
-  '/blog': typeof BlogRoute
   '/buy': typeof BuyRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/favourites': typeof FavouritesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/merchant': typeof MerchantRoute
@@ -172,7 +186,9 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/sell': typeof SellRoute
   '/terms': typeof TermsRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/properties/$propertyId': typeof PropertiesPropertyIdRoute
+  '/blog': typeof BlogIndexRoute
   '/properties': typeof PropertiesIndexRoute
 }
 export interface FileRoutesById {
@@ -181,10 +197,10 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/agents': typeof AgentsRoute
-  '/blog': typeof BlogRoute
   '/buy': typeof BuyRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/favourites': typeof FavouritesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/merchant': typeof MerchantRoute
@@ -195,7 +211,9 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/sell': typeof SellRoute
   '/terms': typeof TermsRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/properties/$propertyId': typeof PropertiesPropertyIdRoute
+  '/blog/': typeof BlogIndexRoute
   '/properties/': typeof PropertiesIndexRoute
 }
 export interface FileRouteTypes {
@@ -205,10 +223,10 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/agents'
-    | '/blog'
     | '/buy'
     | '/contact'
     | '/dashboard'
+    | '/favourites'
     | '/forgot-password'
     | '/login'
     | '/merchant'
@@ -219,7 +237,9 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sell'
     | '/terms'
+    | '/blog/$slug'
     | '/properties/$propertyId'
+    | '/blog/'
     | '/properties/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -227,10 +247,10 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/agents'
-    | '/blog'
     | '/buy'
     | '/contact'
     | '/dashboard'
+    | '/favourites'
     | '/forgot-password'
     | '/login'
     | '/merchant'
@@ -241,7 +261,9 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sell'
     | '/terms'
+    | '/blog/$slug'
     | '/properties/$propertyId'
+    | '/blog'
     | '/properties'
   id:
     | '__root__'
@@ -249,10 +271,10 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/agents'
-    | '/blog'
     | '/buy'
     | '/contact'
     | '/dashboard'
+    | '/favourites'
     | '/forgot-password'
     | '/login'
     | '/merchant'
@@ -263,7 +285,9 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sell'
     | '/terms'
+    | '/blog/$slug'
     | '/properties/$propertyId'
+    | '/blog/'
     | '/properties/'
   fileRoutesById: FileRoutesById
 }
@@ -272,10 +296,10 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
   AgentsRoute: typeof AgentsRoute
-  BlogRoute: typeof BlogRoute
   BuyRoute: typeof BuyRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
+  FavouritesRoute: typeof FavouritesRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   MerchantRoute: typeof MerchantRoute
@@ -286,7 +310,9 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SellRoute: typeof SellRoute
   TermsRoute: typeof TermsRoute
+  BlogSlugRoute: typeof BlogSlugRoute
   PropertiesPropertyIdRoute: typeof PropertiesPropertyIdRoute
+  BlogIndexRoute: typeof BlogIndexRoute
   PropertiesIndexRoute: typeof PropertiesIndexRoute
 }
 
@@ -320,13 +346,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blog': {
-      id: '/blog'
-      path: '/blog'
-      fullPath: '/blog'
-      preLoaderRoute: typeof BlogRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/buy': {
       id: '/buy'
       path: '/buy'
@@ -346,6 +365,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favourites': {
+      id: '/favourites'
+      path: '/favourites'
+      fullPath: '/favourites'
+      preLoaderRoute: typeof FavouritesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgot-password': {
@@ -418,6 +444,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/properties/': {
       id: '/properties/'
       path: '/properties'
@@ -440,10 +480,10 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
   AgentsRoute: AgentsRoute,
-  BlogRoute: BlogRoute,
   BuyRoute: BuyRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
+  FavouritesRoute: FavouritesRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   MerchantRoute: MerchantRoute,
@@ -454,19 +494,11 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SellRoute: SellRoute,
   TermsRoute: TermsRoute,
+  BlogSlugRoute: BlogSlugRoute,
   PropertiesPropertyIdRoute: PropertiesPropertyIdRoute,
+  BlogIndexRoute: BlogIndexRoute,
   PropertiesIndexRoute: PropertiesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

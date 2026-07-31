@@ -1,8 +1,31 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bath, BedDouble, Heart, MapPin, Maximize } from "lucide-react";
-import type { Property } from "@/data/properties";
+import type { Property } from "@/lib/properties";
+import { useAuth } from "@/hooks/use-auth";
+import { fetchFavoriteIds, toggleFavorite } from "@/lib/favorites";
 
 export function PropertyCard({ property }: { property: Property }) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { data: favouriteIds } = useQuery({
+    queryKey: ["favourite-ids", user?.id],
+    queryFn: () => fetchFavoriteIds(user!.id),
+    enabled: Boolean(user?.id),
+  });
+  const isSaved = (favouriteIds ?? []).includes(property.rowId);
+
+  async function handleSave() {
+    if (!user) {
+      navigate({ to: "/login" });
+      return;
+    }
+    await toggleFavorite(user.id, property.rowId, isSaved);
+    queryClient.invalidateQueries({ queryKey: ["favourite-ids", user.id] });
+    queryClient.invalidateQueries({ queryKey: ["favourites", user.id] });
+  }
+
   return (
     <article className="surface-card group overflow-hidden rounded-[1.6rem] transition-all duration-300 hover:-translate-y-1 hover:shadow-lift">
       <div className="relative aspect-[4/3] overflow-hidden">
@@ -19,10 +42,14 @@ export function PropertyCard({ property }: { property: Property }) {
         </span>
         <button
           type="button"
-          aria-label="Save to favourites"
-          className="absolute right-3 top-3 flex size-8 items-center justify-center rounded-full bg-card/85 text-foreground backdrop-blur transition-colors hover:text-primary"
+          onClick={handleSave}
+          aria-pressed={isSaved}
+          aria-label={isSaved ? "Remove from favourites" : "Save to favourites"}
+          className={`absolute right-3 top-3 flex size-8 items-center justify-center rounded-full bg-card/85 backdrop-blur transition-colors hover:text-primary ${
+            isSaved ? "text-primary" : "text-foreground"
+          }`}
         >
-          <Heart className="size-4" />
+          <Heart className={`size-4 ${isSaved ? "fill-current" : ""}`} />
         </button>
       </div>
 

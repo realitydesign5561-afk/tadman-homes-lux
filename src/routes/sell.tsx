@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { PageHeader, Section, Field, PrimaryButton } from "@/components/page-shell";
 import { propertyTypes } from "@/data/properties";
+import { submitContactRequest } from "@/lib/content";
 
 export const Route = createFileRoute("/sell")({
   head: () => ({
@@ -19,6 +21,37 @@ export const Route = createFileRoute("/sell")({
 });
 
 function SellPage() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    type: propertyTypes[0],
+  });
+  const [status, setStatus] = useState<"idle" | "busy" | "done" | "error">("idle");
+
+  const update = (key: keyof typeof form) => (e: { target: { value: string } }) =>
+    setForm((prev) => ({ ...prev, [key]: e.target.value }));
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setStatus("busy");
+    try {
+      await submitContactRequest({
+        name: form.name,
+        email: form.email || undefined,
+        phone: form.phone || undefined,
+        subject: `Valuation request — ${form.type}`,
+        message: `Property address: ${form.address}\nProperty type: ${form.type}`,
+        source: "sell",
+      });
+      setStatus("done");
+      setForm({ name: "", email: "", phone: "", address: "", type: propertyTypes[0] });
+    } catch {
+      setStatus("error");
+    }
+  }
+
   return (
     <>
       <PageHeader
@@ -42,26 +75,31 @@ function SellPage() {
             ))}
           </div>
 
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="surface-card h-fit space-y-4 rounded-[1.75rem] p-7"
-          >
+          <form onSubmit={handleSubmit} className="surface-card h-fit space-y-4 rounded-[1.75rem] p-7">
             <h2 className="text-xl font-semibold text-foreground">Request a free valuation</h2>
-            <Field label="Full name" placeholder="Jane Doe" />
-            <Field label="Email" type="email" placeholder="jane@email.com" />
-            <Field label="Phone" placeholder="+1 555 000 0000" />
-            <Field label="Property address" placeholder="Street, city, country" />
+            <Field label="Full name" required placeholder="Jane Doe" value={form.name} onChange={update("name")} />
+            <Field label="Email" type="email" required placeholder="jane@email.com" value={form.email} onChange={update("email")} />
+            <Field label="Phone" placeholder="+1 555 000 0000" value={form.phone} onChange={update("phone")} />
+            <Field label="Property address" required placeholder="Street, city, country" value={form.address} onChange={update("address")} />
             <label className="block">
               <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Property type
               </span>
-              <select className="h-11 w-full rounded-2xl border border-border bg-secondary/60 px-4 text-sm outline-none focus:border-primary">
+              <select value={form.type} onChange={update("type")} className="h-11 w-full rounded-2xl border border-border bg-secondary/60 px-4 text-sm outline-none focus:border-primary">
                 {propertyTypes.map((t) => (
                   <option key={t}>{t}</option>
                 ))}
               </select>
             </label>
-            <PrimaryButton type="submit">Get my valuation</PrimaryButton>
+            {status === "error" && (
+              <p className="text-sm text-destructive">Your request could not be sent. Please try again.</p>
+            )}
+            {status === "done" && (
+              <p className="text-sm text-primary">Thank you — an agent will contact you within 24 hours.</p>
+            )}
+            <PrimaryButton type="submit" disabled={status === "busy"}>
+              {status === "busy" ? "Sending…" : "Get my valuation"}
+            </PrimaryButton>
           </form>
         </div>
       </Section>
