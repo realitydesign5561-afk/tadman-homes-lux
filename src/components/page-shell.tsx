@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { InputHTMLAttributes, ReactNode } from "react";
 
 export function PageHeader({
   eyebrow,
@@ -91,11 +91,8 @@ export function Field({
   label,
   type = "text",
   placeholder,
-}: {
-  label: string;
-  type?: string;
-  placeholder?: string;
-}) {
+  ...props
+}: { label: string } & InputHTMLAttributes<HTMLInputElement>) {
   return (
     <label className="block">
       <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -104,6 +101,7 @@ export function Field({
       <input
         type={type}
         placeholder={placeholder}
+        {...props}
         className="h-11 w-full rounded-2xl border border-border bg-secondary/60 px-4 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-primary focus:bg-card"
       />
     </label>
@@ -113,14 +111,20 @@ export function Field({
 export function PrimaryButton({
   children,
   type = "button",
+  disabled,
+  onClick,
 }: {
   children: ReactNode;
   type?: "button" | "submit";
+  disabled?: boolean;
+  onClick?: () => void;
 }) {
   return (
     <button
       type={type}
-      className="inline-flex h-12 w-full items-center justify-center rounded-full bg-ink px-6 text-sm font-semibold text-ink-foreground transition-opacity hover:opacity-90"
+      disabled={disabled}
+      onClick={onClick}
+      className="inline-flex h-12 w-full items-center justify-center rounded-full bg-ink px-6 text-sm font-semibold text-ink-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
     >
       {children}
     </button>

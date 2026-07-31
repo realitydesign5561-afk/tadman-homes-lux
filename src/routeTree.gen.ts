@@ -11,10 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as BuyRouteImport } from './routes/buy'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MerchantRouteImport } from './routes/merchant'
@@ -22,6 +24,7 @@ import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as RentRouteImport } from './routes/rent'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SellRouteImport } from './routes/sell'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
@@ -35,6 +38,11 @@ const IndexRoute = IndexRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AgentsRoute = AgentsRouteImport.update({
@@ -55,6 +63,11 @@ const BuyRoute = BuyRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
@@ -92,6 +105,11 @@ const RentRoute = RentRouteImport.update({
   path: '/rent',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SellRoute = SellRouteImport.update({
   id: '/sell',
   path: '/sell',
@@ -116,10 +134,12 @@ const PropertiesPropertyIdRoute = PropertiesPropertyIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/agents': typeof AgentsRoute
   '/blog': typeof BlogRoute
   '/buy': typeof BuyRoute
   '/contact': typeof ContactRoute
+  '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/merchant': typeof MerchantRoute
@@ -127,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
   '/rent': typeof RentRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sell': typeof SellRoute
   '/terms': typeof TermsRoute
   '/properties/$propertyId': typeof PropertiesPropertyIdRoute
@@ -135,10 +156,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/agents': typeof AgentsRoute
   '/blog': typeof BlogRoute
   '/buy': typeof BuyRoute
   '/contact': typeof ContactRoute
+  '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/merchant': typeof MerchantRoute
@@ -146,6 +169,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
   '/rent': typeof RentRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sell': typeof SellRoute
   '/terms': typeof TermsRoute
   '/properties/$propertyId': typeof PropertiesPropertyIdRoute
@@ -155,10 +179,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/agents': typeof AgentsRoute
   '/blog': typeof BlogRoute
   '/buy': typeof BuyRoute
   '/contact': typeof ContactRoute
+  '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/merchant': typeof MerchantRoute
@@ -166,6 +192,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
   '/rent': typeof RentRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sell': typeof SellRoute
   '/terms': typeof TermsRoute
   '/properties/$propertyId': typeof PropertiesPropertyIdRoute
@@ -176,10 +203,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/admin'
     | '/agents'
     | '/blog'
     | '/buy'
     | '/contact'
+    | '/dashboard'
     | '/forgot-password'
     | '/login'
     | '/merchant'
@@ -187,6 +216,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/register'
     | '/rent'
+    | '/reset-password'
     | '/sell'
     | '/terms'
     | '/properties/$propertyId'
@@ -195,10 +225,12 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/admin'
     | '/agents'
     | '/blog'
     | '/buy'
     | '/contact'
+    | '/dashboard'
     | '/forgot-password'
     | '/login'
     | '/merchant'
@@ -206,6 +238,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/register'
     | '/rent'
+    | '/reset-password'
     | '/sell'
     | '/terms'
     | '/properties/$propertyId'
@@ -214,10 +247,12 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/admin'
     | '/agents'
     | '/blog'
     | '/buy'
     | '/contact'
+    | '/dashboard'
     | '/forgot-password'
     | '/login'
     | '/merchant'
@@ -225,6 +260,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/register'
     | '/rent'
+    | '/reset-password'
     | '/sell'
     | '/terms'
     | '/properties/$propertyId'
@@ -234,10 +270,12 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRoute
   AgentsRoute: typeof AgentsRoute
   BlogRoute: typeof BlogRoute
   BuyRoute: typeof BuyRoute
   ContactRoute: typeof ContactRoute
+  DashboardRoute: typeof DashboardRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   MerchantRoute: typeof MerchantRoute
@@ -245,6 +283,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   RegisterRoute: typeof RegisterRoute
   RentRoute: typeof RentRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SellRoute: typeof SellRoute
   TermsRoute: typeof TermsRoute
   PropertiesPropertyIdRoute: typeof PropertiesPropertyIdRoute
@@ -265,6 +304,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/agents': {
@@ -293,6 +339,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgot-password': {
@@ -344,6 +397,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sell': {
       id: '/sell'
       path: '/sell'
@@ -378,10 +438,12 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRoute,
   AgentsRoute: AgentsRoute,
   BlogRoute: BlogRoute,
   BuyRoute: BuyRoute,
   ContactRoute: ContactRoute,
+  DashboardRoute: DashboardRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   MerchantRoute: MerchantRoute,
@@ -389,6 +451,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   RegisterRoute: RegisterRoute,
   RentRoute: RentRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SellRoute: SellRoute,
   TermsRoute: TermsRoute,
   PropertiesPropertyIdRoute: PropertiesPropertyIdRoute,

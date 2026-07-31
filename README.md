@@ -744,3 +744,33 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Supabase backend
+
+The frontend talks to Supabase directly with the publishable (anon) key and RLS.
+
+### Environment variables
+
+Set these locally in `.env` and in Vercel (Project → Settings → Environment Variables):
+
+| Variable | Value |
+| --- | --- |
+| `VITE_SUPABASE_URL` | `https://<project-ref>.supabase.co` |
+| `VITE_SUPABASE_ANON_KEY` | Supabase publishable / anon key |
+
+### What is wired
+
+- `src/lib/supabase.ts` — browser + SSR Supabase client
+- `src/hooks/use-auth.tsx` — session and role context (`user_roles` table)
+- `/login`, `/register`, `/forgot-password`, `/reset-password` — real Supabase Auth
+- `/dashboard` — merchant dashboard: create listings, upload images to the
+  `property-images` bucket, review status, delete listings (auth-guarded)
+- `/admin` — approve/reject/feature listings, approve merchants, read enquiries
+  (guarded by the `admin` role in `user_roles`)
+- `/`, `/properties`, `/buy`, `/rent`, `/properties/$propertyId` — live listings
+  from the `properties` table (only `status = 'approved'` is public)
+- `/agents`, `/blog` — `agents` and `blog_posts` tables
+- `/contact` and property enquiry forms — insert into `contact_requests`
+
+All mock listing, agent, blog and testimonial arrays have been removed;
+`src/data/properties.ts` now only holds static design assets and type options.

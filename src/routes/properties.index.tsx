@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader, Section } from "@/components/page-shell";
 import { SearchPanel } from "@/components/search-panel";
-import { PropertyCard } from "@/components/property-card";
-import { properties } from "@/data/properties";
+import { PropertyGrid } from "@/components/property-grid";
 
 export const Route = createFileRoute("/properties/")({
   head: () => ({
@@ -33,13 +32,8 @@ function PropertiesPage() {
       />
       <Section>
         <SearchPanel />
-        <p className="mt-8 text-sm text-muted-foreground">
-          Showing {properties.length} of 18,420 listings
-        </p>
-        <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {properties.map((p) => (
-            <PropertyCard key={p.id} property={p} />
-          ))}
+        <div className="mt-8">
+          <PropertyGrid queryKey="all" showCount />
         </div>
       </Section>
     </>

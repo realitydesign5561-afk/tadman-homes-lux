@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X, Search, UserRound } from "lucide-react";
+import { Menu, X, Search, UserRound, LayoutDashboard } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 import logo from "@/assets/tadman-logo.jpg.asset.json";
 
 const nav = [
@@ -18,6 +19,7 @@ const nav = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const { session, isAdmin } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 px-3 pt-3 sm:px-5">
@@ -57,13 +59,23 @@ export function SiteHeader() {
           >
             <Search className="size-4" />
           </Link>
-          <Link
-            to="/login"
-            className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-[13px] font-semibold text-ink-foreground transition-opacity hover:opacity-90"
-          >
-            <UserRound className="size-3.5" />
-            Sign in
-          </Link>
+          {session ? (
+            <Link
+              to={isAdmin ? "/admin" : "/dashboard"}
+              className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-[13px] font-semibold text-ink-foreground transition-opacity hover:opacity-90"
+            >
+              <LayoutDashboard className="size-3.5" />
+              {isAdmin ? "Admin" : "Dashboard"}
+            </Link>
+          ) : (
+            <Link
+              to="/login"
+              className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-[13px] font-semibold text-ink-foreground transition-opacity hover:opacity-90"
+            >
+              <UserRound className="size-3.5" />
+              Sign in
+            </Link>
+          )}
           <button
             type="button"
             aria-label="Toggle menu"

@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader, Section } from "@/components/page-shell";
 import { SearchPanel } from "@/components/search-panel";
-import { PropertyCard } from "@/components/property-card";
-import { properties } from "@/data/properties";
+import { PropertyGrid } from "@/components/property-grid";
 
 export const Route = createFileRoute("/rent")({
   head: () => ({
@@ -21,7 +20,6 @@ export const Route = createFileRoute("/rent")({
 });
 
 function RentPage() {
-  const forRent = properties.filter((p) => p.status === "For Rent");
   return (
     <>
       <PageHeader
@@ -33,11 +31,11 @@ function RentPage() {
         <SearchPanel />
       </Section>
       <Section title="Available rentals">
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {forRent.map((p) => (
-            <PropertyCard key={p.id} property={p} />
-          ))}
-        </div>
+        <PropertyGrid
+          queryKey="rent"
+          options={{ rent: true }}
+          emptyMessage="No rentals are published yet. Please check back soon."
+        />
       </Section>
       <Section title="What's included">
         <div className="grid gap-4 sm:grid-cols-3">

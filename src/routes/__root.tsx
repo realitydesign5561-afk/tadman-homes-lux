@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "@/components/site-header";
+import { AuthProvider } from "@/hooks/use-auth";
 import { SiteFooter } from "@/components/site-footer";
 
 function NotFoundComponent() {
@@ -141,6 +142,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <AuthProvider>
       <div className="flex min-h-screen flex-col bg-background">
         <SiteHeader />
         <main className="flex-1">
@@ -149,6 +151,7 @@ function RootComponent() {
         </main>
         <SiteFooter />
       </div>
+    </AuthProvider>
     </QueryClientProvider>
   );
 }

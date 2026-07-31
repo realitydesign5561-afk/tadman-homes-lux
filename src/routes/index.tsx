@@ -17,8 +17,10 @@ import {
 } from "lucide-react";
 import { Section } from "@/components/page-shell";
 import { SearchPanel } from "@/components/search-panel";
-import { PropertyCard } from "@/components/property-card";
-import { locations, posts, properties, testimonials } from "@/data/properties";
+import { useQuery } from "@tanstack/react-query";
+import { PropertyGrid } from "@/components/property-grid";
+import { fetchLocations, fetchPosts, fetchTestimonials } from "@/lib/content";
+import { propertyImages } from "@/data/properties";
 import heroVilla from "@/assets/hero-villa.jpg";
 import prop1 from "@/assets/prop-1.jpg";
 import prop2 from "@/assets/prop-2.jpg";
@@ -73,8 +75,12 @@ const reasons = [
 ];
 
 function Index() {
-  const featured = properties.filter((p) => p.featured);
-  const latest = properties.slice(3, 9);
+  const locationsQuery = useQuery({ queryKey: ["locations"], queryFn: fetchLocations });
+  const testimonialsQuery = useQuery({ queryKey: ["testimonials"], queryFn: fetchTestimonials });
+  const postsQuery = useQuery({ queryKey: ["home-posts"], queryFn: fetchPosts });
+  const locations = locationsQuery.data ?? [];
+  const testimonials = testimonialsQuery.data ?? [];
+  const posts = (postsQuery.data ?? []).slice(0, 3);
 
   return (
     <>
@@ -234,11 +240,11 @@ function Index() {
           </Link>
         }
       >
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {featured.map((p) => (
-            <PropertyCard key={p.id} property={p} />
-          ))}
-        </div>
+        <PropertyGrid
+          queryKey="featured"
+          options={{ featured: true, limit: 6 }}
+          emptyMessage="Featured listings will appear here once published."
+        />
       </Section>
 
       {/* Featured locations */}
@@ -283,7 +289,6 @@ function Index() {
                 <c.icon className="size-5" />
               </span>
               <p className="text-sm font-semibold text-foreground">{c.label}</p>
-              <p className="text-xs text-muted-foreground">{c.count} listings</p>
             </Link>
           ))}
         </div>
@@ -302,11 +307,11 @@ function Index() {
           </Link>
         }
       >
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {latest.map((p) => (
-            <PropertyCard key={p.id} property={p} />
-          ))}
-        </div>
+        <PropertyGrid
+          queryKey="latest"
+          options={{ limit: 6 }}
+          emptyMessage="New listings will appear here once published."
+        />
       </Section>
 
       {/* Testimonials */}
@@ -343,15 +348,15 @@ function Index() {
 
         <div className="mt-5 grid gap-4 sm:grid-cols-3">
           {testimonials.map((t) => (
-            <div key={t.name} className="surface-card rounded-2xl p-6">
-              <p className="text-sm leading-relaxed text-foreground">{t.quote}</p>
+            <div key={t.id} className="surface-card rounded-2xl p-6">
+              <p className="text-sm leading-relaxed text-foreground">{t.content}</p>
               <div className="mt-4 flex items-center gap-2 border-t border-border pt-4">
                 <span className="flex size-8 items-center justify-center rounded-full bg-secondary text-xs font-bold text-primary">
-                  {t.name.slice(0, 1)}
+                  {t.author_name.slice(0, 1)}
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">{t.name}</p>
-                  <p className="text-xs text-muted-foreground">{t.role}</p>
+                  <p className="text-sm font-semibold text-foreground">{t.author_name}</p>
+                  <p className="text-xs text-muted-foreground">{t.author_role}</p>
                 </div>
               </div>
             </div>
@@ -419,9 +424,9 @@ function Index() {
       >
         <div className="grid gap-5 sm:grid-cols-3">
           {posts.map((post) => (
-            <article key={post.slug} className="surface-card overflow-hidden rounded-[1.6rem]">
+            <article key={post.id} className="surface-card overflow-hidden rounded-[1.6rem]">
               <img
-                src={post.image}
+                src={post.cover_image || propertyImages.prop2}
                 alt={post.title}
                 loading="lazy"
                 width={900}
@@ -429,9 +434,15 @@ function Index() {
                 className="h-44 w-full object-cover"
               />
               <div className="p-5">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-primary">
-                  {post.category} · {post.date}
-                </p>
+                {post.published_at && (
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+                    {new Date(post.published_at).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </p>
+                )}
                 <h3 className="mt-2 text-base font-semibold text-foreground">{post.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{post.excerpt}</p>
               </div>

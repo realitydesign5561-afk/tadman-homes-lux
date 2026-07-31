@@ -1,12 +1,16 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { Bath, BedDouble, Check, Maximize, MapPin, Phone } from "lucide-react";
+import { useState } from "react";
+import { Bath, BedDouble, Check, Maximize, MapPin, MessageCircle, Phone } from "lucide-react";
 import { Section } from "@/components/page-shell";
-import { PropertyCard } from "@/components/property-card";
-import { properties } from "@/data/properties";
+import { PropertyGrid } from "@/components/property-grid";
+import { fetchPropertyById } from "@/lib/properties";
+import { submitContactRequest } from "@/lib/content";
+
+const WHATSAPP_NUMBER = "2348074883126";
 
 export const Route = createFileRoute("/properties/$propertyId")({
-  loader: ({ params }) => {
-    const property = properties.find((p) => p.id === params.propertyId);
+  loader: async ({ params }) => {
+    const property = await fetchPropertyById(params.propertyId);
     if (!property) throw notFound();
     return property;
   },
@@ -20,6 +24,13 @@ export const Route = createFileRoute("/properties/$propertyId")({
       },
       { property: "og:title", content: loaderData?.title ?? "Property" },
       { property: "og:description", content: loaderData?.description ?? "" },
+      { property: "og:type", content: "article" },
+      ...(loaderData?.image?.startsWith("http")
+        ? [
+            { property: "og:image", content: loaderData.image },
+            { name: "twitter:image", content: loaderData.image },
+          ]
+        : []),
     ],
   }),
   component: PropertyDetails,
@@ -46,7 +57,6 @@ export const Route = createFileRoute("/properties/$propertyId")({
 
 function PropertyDetails() {
   const property = Route.useLoaderData();
-  const similar = properties.filter((p) => p.id !== property.id).slice(0, 3);
 
   return (
     <>
@@ -59,19 +69,21 @@ function PropertyDetails() {
             height={1000}
             className="h-[300px] w-full rounded-[1.75rem] object-cover sm:h-[440px]"
           />
-          <div className="grid grid-cols-3 gap-3 lg:grid-cols-1">
-            {properties.slice(0, 3).map((p) => (
-              <img
-                key={p.id}
-                src={p.image}
-                alt="Additional property photo"
-                loading="lazy"
-                width={900}
-                height={700}
-                className="h-24 w-full rounded-2xl object-cover lg:h-[139px]"
-              />
-            ))}
-          </div>
+          {property.gallery.length > 1 && (
+            <div className="grid grid-cols-3 gap-3 lg:grid-cols-1">
+              {property.gallery.slice(1, 4).map((src: string) => (
+                <img
+                  key={src}
+                  src={src}
+                  alt={`${property.title} photo`}
+                  loading="lazy"
+                  width={900}
+                  height={700}
+                  className="h-24 w-full rounded-2xl object-cover lg:h-[139px]"
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
@@ -103,18 +115,21 @@ function PropertyDetails() {
 
             <h2 className="mt-9 text-xl font-semibold text-foreground">About this property</h2>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              {property.description} Enquire today to arrange a private viewing with a Tadman
-              accredited agent, either in person or over a live video walkthrough.
+              {property.description}
             </p>
 
-            <h2 className="mt-9 text-xl font-semibold text-foreground">Features</h2>
-            <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-              {property.features.map((f: string) => (
-                <li key={f} className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Check className="size-4 text-primary" /> {f}
-                </li>
-              ))}
-            </ul>
+            {property.features.length > 0 && (
+              <>
+                <h2 className="mt-9 text-xl font-semibold text-foreground">Features</h2>
+                <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+                  {property.features.map((f: string) => (
+                    <li key={f} className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Check className="size-4 text-primary" /> {f}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </div>
 
           <aside className="surface-card h-fit rounded-[1.75rem] p-6 lg:sticky lg:top-24">
@@ -123,51 +138,91 @@ function PropertyDetails() {
               {property.price}
               <span className="text-sm font-medium text-muted-foreground">{property.period}</span>
             </p>
-            <div className="mt-5 flex items-center gap-3 border-t border-border pt-5">
-              <span className="flex size-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-glow text-sm font-bold text-primary-foreground">
-                {property.agent.slice(0, 1)}
-              </span>
-              <div>
-                <p className="text-sm font-semibold text-foreground">{property.agent}</p>
-                <p className="text-xs text-muted-foreground">Accredited Tadman agent</p>
-              </div>
-            </div>
-            <form onSubmit={(e) => e.preventDefault()} className="mt-5 space-y-3">
-              <input
-                placeholder="Your name"
-                aria-label="Your name"
-                className="h-11 w-full rounded-2xl border border-border bg-secondary/60 px-4 text-sm outline-none focus:border-primary"
-              />
-              <input
-                type="email"
-                placeholder="Email address"
-                aria-label="Email address"
-                className="h-11 w-full rounded-2xl border border-border bg-secondary/60 px-4 text-sm outline-none focus:border-primary"
-              />
-              <textarea
-                rows={3}
-                placeholder="I'd like to arrange a viewing…"
-                aria-label="Message"
-                className="w-full rounded-2xl border border-border bg-secondary/60 p-4 text-sm outline-none focus:border-primary"
-              />
-              <button
-                type="submit"
-                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-ink text-sm font-semibold text-ink-foreground"
-              >
-                <Phone className="size-4" /> Contact agent
-              </button>
-            </form>
+            <EnquiryForm propertyId={property.rowId} title={property.title} />
+            <a
+              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                `Hello Tadman, I'm interested in "${property.title}".`,
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-border text-sm font-semibold text-foreground"
+            >
+              <MessageCircle className="size-4" /> Chat on WhatsApp
+            </a>
           </aside>
         </div>
       </Section>
 
       <Section title="Similar properties">
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {similar.map((p) => (
-            <PropertyCard key={p.id} property={p} />
-          ))}
-        </div>
+        <PropertyGrid
+          queryKey="similar"
+          options={{ limit: 3 }}
+          emptyMessage="No other listings are published yet."
+        />
       </Section>
     </>
+  );
+}
+
+function EnquiryForm({ propertyId, title }: { propertyId: string; title: string }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState(`I'd like to arrange a viewing of ${title}.`);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setStatus("sending");
+    try {
+      await submitContactRequest({
+        name,
+        email,
+        message,
+        subject: `Enquiry: ${title}`,
+        property_id: propertyId,
+        source: "property-page",
+      });
+      setStatus("sent");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="mt-5 space-y-3 border-t border-border pt-5">
+      <input
+        required
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Your name"
+        aria-label="Your name"
+        className="h-11 w-full rounded-2xl border border-border bg-secondary/60 px-4 text-sm outline-none focus:border-primary"
+      />
+      <input
+        type="email"
+        required
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email address"
+        aria-label="Email address"
+        className="h-11 w-full rounded-2xl border border-border bg-secondary/60 px-4 text-sm outline-none focus:border-primary"
+      />
+      <textarea
+        rows={3}
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        aria-label="Message"
+        className="w-full rounded-2xl border border-border bg-secondary/60 p-4 text-sm outline-none focus:border-primary"
+      />
+      {status === "sent" && <p className="text-sm text-primary">Thanks — the agent will be in touch.</p>}
+      {status === "error" && <p className="text-sm text-destructive">Could not send your enquiry.</p>}
+      <button
+        type="submit"
+        disabled={status === "sending"}
+        className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-ink text-sm font-semibold text-ink-foreground disabled:opacity-50"
+      >
+        <Phone className="size-4" /> {status === "sending" ? "Sending…" : "Contact agent"}
+      </button>
+    </form>
   );
 }

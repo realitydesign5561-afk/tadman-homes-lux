@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader, Section } from "@/components/page-shell";
 import { SearchPanel } from "@/components/search-panel";
-import { PropertyCard } from "@/components/property-card";
-import { properties } from "@/data/properties";
+import { PropertyGrid } from "@/components/property-grid";
 
 export const Route = createFileRoute("/buy")({
   head: () => ({
@@ -28,7 +27,6 @@ const steps = [
 ];
 
 function BuyPage() {
-  const forSale = properties.filter((p) => p.status === "For Sale");
   return (
     <>
       <PageHeader
@@ -40,11 +38,11 @@ function BuyPage() {
         <SearchPanel />
       </Section>
       <Section title="Properties for sale">
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {forSale.map((p) => (
-            <PropertyCard key={p.id} property={p} />
-          ))}
-        </div>
+        <PropertyGrid
+          queryKey="buy"
+          options={{ listingType: "buy" }}
+          emptyMessage="No properties for sale are published yet. Please check back soon."
+        />
       </Section>
       <Section title="How buying works">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

@@ -1,0 +1,112 @@
+import { supabase } from "@/lib/supabase";
+
+export type AgentRow = {
+  id: string;
+  full_name: string;
+  title: string | null;
+  bio: string | null;
+  photo_url: string | null;
+  email: string | null;
+  phone: string | null;
+  whatsapp: string | null;
+};
+
+export async function fetchAgents(): Promise<AgentRow[]> {
+  const { data, error } = await supabase
+    .from("agents")
+    .select("id, full_name, title, bio, photo_url, email, phone, whatsapp")
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as AgentRow[];
+}
+
+export type BlogPostRow = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  cover_image: string | null;
+  published_at: string | null;
+};
+
+export async function fetchPosts(): Promise<BlogPostRow[]> {
+  const { data, error } = await supabase
+    .from("blog_posts")
+    .select("id, title, slug, excerpt, cover_image, published_at")
+    .eq("is_published", true)
+    .order("published_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as BlogPostRow[];
+}
+
+export type TestimonialRow = {
+  id: string;
+  author_name: string;
+  author_role: string | null;
+  content: string;
+};
+
+export async function fetchTestimonials(): Promise<TestimonialRow[]> {
+  const { data, error } = await supabase
+    .from("testimonials")
+    .select("id, author_name, author_role, content")
+    .eq("is_published", true)
+    .order("sort_order", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as TestimonialRow[];
+}
+
+export type LocationCount = { city: string; country: string; count: number };
+
+export async function fetchLocations(): Promise<LocationCount[]> {
+  const { data, error } = await supabase
+    .from("properties")
+    .select("city, country")
+    .eq("status", "approved");
+  if (error) throw error;
+  const map = new Map<string, LocationCount>();
+  for (const row of (data ?? []) as { city: string | null; country: string | null }[]) {
+    if (!row.city) continue;
+    const key = `${row.city}|${row.country ?? ""}`;
+    const found = map.get(key);
+    if (found) found.count += 1;
+    else map.set(key, { city: row.city, country: row.country ?? "", count: 1 });
+  }
+  return [...map.values()].sort((a, b) => b.count - a.count).slice(0, 6);
+}
+
+export async function submitContactRequest(input: {
+  name: string;
+  email?: string;
+  phone?: string;
+  subject?: string;
+  message: string;
+  property_id?: string;
+  merchant_id?: string;
+  source?: string;
+}) {
+  const { error } = await supabase.from("contact_requests").insert(input);
+  if (error) throw error;
+}
+
+export type SubscriptionPlan = {
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  currency: string;
+  interval: string;
+  listing_limit: number | null;
+  features: string[];
+};
+
+export async function fetchPlans(): Promise<SubscriptionPlan[]> {
+  const { data, error } = await supabase
+    .from("subscription_plans")
+    .select("id, name, slug, price, currency, interval, listing_limit, features")
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as SubscriptionPlan[];
+}

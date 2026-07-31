@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader, Section } from "@/components/page-shell";
-import { posts } from "@/data/properties";
+import { useQuery } from "@tanstack/react-query";
+import { fetchPosts } from "@/lib/content";
+import { propertyImages } from "@/data/properties";
 
 export const Route = createFileRoute("/blog")({
   head: () => ({
@@ -19,6 +21,9 @@ export const Route = createFileRoute("/blog")({
 });
 
 function BlogPage() {
+  const { data, isLoading, error } = useQuery({ queryKey: ["blog-posts"], queryFn: fetchPosts });
+  const posts = data ?? [];
+
   return (
     <>
       <PageHeader
@@ -27,11 +32,18 @@ function BlogPage() {
         subtitle="Research and practical guides from our agents across 40+ markets."
       />
       <Section>
+        {isLoading ? (
+          <p className="text-sm text-muted-foreground">Loading articles…</p>
+        ) : error ? (
+          <p className="text-sm text-destructive">Articles could not be loaded right now.</p>
+        ) : posts.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No articles have been published yet.</p>
+        ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {posts.concat(posts).map((post, i) => (
-            <article key={i} className="surface-card overflow-hidden rounded-[1.6rem]">
+          {posts.map((post) => (
+            <article key={post.id} className="surface-card overflow-hidden rounded-[1.6rem]">
               <img
-                src={post.image}
+                src={post.cover_image || propertyImages.prop2}
                 alt={post.title}
                 loading="lazy"
                 width={900}
@@ -39,15 +51,22 @@ function BlogPage() {
                 className="h-44 w-full object-cover"
               />
               <div className="p-6">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-primary">
-                  {post.category} · {post.date}
-                </p>
+                {post.published_at && (
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+                    {new Date(post.published_at).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </p>
+                )}
                 <h2 className="mt-2 text-base font-semibold text-foreground">{post.title}</h2>
                 <p className="mt-2 text-sm text-muted-foreground">{post.excerpt}</p>
               </div>
             </article>
           ))}
         </div>
+        )}
       </Section>
     </>
   );

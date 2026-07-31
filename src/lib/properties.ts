@@ -1,0 +1,142 @@
+import { supabase } from "@/lib/supabase";
+import { propertyImages } from "@/data/properties";
+
+export type PropertyRow = {
+  id: string;
+  slug: string | null;
+  title: string;
+  description: string | null;
+  price: number | null;
+  currency: string;
+  country: string | null;
+  state: string | null;
+  city: string | null;
+  address: string | null;
+  property_type: string | null;
+  listing_type: "buy" | "sell" | "rent" | "shortlet";
+  bedrooms: number | null;
+  bathrooms: number | null;
+  parking: number | null;
+  size: number | null;
+  size_unit: string | null;
+  amenities: string[] | null;
+  featured_image: string | null;
+  gallery: string[] | null;
+  status: string;
+  is_featured: boolean;
+  views_count: number;
+  owner_id: string;
+  merchant_id: string | null;
+  created_at: string;
+};
+
+export type Property = {
+  id: string;
+  rowId: string;
+  title: string;
+  type: string;
+  status: "For Sale" | "For Rent";
+  price: string;
+  period?: string;
+  city: string;
+  country: string;
+  beds: number;
+  baths: number;
+  area: string;
+  image: string;
+  gallery: string[];
+  featured?: boolean;
+  description: string;
+  features: string[];
+  agent: string;
+};
+
+export function formatPrice(price: number | null, currency = "NGN") {
+  if (price == null) return "Price on request";
+  try {
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 0,
+    }).format(price);
+  } catch {
+    return `${currency} ${price.toLocaleString()}`;
+  }
+}
+
+export function mapProperty(row: PropertyRow, agentName = "Tadman Homes"): Property {
+  const isRent = row.listing_type === "rent" || row.listing_type === "shortlet";
+  return {
+    id: row.slug || row.id,
+    rowId: row.id,
+    title: row.title,
+    type: row.property_type || "Property",
+    status: isRent ? "For Rent" : "For Sale",
+    price: formatPrice(row.price, row.currency),
+    period: isRent ? "/month" : undefined,
+    city: row.city || "",
+    country: row.country || "",
+    beds: row.bedrooms ?? 0,
+    baths: row.bathrooms ?? 0,
+    area: row.size ? `${row.size} ${row.size_unit || "sqm"}` : "—",
+    image: row.featured_image || row.gallery?.[0] || propertyImages.prop1,
+    gallery: row.gallery?.length ? row.gallery : row.featured_image ? [row.featured_image] : [],
+    featured: row.is_featured,
+    description: row.description || "",
+    features: row.amenities ?? [],
+    agent: agentName,
+  };
+}
+
+const SELECT = "*";
+
+export async function fetchProperties(options: {
+  listingType?: "buy" | "sell" | "rent" | "shortlet";
+  rent?: boolean;
+  featured?: boolean;
+  limit?: number;
+} = {}): Promise<Property[]> {
+  let query = supabase
+    .from("properties")
+    .select(SELECT)
+    .eq("status", "approved")
+    .order("created_at", { ascending: false });
+
+  if (options.rent) query = query.in("listing_type", ["rent", "shortlet"]);
+  else if (options.listingType) query = query.eq("listing_type", options.listingType);
+  if (options.featured) query = query.eq("is_featured", true);
+  if (options.limit) query = query.limit(options.limit);
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return (data as PropertyRow[]).map((row) => mapProperty(row));
+}
+
+export async function fetchPropertyById(idOrSlug: string): Promise<Property | null> {
+  const isUuid = /^[0-9a-f-]{36}$/i.test(idOrSlug);
+  const { data, error } = await supabase
+    .from("properties")
+    .select(SELECT)
+    .eq(isUuid ? "id" : "slug", idOrSlug)
+    .eq("status", "approved")
+    .maybeSingle();
+  if (error) throw error;
+  return data ? mapProperty(data as PropertyRow) : null;
+}
+
+export async function fetchMyProperties(ownerId: string): Promise<PropertyRow[]> {
+  const { data, error } = await supabase
+    .from("properties")
+    .select(SELECT)
+    .eq("owner_id", ownerId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data as PropertyRow[];
+}
+
+export function slugify(value: string) {
+  return `${value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")}-${Math.random().toString(36).slice(2, 7)}`;
+}

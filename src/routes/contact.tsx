@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Mail, MapPin, Phone } from "lucide-react";
+import { useState } from "react";
 import { PageHeader, Section, Field, PrimaryButton } from "@/components/page-shell";
+import { submitContactRequest } from "@/lib/content";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -19,6 +21,21 @@ export const Route = createFileRoute("/contact")({
 });
 
 function ContactPage() {
+  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setStatus("sending");
+    try {
+      await submitContactRequest({ ...form, source: "contact-page" });
+      setStatus("sent");
+      setForm({ name: "", email: "", subject: "", message: "" });
+    } catch {
+      setStatus("error");
+    }
+  }
+
   return (
     <>
       <PageHeader
@@ -46,24 +63,50 @@ function ContactPage() {
             ))}
           </div>
 
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="surface-card space-y-4 rounded-[1.75rem] p-7"
-          >
-            <Field label="Full name" placeholder="Jane Doe" />
-            <Field label="Email" type="email" placeholder="jane@email.com" />
-            <Field label="Subject" placeholder="How can we help?" />
+          <form onSubmit={handleSubmit} className="surface-card space-y-4 rounded-[1.75rem] p-7">
+            <Field
+              label="Full name"
+              required
+              placeholder="Jane Doe"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+            />
+            <Field
+              label="Email"
+              type="email"
+              required
+              placeholder="jane@email.com"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+            />
+            <Field
+              label="Subject"
+              placeholder="How can we help?"
+              value={form.subject}
+              onChange={(e) => setForm({ ...form, subject: e.target.value })}
+            />
             <label className="block">
               <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Message
               </span>
               <textarea
                 rows={5}
+                required
+                value={form.message}
+                onChange={(e) => setForm({ ...form, message: e.target.value })}
                 placeholder="Tell us a little more…"
                 className="w-full rounded-2xl border border-border bg-secondary/60 p-4 text-sm outline-none focus:border-primary"
               />
             </label>
-            <PrimaryButton type="submit">Send message</PrimaryButton>
+            {status === "sent" && (
+              <p className="text-sm text-primary">Thanks — we'll reply within one business day.</p>
+            )}
+            {status === "error" && (
+              <p className="text-sm text-destructive">Your message could not be sent.</p>
+            )}
+            <PrimaryButton type="submit" disabled={status === "sending"}>
+              {status === "sending" ? "Sending…" : "Send message"}
+            </PrimaryButton>
           </form>
         </div>
       </Section>
