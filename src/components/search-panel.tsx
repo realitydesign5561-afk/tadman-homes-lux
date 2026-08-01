@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { propertyTypes } from "@/data/properties";
 
@@ -47,7 +47,13 @@ const inputClass =
 const selectClass =
   "h-11 w-full appearance-none rounded-full border border-border bg-secondary/60 px-4 text-sm text-foreground outline-none focus:border-primary focus:bg-card";
 
-export function SearchPanel({ initial = {} }: { initial?: PropertySearch }) {
+export function SearchPanel({
+  initial = {},
+  onClose,
+}: {
+  initial?: PropertySearch;
+  onClose?: () => void;
+}) {
   const navigate = useNavigate();
   const [values, setValues] = useState<PropertySearch>(initial);
 
@@ -62,6 +68,7 @@ export function SearchPanel({ initial = {} }: { initial?: PropertySearch }) {
       if (v && !v.startsWith("Any")) search[k] = v;
     });
     navigate({ to: "/properties", search });
+    onClose?.();
   }
 
   const textFields: { key: keyof PropertySearch; label: string; placeholder: string }[] = [
@@ -82,6 +89,19 @@ export function SearchPanel({ initial = {} }: { initial?: PropertySearch }) {
 
   return (
     <form onSubmit={handleSubmit} className="surface-card rounded-[1.75rem] p-4 sm:p-6">
+      {onClose && (
+        <div className="mb-4 flex items-center justify-between">
+          <p className="text-sm font-semibold text-foreground">Advanced property search</p>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close search"
+            className="flex size-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
+      )}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         {textFields.map((f) => (
           <label key={f.key} className="block">

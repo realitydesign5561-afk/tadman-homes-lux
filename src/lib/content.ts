@@ -142,3 +142,18 @@ export async function subscribeNewsletter(email: string, source = "homepage") {
   const { error } = await supabase.from("newsletter_subscribers").insert({ email, source });
   if (error && !error.message.toLowerCase().includes("duplicate")) throw error;
 }
+
+export type ManagementRequestInput = {
+  full_name: string;
+  email?: string;
+  phone?: string;
+  property_address?: string;
+  property_type?: string;
+  service?: string;
+  message?: string;
+};
+
+export async function submitManagementRequest(input: ManagementRequestInput) {
+  const { error } = await supabase.from("property_management_requests").insert(input);
+  if (error) throw error;
+}

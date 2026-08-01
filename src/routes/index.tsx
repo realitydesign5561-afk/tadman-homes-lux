@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowUpRight,
   BadgeCheck,
+  Search,
   Building2,
   Home,
   Landmark,
@@ -16,7 +17,8 @@ import {
   Warehouse,
 } from "lucide-react";
 import { Section } from "@/components/page-shell";
-import { SearchPanel } from "@/components/search-panel";
+import { SearchReveal } from "@/components/search-reveal";
+import { useSettings } from "@/hooks/use-settings";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { PropertyGrid } from "@/components/property-grid";
@@ -76,6 +78,8 @@ const reasons = [
 ];
 
 function Index() {
+  const settings = useSettings();
+  const [searchOpen, setSearchOpen] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterState, setNewsletterState] = useState<"idle" | "busy" | "done" | "error">("idle");
 
@@ -106,25 +110,27 @@ function Index() {
           <div className="fade-up flex flex-col justify-between gap-6">
             <div>
               <h1 className="text-[2rem] font-bold leading-[1.05] text-foreground sm:text-5xl xl:text-[3.4rem]">
-                Find Your Perfect Property{" "}
-                <span className="text-gradient-brand">Anywhere</span> in the World
+                Find Your Perfect Property with{" "}
+                <span className="text-gradient-brand">Confidence</span>
               </h1>
               <p className="mt-5 max-w-md text-sm text-muted-foreground sm:text-base">
-                Buy, Sell &amp; Rent Premium Properties Worldwide. Hand-picked homes, expert
-                agents and a seamless journey to your perfect address.
+                {settings.hero.subtitle}
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
-                <Link
-                  to="/properties"
-                  className="inline-flex h-12 items-center justify-center rounded-full bg-ink px-6 text-sm font-semibold text-ink-foreground transition-opacity hover:opacity-90"
+                <button
+                  type="button"
+                  onClick={() => setSearchOpen((v) => !v)}
+                  aria-expanded={searchOpen}
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-ink px-7 text-sm font-semibold text-ink-foreground transition-opacity hover:opacity-90"
                 >
-                  Browse Properties
-                </Link>
+                  <Search className="size-4" />
+                  {settings.hero.cta_label}
+                </button>
                 <Link
                   to="/merchant"
                   className="inline-flex h-12 items-center justify-center gap-1.5 rounded-full border border-border bg-card px-6 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
                 >
-                  Become a Merchant <ArrowUpRight className="size-4" />
+                  {settings.hero.cta_secondary_label} <ArrowUpRight className="size-4" />
                 </Link>
               </div>
             </div>
@@ -140,7 +146,7 @@ function Index() {
               />
               <div className="min-w-0">
                 <p className="truncate rounded-full bg-secondary px-3 py-1.5 text-xs text-muted-foreground">
-                  support@tadmanhomes.com
+                  {settings.contact.email}
                 </p>
                 <div className="mt-2.5 flex items-center gap-2">
                   <span className="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-glow text-xs font-bold text-primary-foreground">
@@ -186,8 +192,8 @@ function Index() {
           </div>
         </div>
 
-        <div className="mx-auto mt-5 max-w-[1240px]">
-          <SearchPanel />
+        <div className="mx-auto max-w-[1240px]">
+          <SearchReveal open={searchOpen} onClose={() => setSearchOpen(false)} />
         </div>
       </section>
 
