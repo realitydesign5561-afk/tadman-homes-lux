@@ -1,13 +1,12 @@
 import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Plus, Trash2 } from "lucide-react";
-import { PageHeader, Section, Field, PrimaryButton } from "@/components/page-shell";
+import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { PageHeader, Section } from "@/components/page-shell";
+import { PropertyForm } from "@/components/property-form";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/use-auth";
-import { fetchMyProperties, formatPrice, slugify, type PropertyRow } from "@/lib/properties";
-import { uploadPropertyImage } from "@/lib/storage";
-import { propertyTypes } from "@/data/properties";
+import { fetchMyProperties, formatPrice, type PropertyRow } from "@/lib/properties";
 
 export const Route = createFileRoute("/dashboard")({
   ssr: false,
@@ -30,14 +29,21 @@ const statusStyles: Record<string, string> = {
   approved: "bg-emerald-100 text-emerald-800",
   pending: "bg-amber-100 text-amber-800",
   rejected: "bg-red-100 text-red-800",
+  sold: "bg-blue-100 text-blue-800",
+  rented: "bg-indigo-100 text-indigo-800",
   draft: "bg-secondary text-muted-foreground",
+  archived: "bg-secondary text-muted-foreground",
 };
+
+const FILTERS = ["all", "draft", "pending", "approved", "sold", "rented"] as const;
 
 function DashboardPage() {
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState<PropertyRow | null>(null);
+  const [filter, setFilter] = useState<(typeof FILTERS)[number]>("all");
 
   const listings = useQuery({
     queryKey: ["my-properties", user?.id],
@@ -58,6 +64,30 @@ function DashboardPage() {
     enabled: Boolean(user?.id),
   });
 
+  const enquiries = useQuery({
+    queryKey: ["merchant-enquiries", user?.id],
+    queryFn: async () => {
+      const ids = (listings.data ?? []).map((r) => r.id);
+      if (ids.length === 0) return [];
+      const { data } = await supabase
+        .from("contact_requests")
+        .select("id, name, email, phone, message, property_id, created_at")
+        .in("property_id", ids)
+        .order("created_at", { ascending: false })
+        .limit(30);
+      return (data ?? []) as {
+        id: string;
+        name: string;
+        email: string | null;
+        phone: string | null;
+        message: string;
+        property_id: string | null;
+        created_at: string;
+      }[];
+    },
+    enabled: Boolean(user?.id) && (listings.data ?? []).length > 0,
+  });
+
   const remove = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("properties").delete().eq("id", id);
@@ -66,7 +96,28 @@ function DashboardPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["my-properties"] }),
   });
 
+  const setStatus = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      const { error } = await supabase.from("properties").update({ status }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["my-properties"] }),
+  });
+
   const rows = listings.data ?? [];
+  const visible = filter === "all" ? rows : rows.filter((r) => r.status === filter);
+  const stats = {
+    total: rows.length,
+    live: rows.filter((r) => r.status === "approved").length,
+    pending: rows.filter((r) => r.status === "pending").length,
+    views: rows.reduce((sum, r) => sum + (r.views_count ?? 0), 0),
+  };
+
+  function closeForm() {
+    setShowForm(false);
+    setEditing(null);
+    queryClient.invalidateQueries({ queryKey: ["my-properties"] });
+  }
 
   return (
     <>
@@ -78,10 +129,13 @@ function DashboardPage() {
         <div className="flex flex-wrap justify-center gap-3">
           <button
             type="button"
-            onClick={() => setShowForm((v) => !v)}
+            onClick={() => {
+              setEditing(null);
+              setShowForm((v) => !v);
+            }}
             className="inline-flex h-12 items-center gap-2 rounded-full bg-ink px-6 text-sm font-semibold text-ink-foreground"
           >
-            <Plus className="size-4" /> {showForm ? "Close form" : "Add listing"}
+            <Plus className="size-4" /> {showForm && !editing ? "Close form" : "Add listing"}
           </button>
           {isAdmin && (
             <Link
@@ -106,36 +160,68 @@ function DashboardPage() {
         </div>
       </PageHeader>
 
-      {showForm && (
-        <Section title="New listing">
-          <ListingForm
-            userId={user!.id}
+      <Section>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { label: "Total listings", value: stats.total },
+            { label: "Live", value: stats.live },
+            { label: "Awaiting review", value: stats.pending },
+            { label: "Total views", value: stats.views },
+          ].map((s) => (
+            <div key={s.label} className="surface-card rounded-2xl p-5">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">{s.label}</p>
+              <p className="mt-2 font-display text-2xl font-bold text-foreground">{s.value}</p>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {(showForm || editing) && user && (
+        <Section title={editing ? "Edit listing" : "New listing"}>
+          <PropertyForm
+            userId={user.id}
             merchantId={merchant.data?.id ?? null}
-            onDone={() => {
-              setShowForm(false);
-              queryClient.invalidateQueries({ queryKey: ["my-properties"] });
-            }}
+            property={editing}
+            canPublish={isAdmin}
+            canFeature={isAdmin}
+            onDone={closeForm}
+            onCancel={closeForm}
           />
         </Section>
       )}
 
       <Section
         title="Your listings"
-        subtitle="New listings are reviewed by an administrator before they appear publicly."
+        subtitle="Drafts stay private. Submitted listings are reviewed by an administrator before they go live."
       >
+        <div className="mb-6 flex flex-wrap gap-2">
+          {FILTERS.map((f) => (
+            <button
+              key={f}
+              type="button"
+              onClick={() => setFilter(f)}
+              className={`rounded-full px-4 py-2 text-xs font-semibold capitalize ${
+                filter === f ? "bg-ink text-ink-foreground" : "border border-border bg-card"
+              }`}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+
         {listings.isLoading ? (
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
             <Loader2 className="size-4 animate-spin" /> Loading listings…
           </p>
         ) : listings.error ? (
           <p className="text-sm text-destructive">Could not load your listings.</p>
-        ) : rows.length === 0 ? (
+        ) : visible.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            You have no listings yet. Use “Add listing” to publish your first property.
+            No listings in this view. Use “Add listing” to create one.
           </p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {rows.map((row: PropertyRow) => (
+            {visible.map((row) => (
               <div key={row.id} className="surface-card overflow-hidden rounded-2xl">
                 {row.featured_image && (
                   <img
@@ -160,173 +246,77 @@ function DashboardPage() {
                   <p className="font-display text-sm font-bold text-primary">
                     {formatPrice(row.price, row.currency)}
                   </p>
-                  <p className="text-xs text-muted-foreground">{row.views_count} views</p>
-                  <button
-                    type="button"
-                    onClick={() => remove.mutate(row.id)}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-destructive"
-                  >
-                    <Trash2 className="size-3.5" /> Delete
-                  </button>
+                  <p className="text-xs text-muted-foreground">{row.views_count ?? 0} views</p>
+
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditing(row);
+                        setShowForm(false);
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-semibold"
+                    >
+                      <Pencil className="size-3.5" /> Edit
+                    </button>
+                    {row.status === "draft" && (
+                      <button
+                        type="button"
+                        onClick={() => setStatus.mutate({ id: row.id, status: "pending" })}
+                        className="rounded-full border border-border px-3 py-1.5 text-xs font-semibold"
+                      >
+                        Submit
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setStatus.mutate({ id: row.id, status: "sold" })}
+                      className="rounded-full border border-border px-3 py-1.5 text-xs font-semibold"
+                    >
+                      Mark sold
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setStatus.mutate({ id: row.id, status: "rented" })}
+                      className="rounded-full border border-border px-3 py-1.5 text-xs font-semibold"
+                    >
+                      Mark rented
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => remove.mutate(row.id)}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-semibold text-destructive"
+                    >
+                      <Trash2 className="size-3.5" /> Delete
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         )}
       </Section>
+
+      <Section title="Enquiries on your listings">
+        {(enquiries.data ?? []).length === 0 ? (
+          <p className="text-sm text-muted-foreground">No enquiries yet.</p>
+        ) : (
+          <div className="space-y-3">
+            {(enquiries.data ?? []).map((e) => (
+              <div key={e.id} className="surface-card rounded-2xl p-5">
+                <p className="text-sm font-semibold text-foreground">
+                  {e.name}{" "}
+                  <span className="text-xs font-normal text-muted-foreground">
+                    {e.email ?? e.phone ?? ""}
+                  </span>
+                </p>
+                <p className="mt-2 text-sm text-muted-foreground">{e.message}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </Section>
     </>
-  );
-}
-
-function ListingForm({
-  userId,
-  merchantId,
-  onDone,
-}: {
-  userId: string;
-  merchantId: string | null;
-  onDone: () => void;
-}) {
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    price: "",
-    currency: "NGN",
-    listing_type: "buy",
-    property_type: "Apartment",
-    city: "",
-    state: "",
-    country: "Nigeria",
-    address: "",
-    bedrooms: "",
-    bathrooms: "",
-    size: "",
-    amenities: "",
-  });
-  const [files, setFiles] = useState<File[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-
-  function set(key: keyof typeof form) {
-    return (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
-      setForm((f) => ({ ...f, [key]: e.target.value }));
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    setError(null);
-    try {
-      const urls: string[] = [];
-      for (const file of files) urls.push(await uploadPropertyImage(userId, file));
-
-      const { error } = await supabase.from("properties").insert({
-        owner_id: userId,
-        merchant_id: merchantId,
-        title: form.title,
-        slug: slugify(form.title),
-        description: form.description,
-        price: form.price ? Number(form.price) : null,
-        currency: form.currency,
-        listing_type: form.listing_type,
-        property_type: form.property_type,
-        city: form.city,
-        state: form.state,
-        country: form.country,
-        address: form.address,
-        bedrooms: form.bedrooms ? Number(form.bedrooms) : null,
-        bathrooms: form.bathrooms ? Number(form.bathrooms) : null,
-        size: form.size ? Number(form.size) : null,
-        amenities: form.amenities
-          .split(",")
-          .map((a) => a.trim())
-          .filter(Boolean),
-        featured_image: urls[0] ?? null,
-        gallery: urls,
-        status: "pending",
-      });
-      if (error) throw error;
-      onDone();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not save the listing.");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="surface-card grid gap-4 rounded-2xl p-6 sm:grid-cols-2">
-      <Field label="Title" required value={form.title} onChange={set("title")} />
-      <Field label="Price" type="number" min={0} value={form.price} onChange={set("price")} />
-      <label className="block">
-        <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Listing type
-        </span>
-        <select
-          value={form.listing_type}
-          onChange={set("listing_type")}
-          className="h-11 w-full rounded-2xl border border-border bg-secondary/60 px-4 text-sm"
-        >
-          <option value="buy">For sale</option>
-          <option value="rent">For rent</option>
-          <option value="shortlet">Shortlet</option>
-        </select>
-      </label>
-      <label className="block">
-        <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Property type
-        </span>
-        <select
-          value={form.property_type}
-          onChange={set("property_type")}
-          className="h-11 w-full rounded-2xl border border-border bg-secondary/60 px-4 text-sm"
-        >
-          {propertyTypes.map((t) => (
-            <option key={t}>{t}</option>
-          ))}
-        </select>
-      </label>
-      <Field label="City" value={form.city} onChange={set("city")} />
-      <Field label="State" value={form.state} onChange={set("state")} />
-      <Field label="Country" value={form.country} onChange={set("country")} />
-      <Field label="Address" value={form.address} onChange={set("address")} />
-      <Field label="Bedrooms" type="number" min={0} value={form.bedrooms} onChange={set("bedrooms")} />
-      <Field label="Bathrooms" type="number" min={0} value={form.bathrooms} onChange={set("bathrooms")} />
-      <Field label="Size (sqm)" type="number" min={0} value={form.size} onChange={set("size")} />
-      <Field
-        label="Amenities (comma separated)"
-        value={form.amenities}
-        onChange={set("amenities")}
-      />
-      <label className="block sm:col-span-2">
-        <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Description
-        </span>
-        <textarea
-          rows={4}
-          value={form.description}
-          onChange={set("description")}
-          className="w-full rounded-2xl border border-border bg-secondary/60 p-4 text-sm"
-        />
-      </label>
-      <label className="block sm:col-span-2">
-        <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Photos
-        </span>
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
-          className="w-full rounded-2xl border border-border bg-secondary/60 p-3 text-sm"
-        />
-      </label>
-      {error && <p className="text-sm text-destructive sm:col-span-2">{error}</p>}
-      <div className="sm:col-span-2">
-        <PrimaryButton type="submit" disabled={busy}>
-          {busy ? "Publishing…" : "Submit for review"}
-        </PrimaryButton>
-      </div>
-    </form>
   );
 }

@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "@/components/site-header";
 import { AuthProvider } from "@/hooks/use-auth";
 import { SiteFooter } from "@/components/site-footer";
+import { WhatsAppButton } from "@/components/whatsapp-button";
 
 function NotFoundComponent() {
   return (
@@ -150,6 +151,7 @@ function RootComponent() {
           <Outlet />
         </main>
         <SiteFooter />
+        <WhatsAppButton />
       </div>
     </AuthProvider>
     </QueryClientProvider>
