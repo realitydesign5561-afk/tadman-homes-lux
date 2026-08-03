@@ -94,7 +94,6 @@ function AdminPage() {
   const { userId } = Route.useRouteContext();
   const { signOut } = useAuth();
   const navigate = useNavigate();
-
   const [tab, setTab] = useState<Tab>("Overview");
 
   return (
