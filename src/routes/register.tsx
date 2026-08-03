@@ -31,7 +31,7 @@ function RegisterPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"user" | "merchant">("user");
+  const [role, setRole] = useState<"customer" | "merchant">("user");
   const [businessName, setBusinessName] = useState("");
 
   const [error, setError] = useState<string | null>(null);
@@ -182,7 +182,7 @@ function RegisterPage() {
             }
             className="h-11 w-full rounded-2xl border border-border bg-secondary/60 px-4 text-sm outline-none focus:border-primary"
           >
-            <option value="user">Buyer / Tenant</option>
+            <option value="customer">Buyer / Tenant</option>
             <option value="merchant">
               Merchant (Agent, Agency, Developer, Landlord)
             </option>
