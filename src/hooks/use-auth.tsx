@@ -32,38 +32,57 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let active = true;
 
-    const { data: subscription } = supabase.auth.onAuthStateChange((_event, next) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       if (!active) return;
-      setSession(next);
+      setSession(nextSession);
     });
 
     supabase.auth.getSession().then(({ data }) => {
       if (!active) return;
       setSession(data.session);
-      setLoading(false);
+      // Loading will finish after roles are loaded.
     });
 
     return () => {
       active = false;
-      subscription.subscription.unsubscribe();
+      subscription.unsubscribe();
     };
   }, []);
 
   useEffect(() => {
     const userId = session?.user?.id;
+
     if (!userId) {
       setRoles([]);
+      setLoading(false);
       return;
     }
+
+    setLoading(true);
+
     let active = true;
+
     supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", userId)
-      .then(({ data }) => {
+      .then(({ data, error }) => {
         if (!active) return;
-        setRoles(((data ?? []) as { role: AppRole }[]).map((r) => r.role));
+
+        if (error) {
+          console.error("Failed to load user roles:", error);
+          setRoles([]);
+        } else {
+          setRoles(
+            ((data ?? []) as { role: AppRole }[]).map((r) => r.role)
+          );
+        }
+
+        setLoading(false);
       });
+
     return () => {
       active = false;
     };
@@ -76,15 +95,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       roles,
       loading,
       isAdmin: roles.includes("admin"),
-      isMerchant: roles.includes("merchant") || roles.includes("agent"),
+      isMerchant:
+        roles.includes("merchant") || roles.includes("agent"),
+
       signOut: async () => {
+        setLoading(true);
         await supabase.auth.signOut();
+        setRoles([]);
+        setSession(null);
+        setLoading(false);
       },
     }),
-    [session, roles, loading],
+    [session, roles, loading]
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {

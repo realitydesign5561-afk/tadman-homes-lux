@@ -9,10 +9,17 @@ export const Route = createFileRoute("/register")({
       { title: "Create an Account | Tadman Homes & Properties" },
       {
         name: "description",
-        content: "Register as a buyer or merchant to save favourites and advertise your properties.",
+        content:
+          "Register as a buyer or merchant to save favourites and advertise your properties.",
       },
-      { property: "og:title", content: "Create an Account | Tadman Homes" },
-      { property: "og:description", content: "Join as a buyer or subscribe as a merchant." },
+      {
+        property: "og:title",
+        content: "Create an Account | Tadman Homes",
+      },
+      {
+        property: "og:description",
+        content: "Join as a buyer or subscribe as a merchant.",
+      },
     ],
   }),
   component: RegisterPage,
@@ -20,46 +27,105 @@ export const Route = createFileRoute("/register")({
 
 function RegisterPage() {
   const navigate = useNavigate();
+
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<"user" | "merchant">("user");
   const [businessName, setBusinessName] = useState("");
+
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
     setBusy(true);
     setError(null);
+    setNotice(null);
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/login`,
-        data: { full_name: fullName, role },
+        data: {
+          full_name: fullName,
+          role,
+        },
       },
     });
+
     if (error) {
       setBusy(false);
       setError(error.message);
       return;
     }
 
-    if (data.session && role === "merchant") {
-      await supabase.from("merchants").insert({
-        user_id: data.session.user.id,
-        business_name: businessName || fullName,
+    if (!data.user) {
+      setBusy(false);
+      setError("Unable to create account.");
+      return;
+    }
+
+    // Create Profile
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .upsert({
+        id: data.user.id,
+        full_name: fullName,
         email,
       });
+
+    if (profileError) {
+      setBusy(false);
+      setError(profileError.message);
+      return;
     }
+
+    // Create User Role
+    const { error: roleError } = await supabase
+      .from("user_roles")
+      .upsert({
+        user_id: data.user.id,
+        role,
+      });
+
+    if (roleError) {
+      setBusy(false);
+      setError(roleError.message);
+      return;
+    }
+
+    // Create Merchant Profile
+    if (role === "merchant") {
+      const { error: merchantError } = await supabase
+        .from("merchants")
+        .upsert({
+          user_id: data.user.id,
+          business_name: businessName || fullName,
+          email,
+        });
+
+      if (merchantError) {
+        setBusy(false);
+        setError(merchantError.message);
+        return;
+      }
+    }
+
     setBusy(false);
 
     if (data.session) {
-      navigate({ to: "/dashboard", replace: true });
+      navigate({
+        to: role === "merchant" ? "/dashboard" : "/",
+        replace: true,
+      });
     } else {
-      setNotice("Check your email to confirm your account, then sign in.");
+      setNotice(
+        "Account created successfully. Please check your email to verify your account before signing in."
+      );
     }
   }
 
@@ -84,6 +150,7 @@ function RegisterPage() {
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
         />
+
         <Field
           label="Email"
           type="email"
@@ -92,6 +159,7 @@ function RegisterPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+
         <Field
           label="Password"
           type="password"
@@ -101,19 +169,26 @@ function RegisterPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+
         <label className="block">
           <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Account type
           </span>
+
           <select
             value={role}
-            onChange={(e) => setRole(e.target.value as "user" | "merchant")}
+            onChange={(e) =>
+              setRole(e.target.value as "user" | "merchant")
+            }
             className="h-11 w-full rounded-2xl border border-border bg-secondary/60 px-4 text-sm outline-none focus:border-primary"
           >
             <option value="user">Buyer / Tenant</option>
-            <option value="merchant">Merchant (Agent, Agency, Developer, Landlord)</option>
+            <option value="merchant">
+              Merchant (Agent, Agency, Developer, Landlord)
+            </option>
           </select>
         </label>
+
         {role === "merchant" && (
           <Field
             label="Business name"
@@ -122,10 +197,17 @@ function RegisterPage() {
             onChange={(e) => setBusinessName(e.target.value)}
           />
         )}
-        {error && <p className="text-sm text-destructive">{error}</p>}
-        {notice && <p className="text-sm text-primary">{notice}</p>}
+
+        {error && (
+          <p className="text-sm text-destructive">{error}</p>
+        )}
+
+        {notice && (
+          <p className="text-sm text-primary">{notice}</p>
+        )}
+
         <PrimaryButton type="submit" disabled={busy}>
-          {busy ? "Creating account…" : "Create account"}
+          {busy ? "Creating account..." : "Create account"}
         </PrimaryButton>
       </AuthCard>
     </form>
