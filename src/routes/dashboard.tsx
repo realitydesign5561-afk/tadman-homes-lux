@@ -38,7 +38,7 @@ const statusStyles: Record<string, string> = {
 const FILTERS = ["all", "draft", "pending", "approved", "sold", "rented"] as const;
 
 function DashboardPage() {
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, loading, isAdmin, isMerchant, signOut } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
@@ -118,7 +118,12 @@ function DashboardPage() {
     setEditing(null);
     queryClient.invalidateQueries({ queryKey: ["my-properties"] });
   }
-
+  
+if (!loading && !isAdmin && !isMerchant) {
+  navigate({ to: "/", replace: true });
+  return null;
+}
+  
   return (
     <>
       <PageHeader
@@ -127,16 +132,18 @@ function DashboardPage() {
         subtitle={user?.email ?? undefined}
       >
         <div className="flex flex-wrap justify-center gap-3">
-          <button
-            type="button"
-            onClick={() => {
-              setEditing(null);
-              setShowForm((v) => !v);
-            }}
-            className="inline-flex h-12 items-center gap-2 rounded-full bg-ink px-6 text-sm font-semibold text-ink-foreground"
-          >
-            <Plus className="size-4" /> {showForm && !editing ? "Close form" : "Add listing"}
-          </button>
+          {(isMerchant || isAdmin) && (
+  <button
+    type="button"
+    onClick={() => {
+      setEditing(null);
+      setShowForm((v) => !v);
+    }}
+    className="inline-flex h-12 items-center gap-2 rounded-full bg-ink px-6 text-sm font-semibold text-ink-foreground"
+  >
+    <Plus className="size-4" /> {showForm && !editing ? "Close form" : "Add listing"}
+  </button>
+)}
           {isAdmin && (
             <Link
               to="/admin"
@@ -176,7 +183,7 @@ function DashboardPage() {
         </div>
       </Section>
 
-      {(showForm || editing) && user && (
+      {(showForm || editing) && user && (isMerchant || isAdmin) && (
         <Section title={editing ? "Edit listing" : "New listing"}>
           <PropertyForm
             userId={user.id}
