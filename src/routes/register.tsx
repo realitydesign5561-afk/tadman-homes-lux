@@ -56,13 +56,26 @@ function RegisterPage() {
         },
       },
     });
+if (error) {
+  console.error("Signup error:", error);
 
-    if (error) {
-      setBusy(false);
-      setError(error.message);
-      return;
-    }
+  setBusy(false);
 
+  setError(
+    JSON.stringify(
+      {
+        message: error.message,
+        status: error.status,
+        code: (error as any).code,
+        name: error.name,
+      },
+      null,
+      2
+    )
+  );
+
+  return;
+}
     if (!data.user) {
       setBusy(false);
       setError("Unable to create account.");
