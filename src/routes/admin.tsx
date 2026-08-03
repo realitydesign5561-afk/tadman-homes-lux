@@ -95,6 +95,8 @@ function AdminPage() {
   const { signOut } = useAuth();
   const navigate = useNavigate();
 
+  const [tab, setTab] = useState<Tab>("Overview");
+
   return (
     <>
       <PageHeader
