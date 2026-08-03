@@ -243,7 +243,7 @@ function PropertiesTab({ userId }: { userId: string }) {
       {(creating || editing) && (
         <PropertyForm
   userId={userId}
-  merchantId={userId}
+  merchantId="332a1140-ab52-4fd3-a7e5-3c5da93a935b"
   property={editing}
   agents={(agents.data ?? []).map((a) => ({ id: a.id, full_name: a.full_name }))}
   canFeature
