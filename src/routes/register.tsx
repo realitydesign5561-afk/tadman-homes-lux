@@ -31,7 +31,7 @@ function RegisterPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"customer" | "merchant">("user");
+  const [role, setRole] = useState<"customer" | "merchant">("customer");
   const [businessName, setBusinessName] = useState("");
 
   const [error, setError] = useState<string | null>(null);
@@ -67,52 +67,6 @@ function RegisterPage() {
       setBusy(false);
       setError("Unable to create account.");
       return;
-    }
-
-    // Create Profile
-    const { error: profileError } = await supabase
-      .from("profiles")
-      .upsert({
-        id: data.user.id,
-        full_name: fullName,
-        email,
-      });
-
-    if (profileError) {
-      setBusy(false);
-      setError(profileError.message);
-      return;
-    }
-
-    // Create User Role
-    const { error: roleError } = await supabase
-      .from("user_roles")
-      .upsert({
-        user_id: data.user.id,
-        role,
-      });
-
-    if (roleError) {
-      setBusy(false);
-      setError(roleError.message);
-      return;
-    }
-
-    // Create Merchant Profile
-    if (role === "merchant") {
-      const { error: merchantError } = await supabase
-        .from("merchants")
-        .upsert({
-          user_id: data.user.id,
-          business_name: businessName || fullName,
-          email,
-        });
-
-      if (merchantError) {
-        setBusy(false);
-        setError(merchantError.message);
-        return;
-      }
     }
 
     setBusy(false);
@@ -178,7 +132,7 @@ function RegisterPage() {
           <select
             value={role}
             onChange={(e) =>
-              setRole(e.target.value as "user" | "merchant")
+              setRole(e.target.value as "customer" | "merchant")
             }
             className="h-11 w-full rounded-2xl border border-border bg-secondary/60 px-4 text-sm outline-none focus:border-primary"
           >
