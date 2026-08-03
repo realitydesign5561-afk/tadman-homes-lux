@@ -242,11 +242,12 @@ function PropertiesTab({ userId }: { userId: string }) {
 
       {(creating || editing) && (
         <PropertyForm
-          userId={userId}
-          property={editing}
-          agents={(agents.data ?? []).map((a) => ({ id: a.id, full_name: a.full_name }))}
-          canFeature
-          canPublish
+  userId={userId}
+  merchantId={userId}
+  property={editing}
+  agents={(agents.data ?? []).map((a) => ({ id: a.id, full_name: a.full_name }))}
+  canFeature
+  canPublish
           onDone={() => {
             setCreating(false);
             setEditing(null);
@@ -1094,7 +1095,7 @@ function SettingsTab() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 /* -------------------------------- activity ------------------------------- */
