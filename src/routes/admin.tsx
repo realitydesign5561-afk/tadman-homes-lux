@@ -1,5 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Trash2 } from "lucide-react";
 import { Field, PageHeader, PrimaryButton, Section } from "@/components/page-shell";
@@ -90,15 +92,27 @@ const chipDark = "rounded-full bg-ink px-3 py-1.5 text-xs font-semibold text-ink
 
 function AdminPage() {
   const { userId } = Route.useRouteContext();
-  const [tab, setTab] = useState<Tab>("Overview");
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <>
       <PageHeader
-        eyebrow="Administration"
-        title="Admin dashboard"
-        subtitle="Manage the entire Tadman Homes platform from one place."
-      />
+  eyebrow="Administration"
+  title="Admin dashboard"
+  subtitle="Manage the entire Tadman Homes platform from one place."
+>
+  <button
+    type="button"
+    onClick={async () => {
+      await signOut();
+      navigate({ to: "/login", replace: true });
+    }}
+    className="inline-flex h-11 items-center rounded-full border border-border bg-card px-5 text-sm font-semibold"
+  >
+    Sign Out
+  </button>
+</PageHeader>
       <Section>
         <div className="mb-8 flex flex-wrap gap-2">
           {TABS.map((t) => (
