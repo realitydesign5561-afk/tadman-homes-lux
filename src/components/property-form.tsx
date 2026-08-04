@@ -108,34 +108,41 @@ export function PropertyForm({
       for (const file of files) uploaded.push(await uploadPropertyImage(userId, file));
       const nextGallery = [...gallery, ...uploaded];
 
-      const payload: Record<string, unknown> = {
-        title: form.title,
-        slug: form.slug || slugify(form.title),
-        description: form.description,
-        price: form.price ? Number(form.price) : null,
-        currency: form.currency,
-        listing_type: form.listing_type,
-        property_type: form.property_type,
-        category: form.category,
-        country: form.country,
-        state: form.state,
-        city: form.city,
-        address: form.address,
-        map_url: form.map_url || null,
-        bedrooms: form.bedrooms ? Number(form.bedrooms) : null,
-        bathrooms: form.bathrooms ? Number(form.bathrooms) : null,
-        parking: form.parking ? Number(form.parking) : null,
-        size: form.size ? Number(form.size) : null,
-        amenities: form.amenities
-          .split(",")
-          .map((a) => a.trim())
-          .filter(Boolean),
-        featured_image: nextGallery[0] ?? null,
-        gallery: nextGallery,
-        agent_id: form.agent_id || null,
-        status: targetStatus ?? form.status,
-        is_featured: form.is_featured,
-      };
+     const payload = {
+  title: form.title,
+  slug: form.slug || slugify(form.title),
+  description: form.description,
+
+  price: form.price ? Number(form.price) : null,
+  currency: form.currency,
+
+  listing_type: form.listing_type,
+  property_type: form.property_type,
+
+  country: form.country,
+  state: form.state,
+  city: form.city,
+  address: form.address,
+
+  bedrooms: form.bedrooms ? Number(form.bedrooms) : null,
+  bathrooms: form.bathrooms ? Number(form.bathrooms) : null,
+
+  area: form.size ? Number(form.size) : null,
+  area_unit: "sqm",
+
+  amenities: form.amenities
+    .split(",")
+    .map((a) => a.trim())
+    .filter(Boolean),
+
+  featured_image: nextGallery[0] ?? null,
+  images: nextGallery,
+
+  agent_id: form.agent_id || null,
+
+  status: targetStatus ?? form.status,
+  is_featured: form.is_featured,
+};
       if (payload.status === "approved") payload.published_at = new Date().toISOString();
 if (property?.id) {
   const { data, error } = await supabase
@@ -161,11 +168,9 @@ if (property?.id) {
   const { error: err } = await supabase
     .from("properties")
     .insert({
-      ...payload,
-      owner_id: userId,
-      merchant_id: merchantId ?? null,
-    });
-
+  ...payload,
+  merchant_id: merchantId ?? null,
+});
   if (err) throw err;
 
   await logActivity("Created property", "property");
