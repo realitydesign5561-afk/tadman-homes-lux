@@ -173,10 +173,17 @@ if (property?.id) {
 
 onDone();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not save the listing.");
-    } finally {
-      setBusy(false);
-    }
+  console.error("SAVE ERROR:", err);
+  alert(JSON.stringify(err, null, 2));
+
+  setError(
+    err instanceof Error
+      ? err.message
+      : JSON.stringify(err)
+  );
+} finally {
+  setBusy(false);
+}
   }
 
   return (
