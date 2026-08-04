@@ -137,19 +137,41 @@ export function PropertyForm({
         is_featured: form.is_featured,
       };
       if (payload.status === "approved") payload.published_at = new Date().toISOString();
+if (property?.id) {
+  const { data, error } = await supabase
+    .from("properties")
+    .update({
+      ...payload,
+      merchant_id: merchantId,
+    })
+    .eq("id", property.id)
+    .select();
 
-      if (property?.id) {
-        const { error: err } = await supabase.from("properties").update(payload).eq("id", property.id);
-        if (err) throw err;
-        await logActivity("Updated property", "property", property.id);
-      } else {
-        const { error: err } = await supabase
-          .from("properties")
-          .insert({ ...payload, owner_id: userId, merchant_id: merchantId ?? null });
-        if (err) throw err;
-        await logActivity("Created property", "property");
-      }
-      onDone();
+  console.log(data);
+  console.log(error);
+
+  if (error) {
+    alert(JSON.stringify(error));
+    throw error;
+  }
+
+  await logActivity("Updated property", "property", property.id);
+
+} else {
+  const { error: err } = await supabase
+    .from("properties")
+    .insert({
+      ...payload,
+      owner_id: userId,
+      merchant_id: merchantId ?? null,
+    });
+
+  if (err) throw err;
+
+  await logActivity("Created property", "property");
+}
+
+onDone();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save the listing.");
     } finally {
