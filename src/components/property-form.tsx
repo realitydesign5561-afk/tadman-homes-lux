@@ -97,15 +97,27 @@ const [gallery, setGallery] = useState<string[]>(
     return (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
       setForm((f) => ({ ...f, [key]: e.target.value }));
   }
-
+import { canCreateProperty } from "@/lib/subscriptions";
+  
   async function save(targetStatus?: string) {
-    setBusy(true);
-    setError(null);
-    try {
-   const uploaded: string[] = [];
-for (const file of files) {
-  uploaded.push(await uploadPropertyImage(userId, file));
-}
+
+  setBusy(true);
+  setError(null);
+
+  try {
+
+    if (!property?.id && merchantId) {
+
+      const allowed = await canCreateProperty(
+        merchantId
+      );
+
+      if (!allowed) {
+        throw new Error(
+          "Your subscription listing limit has been reached. Upgrade your plan to add more properties."
+        );
+      }
+    }
 
 const allImages = [...gallery, ...uploaded];
   const payload: Record<string, any> = {
