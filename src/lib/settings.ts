@@ -23,18 +23,66 @@ export type HeroSettings = {
   cta_secondary_label: string;
 };
 
-export type FooterSettings = {
-  about: string;
-  socials: { facebook?: string; instagram?: string; linkedin?: string; x?: string };
+export type PageSettings = { heading: string; body: string; cta_label?: string };
+export type HomepageSettings = {
+  featured_heading: string;
+  featured_subheading: string;
+
+  stats_happy_clients: string;
+  stats_properties: string;
+  stats_agents: string;
+  stats_cities: string;
+
+  why_choose_title: string;
+  why_choose_subtitle: string;
+
+  testimonials_title: string;
+  testimonials_subtitle: string;
+
+  faq_title: string;
+  faq_subtitle: string;
+
+  newsletter_title: string;
+  newsletter_subtitle: string;
+
+  copyright: string;
 };
 
-export type PageSettings = { heading: string; body: string; cta_label?: string };
+export type SeoSettings = {
+  meta_title: string;
+  meta_description: string;
+  keywords: string;
+};
 
+export type SocialSettings = {
+  facebook: string;
+  instagram: string;
+  linkedin: string;
+  x: string;
+  youtube: string;
+  tiktok: string;
+};
+
+export type AppearanceSettings = {
+  primary_color: string;
+  secondary_color: string;
+  accent_color: string;
+
+  hero_image: string;
+  hero_video: string;
+
+  favicon: string;
+};
 export type SiteSettings = {
   brand: BrandSettings;
   contact: ContactSettings;
   hero: HeroSettings;
-  footer: FooterSettings;
+
+  homepage: HomepageSettings;
+  seo: SeoSettings;
+  social: SocialSettings;
+  appearance: AppearanceSettings;
+
   about_page: PageSettings;
   property_management_page: PageSettings;
   legal_team_page: PageSettings;
@@ -59,12 +107,69 @@ export const defaultSettings: SiteSettings = {
     hours: "Mon – Sat, 8:00am – 6:00pm",
   },
   hero: {
-    title: "Find Your Perfect Property with Confidence",
-    subtitle: "Buy, sell, rent and manage premium properties through trusted professionals.",
-    cta_label: "Find Properties",
-    cta_secondary_label: "Become a Merchant",
-  },
-  footer: { about: MOTTO, socials: {} },
+  title: "Find Your Perfect Property with Confidence",
+  subtitle:
+    "Buy, sell, rent and manage premium properties through trusted professionals.",
+  cta_label: "Find Properties",
+  cta_secondary_label: "Become a Merchant",
+},
+
+homepage: {
+  featured_heading: "Featured Properties",
+  featured_subheading: "Explore our premium listings.",
+
+  stats_happy_clients: "1500+",
+  stats_properties: "500+",
+  stats_agents: "35+",
+  stats_cities: "20+",
+
+  why_choose_title: "Why Choose Tadman",
+  why_choose_subtitle:
+    "Trusted professionals for every property transaction.",
+
+  testimonials_title: "What Our Clients Say",
+  testimonials_subtitle:
+    "Real stories from satisfied clients.",
+
+  faq_title: "Frequently Asked Questions",
+  faq_subtitle: "Everything you need to know.",
+
+  newsletter_title: "Stay Updated",
+  newsletter_subtitle:
+    "Subscribe for the latest property updates.",
+
+  copyright:
+    "© 2026 Tadman Homes and Properties. All rights reserved.",
+},
+
+seo: {
+  meta_title: "Tadman Homes and Properties",
+  meta_description:
+    "Buy, Sell, Rent and Manage Premium Properties in Nigeria.",
+  keywords:
+    "real estate, properties, houses, land, apartments, Lagos, Nigeria",
+},
+
+social: {
+  facebook: "",
+  instagram: "",
+  linkedin: "",
+  x: "",
+  youtube: "",
+  tiktok: "",
+},
+
+appearance: {
+  primary_color: "#0A1A2F",
+  secondary_color: "#F8F9FA",
+  accent_color: "#D4AF37",
+
+  hero_image: "",
+  hero_video: "",
+
+  favicon: "",
+},
+
   about_page: {
     heading: "About Tadman Homes and Properties",
     body: "Tadman Homes and Properties is a Lagos-based real estate company helping clients buy, sell, rent and manage premium properties with confidence.",
@@ -99,20 +204,30 @@ export async function fetchSettings(): Promise<SiteSettings> {
   if (error) return defaultSettings;
   const map = new Map<string, unknown>((data ?? []).map((r: any) => [r.key, r.value]));
   return {
-    brand: parse(map.get("brand"), defaultSettings.brand),
-    contact: parse(map.get("contact"), defaultSettings.contact),
-    hero: parse(map.get("hero"), defaultSettings.hero),
-    footer: parse(map.get("footer"), defaultSettings.footer),
-    about_page: parse(map.get("about_page"), defaultSettings.about_page),
-    property_management_page: parse(
-      map.get("property_management_page"),
-      defaultSettings.property_management_page,
-    ),
-    legal_team_page: parse(map.get("legal_team_page"), defaultSettings.legal_team_page),
-    contact_page: parse(map.get("contact_page"), defaultSettings.contact_page),
-  };
-}
+  brand: parse(map.get("brand"), defaultSettings.brand),
+  contact: parse(map.get("contact"), defaultSettings.contact),
+  hero: parse(map.get("hero"), defaultSettings.hero),
 
+  homepage: parse(map.get("homepage"), defaultSettings.homepage),
+  seo: parse(map.get("seo"), defaultSettings.seo),
+  social: parse(map.get("social"), defaultSettings.social),
+  appearance: parse(map.get("appearance"), defaultSettings.appearance),
+
+  about_page: parse(map.get("about_page"), defaultSettings.about_page),
+  property_management_page: parse(
+    map.get("property_management_page"),
+    defaultSettings.property_management_page,
+  ),
+  legal_team_page: parse(
+    map.get("legal_team_page"),
+    defaultSettings.legal_team_page,
+  ),
+  contact_page: parse(
+    map.get("contact_page"),
+    defaultSettings.contact_page,
+  ),
+};
+}
 export async function saveSetting(key: keyof SiteSettings, value: unknown) {
   const { error } = await supabase
     .from("website_settings")
