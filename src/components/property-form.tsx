@@ -102,11 +102,13 @@ const [gallery, setGallery] = useState<string[]>(
     setBusy(true);
     setError(null);
     try {
-      const uploaded: string[] = [];
-      for (const file of files) uploaded.push(await uploadPropertyImage(userId, file));
-      const nextGallery = [...gallery, ...uploaded];
+   const uploaded: string[] = [];
+for (const file of files) {
+  uploaded.push(await uploadPropertyImage(userId, file));
+}
 
-  const payload = {
+const allImages = [...gallery, ...uploaded];
+  const payload: Record<string, any> = {
   title: form.title,
   slug: form.slug || slugify(form.title),
   description: form.description,
@@ -132,17 +134,16 @@ const [gallery, setGallery] = useState<string[]>(
     .split(",")
     .map(a => a.trim())
     .filter(Boolean),
-
-  featured_image: nextGallery[0] ?? null,
-  images: nextGallery,
+featured_image: allImages[0] ?? null,
+images: allImages,
 
   agent_id: form.agent_id || null,
 
   status: targetStatus ?? form.status,
   is_featured: form.is_featured,
 };
-     if const payload: Record<string, any> = {};
-      if (payload.status === "approved") {
+
+if (payload.status === "approved") {
   payload.published_at = new Date().toISOString();
 }
 if (property?.id) {
