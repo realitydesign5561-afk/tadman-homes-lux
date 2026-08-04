@@ -170,9 +170,10 @@ if (property?.id) {
  const { error: err } = await supabase
   .from("properties")
   .insert({
-    ...payload,
-    merchant_id: merchantId ?? null,
-  });
+ ...payload,
+ merchant_id: merchantId ?? null,
+ owner_id: userId,
+});
   
   if (err) throw err;
 
