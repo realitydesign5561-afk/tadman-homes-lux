@@ -272,3 +272,4 @@ export async function changeOwnPassword(password: string) {
   const { error } = await supabase.auth.updateUser({ password });
   if (error) throw error;
 }
+ 
