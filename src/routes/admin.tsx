@@ -47,7 +47,6 @@ import {
   type TestimonialAdminRow,
 } from "@/lib/cms";
 import { defaultSettings, fetchSettings, saveSetting, type SiteSettings } from "@/lib/settings";
-import { supabase as sb } from "@/lib/supabase";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
@@ -1105,7 +1104,7 @@ function ActivityTab() {
   const newsletter = useQuery({
     queryKey: ["admin-newsletter"],
     queryFn: async () => {
-      const { data } = await sb
+      const { data } = await supabase
         .from("newsletter_subscribers")
         .select("id, email, created_at")
         .order("created_at", { ascending: false })
@@ -1146,3 +1145,14 @@ function ActivityTab() {
     </div>
   );
 }
+export type FooterSettings = {
+  about: string;
+  socials: {
+    facebook: string;
+    instagram: string;
+    linkedin: string;
+    x: string;
+    youtube: string;
+    tiktok: string;
+  };
+};
