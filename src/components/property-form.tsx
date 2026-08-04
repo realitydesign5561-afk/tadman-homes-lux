@@ -5,6 +5,7 @@ import { slugify, type PropertyRow } from "@/lib/properties";
 import { uploadPropertyImage } from "@/lib/storage";
 import { propertyTypes } from "@/data/properties";
 import { logActivity } from "@/lib/admin";
+import { canCreateProperty } from "@/lib/subscriptions";
 
 export const PROPERTY_STATUSES = [
   "draft",
@@ -97,8 +98,7 @@ const [gallery, setGallery] = useState<string[]>(
     return (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
       setForm((f) => ({ ...f, [key]: e.target.value }));
   }
-import { canCreateProperty } from "@/lib/subscriptions";
-  
+
   async function save(targetStatus?: string) {
 
   setBusy(true);
