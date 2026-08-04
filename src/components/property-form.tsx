@@ -23,15 +23,12 @@ type FormState = {
   currency: string;
   listing_type: string;
   property_type: string;
-  category: string;
   country: string;
   state: string;
   city: string;
   address: string;
-  map_url: string;
   bedrooms: string;
   bathrooms: string;
-  parking: string;
   size: string;
   amenities: string;
   slug: string;
@@ -49,17 +46,16 @@ function initial(row?: PropertyRow | null): FormState {
     currency: r?.currency ?? "NGN",
     listing_type: r?.listing_type ?? "buy",
     property_type: r?.property_type ?? "Apartment",
-    category: r?.category ?? "Residential",
     country: r?.country ?? "Nigeria",
     state: r?.state ?? "",
     city: r?.city ?? "",
     address: r?.address ?? "",
-    map_url: r?.map_url ?? "",
     bedrooms: r?.bedrooms != null ? String(r.bedrooms) : "",
     bathrooms: r?.bathrooms != null ? String(r.bathrooms) : "",
-    parking: r?.parking != null ? String(r.parking) : "",
     size: r?.size != null ? String(r.size) : "",
-    amenities: (r?.amenities ?? []).join(", "),
+   amenities: Array.isArray(r?.amenities)
+  ? r.amenities.join(", ")
+  : "",
     slug: r?.slug ?? "",
     status: r?.status ?? "draft",
     is_featured: Boolean(r?.is_featured),
@@ -91,7 +87,9 @@ export function PropertyForm({
 }) {
   const [form, setForm] = useState<FormState>(initial(property));
   const [files, setFiles] = useState<File[]>([]);
-  const [gallery, setGallery] = useState<string[]>(property?.gallery ?? []);
+const [gallery, setGallery] = useState<string[]>(
+  (property?.images as string[]) ?? []
+);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -108,7 +106,7 @@ export function PropertyForm({
       for (const file of files) uploaded.push(await uploadPropertyImage(userId, file));
       const nextGallery = [...gallery, ...uploaded];
 
-     const payload = {
+  const payload = {
   title: form.title,
   slug: form.slug || slugify(form.title),
   description: form.description,
@@ -132,7 +130,7 @@ export function PropertyForm({
 
   amenities: form.amenities
     .split(",")
-    .map((a) => a.trim())
+    .map(a => a.trim())
     .filter(Boolean),
 
   featured_image: nextGallery[0] ?? null,
@@ -143,7 +141,10 @@ export function PropertyForm({
   status: targetStatus ?? form.status,
   is_featured: form.is_featured,
 };
-      if (payload.status === "approved") payload.published_at = new Date().toISOString();
+     if const payload: Record<string, any> = {};
+      if (payload.status === "approved") {
+  payload.published_at = new Date().toISOString();
+}
 if (property?.id) {
   const { data, error } = await supabase
     .from("properties")
@@ -165,12 +166,13 @@ if (property?.id) {
   await logActivity("Updated property", "property", property.id);
 
 } else {
-  const { error: err } = await supabase
-    .from("properties")
-    .insert({
-  ...payload,
-  merchant_id: merchantId ?? null,
-});
+ const { error: err } = await supabase
+  .from("properties")
+  .insert({
+    ...payload,
+    merchant_id: merchantId ?? null,
+  });
+  
   if (err) throw err;
 
   await logActivity("Created property", "property");
@@ -228,18 +230,6 @@ onDone();
 
       <label className="block">
         <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Category
-        </span>
-        <select value={form.category} onChange={set("category")} className={selectClass}>
-          <option>Residential</option>
-          <option>Commercial</option>
-          <option>Land</option>
-          <option>Industrial</option>
-        </select>
-      </label>
-
-      <label className="block">
-        <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
           Agent
         </span>
         <select value={form.agent_id} onChange={set("agent_id")} className={selectClass}>
@@ -256,10 +246,8 @@ onDone();
       <Field label="State" value={form.state} onChange={set("state")} />
       <Field label="Country" value={form.country} onChange={set("country")} />
       <Field label="Address" value={form.address} onChange={set("address")} />
-      <Field label="Google Map URL" value={form.map_url} onChange={set("map_url")} />
       <Field label="Bedrooms" type="number" min={0} value={form.bedrooms} onChange={set("bedrooms")} />
       <Field label="Bathrooms" type="number" min={0} value={form.bathrooms} onChange={set("bathrooms")} />
-      <Field label="Parking" type="number" min={0} value={form.parking} onChange={set("parking")} />
       <Field label="Size (sqm)" type="number" min={0} value={form.size} onChange={set("size")} />
       <Field label="Amenities (comma separated)" value={form.amenities} onChange={set("amenities")} />
 
