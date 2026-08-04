@@ -125,19 +125,42 @@ export async function deleteMerchant(id: string) {
   await logActivity("Deleted merchant", "merchant", id);
 }
 
+/* ----------------------------- subscriptions ----------------------------- */
+
 export type SubscriptionRow = {
   id: string;
-  merchant_id: string | null;
+  merchant_id: string;
+  start_date: string;
+  expiry_date: string;
+  payment_reference: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+  plan_id: string | null;
   status: string;
-  current_period_end: string | null;
-  provider: string | null;
+  subscription_plans?: {
+    name: string;
+    price: number;
+    interval: string;
+  } | null;
 };
+
 
 export async function fetchSubscriptions(): Promise<SubscriptionRow[]> {
   const { data, error } = await supabase
     .from("subscriptions")
-    .select("id, merchant_id, status, current_period_end, provider");
-  if (error) return [];
+    .select(`
+      *,
+      subscription_plans (
+        name,
+        price,
+        interval
+      )
+    `)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+
   return (data ?? []) as SubscriptionRow[];
 }
 
