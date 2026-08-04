@@ -119,6 +119,13 @@ const [gallery, setGallery] = useState<string[]>(
       }
     }
 
+const uploaded: string[] = [];
+
+for (const file of files) {
+  const url = await uploadPropertyImage(file, merchantId ?? userId);
+  uploaded.push(url);
+}
+
 const allImages = [...gallery, ...uploaded];
   const payload: Record<string, any> = {
   title: form.title,
