@@ -123,7 +123,7 @@ function PricingPage() {
       </Section>
 
       {(faqs ?? []).length > 0 && (
-        <Section title=title="Frequently Asked Questions">
+        <Section title="Frequently Asked Questions">
           <div className="grid gap-4 sm:grid-cols-2">
             {(faqs ?? []).map((item) => (
               <div key={item.id} className="surface-card rounded-2xl p-6">
