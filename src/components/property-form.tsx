@@ -128,10 +128,12 @@ uploaded.push(url);
 const allImages = [...gallery, ...uploaded];
 const payload: Record<string, any> = {
  title: form.title,
- slug: form.slug || slugify(form.title),
+ slug: form.slug ||
+slugify(form.title),
  description: form.description,
 
- price: form.price ? Number(form.price) : null,
+ price: form.price ? 
+Number(form.price) : null,
  currency: form.currency,
 
  listing_type: form.listing_type,
