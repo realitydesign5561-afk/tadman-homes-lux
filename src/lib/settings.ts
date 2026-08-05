@@ -243,7 +243,12 @@ export async function fetchSettings(): Promise<SiteSettings> {
     social: parse(map.get("social"), defaultSettings.social),
     appearance: parse(map.get("appearance"), defaultSettings.appearance),
 
-    about_page: parse(map.get("about_page"), defaultSettings.about_page),
+    about_page: {
+  heading:
+    String(map.get("about_heading") ?? defaultSettings.about_page.heading),
+  body:
+    String(map.get("about_text") ?? defaultSettings.about_page.body),
+},
 
     property_management_page: parse(
       map.get("property_management_page"),
