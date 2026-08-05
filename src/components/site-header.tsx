@@ -118,23 +118,31 @@ export function SiteHeader() {
               <Heart className="size-4" />
             </Link>
           )}
-          {session ? (
-            <Link
-              to={isAdmin ? "/admin" : "/dashboard"}
-              className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-[13px] font-semibold text-ink-foreground transition-opacity hover:opacity-90"
-            >
-              <LayoutDashboard className="size-3.5" />
-              {isAdmin ? "Admin" : "Dashboard"}
-            </Link>
-          ) : (
-            <Link
-              to="/login"
-              className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-[13px] font-semibold text-ink-foreground transition-opacity hover:opacity-90"
-            >
-              <UserRound className="size-3.5" />
-              Sign in
-            </Link>
-          )}
+         {isAdmin ? (
+  <Link
+    to="/admin"
+    className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-[13px] font-semibold text-ink-foreground transition-opacity hover:opacity-90"
+  >
+    <LayoutDashboard className="size-3.5" />
+    Admin
+  </Link>
+) : session ? (
+  <Link
+    to="/dashboard"
+    className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-[13px] font-semibold text-ink-foreground transition-opacity hover:opacity-90"
+  >
+    <LayoutDashboard className="size-3.5" />
+    Dashboard
+  </Link>
+) : (
+  <Link
+    to="/login"
+    className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-[13px] font-semibold text-ink-foreground transition-opacity hover:opacity-90"
+  >
+    <UserRound className="size-3.5" />
+    Sign in
+  </Link>
+)}
           <button
             type="button"
             aria-label="Toggle menu"
