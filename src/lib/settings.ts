@@ -219,37 +219,47 @@ function parse<T>(raw: unknown, fallback: T): T {
 }
 
 export async function fetchSettings(): Promise<SiteSettings> {
-  const { data, error } = await supabase.from("website_settings").select("key, value");
+  const { data, error } = await supabase
+    .from("website_settings")
+    .select("key, value");
+
   if (error) {
-  console.error("Settings fetch error:", error);
-  throw error;
-}
-  const map = new Map<string, unknown>((data ?? []).map((r: any) => [r.key, r.value]));
+    console.error("Settings fetch error:", error);
+    throw error;
+  }
+
+  const map = new Map<string, unknown>(
+    (data ?? []).map((r: any) => [r.key, r.value])
+  );
+
   return {
-  footer: parse(map.get("footer"), defaultSettings.footer),
-  brand: parse(map.get("brand"), defaultSettings.brand),
-  contact: parse(map.get("contact"), defaultSettings.contact),
-  hero: parse(map.get("hero"), defaultSettings.hero),
+    footer: parse(map.get("footer"), defaultSettings.footer),
+    brand: parse(map.get("brand"), defaultSettings.brand),
+    contact: parse(map.get("contact"), defaultSettings.contact),
+    hero: parse(map.get("hero"), defaultSettings.hero),
 
-  homepage: parse(map.get("homepage"), defaultSettings.homepage),
-  seo: parse(map.get("seo"), defaultSettings.seo),
-  social: parse(map.get("social"), defaultSettings.social),
-  appearance: parse(map.get("appearance"), defaultSettings.appearance),
+    homepage: parse(map.get("homepage"), defaultSettings.homepage),
+    seo: parse(map.get("seo"), defaultSettings.seo),
+    social: parse(map.get("social"), defaultSettings.social),
+    appearance: parse(map.get("appearance"), defaultSettings.appearance),
 
-  about_page: parse(map.get("about_page"), defaultSettings.about_page),
-  property_management_page: parse(
-    map.get("property_management_page"),
-    defaultSettings.property_management_page,
-  ),
-  legal_team_page: parse(
-    map.get("legal_team_page"),
-    defaultSettings.legal_team_page,
-  ),
-  contact_page: parse(
-    map.get("contact_page"),
-    defaultSettings.contact_page,
-  ),
-};
+    about_page: parse(map.get("about_page"), defaultSettings.about_page),
+
+    property_management_page: parse(
+      map.get("property_management_page"),
+      defaultSettings.property_management_page
+    ),
+
+    legal_team_page: parse(
+      map.get("legal_team_page"),
+      defaultSettings.legal_team_page
+    ),
+
+    contact_page: parse(
+      map.get("contact_page"),
+      defaultSettings.contact_page
+    ),
+  };
 }
 export async function saveSetting(key: keyof SiteSettings, value: unknown) {
   const { error } = await supabase
