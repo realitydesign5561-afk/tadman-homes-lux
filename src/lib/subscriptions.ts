@@ -1,3 +1,4 @@
+// subscription helper
 import { supabase } from "./supabase";
 
 export async function canCreateProperty(merchantId: string) {
