@@ -226,7 +226,6 @@ export async function fetchSettings(): Promise<SiteSettings> {
 }
   const map = new Map<string, unknown>((data ?? []).map((r: any) => [r.key, r.value]));
   return {
-  return {
   footer: parse(map.get("footer"), defaultSettings.footer),
   brand: parse(map.get("brand"), defaultSettings.brand),
   contact: parse(map.get("contact"), defaultSettings.contact),
