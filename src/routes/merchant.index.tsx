@@ -22,12 +22,36 @@ export const Route = createFileRoute("/merchant/")({
 });
 
 const benefits = [
-  { icon: LayoutDashboard, t: "Private dashboard", d: "Manage every listing, lead and invoice in one secure workspace." },
-  { icon: Upload, t: "Unlimited uploads", d: "Publish listings with galleries, floorplans and video walkthroughs." },
-  { icon: MessagesSquare, t: "Direct enquiries", d: "Buyers and tenants message you straight from your listing page." },
-  { icon: BarChart3, t: "Performance analytics", d: "See views, saves and enquiry conversion for every property." },
-  { icon: Globe2, t: "Worldwide reach", d: "Get in front of 120,000 monthly buyers across 40+ countries." },
-  { icon: Check, t: "Verified badge", d: "Build trust instantly with an accredited merchant badge." },
+  {
+    icon: LayoutDashboard,
+    t: "Merchant Dashboard",
+    d: "Manage your listings, enquiries, subscriptions and account from one secure dashboard.",
+  },
+  {
+    icon: Upload,
+    t: "Easy Property Upload",
+    d: "Upload houses, apartments, land and commercial properties in minutes.",
+  },
+  {
+    icon: MessagesSquare,
+    t: "Direct Buyer Enquiries",
+    d: "Receive enquiries directly from interested buyers and tenants.",
+  },
+  {
+    icon: BarChart3,
+    t: "Listing Analytics",
+    d: "Track property views, enquiries and listing performance.",
+  },
+  {
+    icon: Globe2,
+    t: "Worldwide Exposure",
+    d: "Reach buyers and investors from different cities and countries.",
+  },
+  {
+    icon: Check,
+    t: "Verified Merchant Badge",
+    d: "Increase trust with a verified merchant profile on every listing.",
+  },
 ];
 
 function MerchantPage() {
@@ -35,15 +59,15 @@ function MerchantPage() {
     <>
       <PageHeader
         eyebrow="Merchants"
-        title="Advertise your properties worldwide"
-        subtitle="Agencies, developers, landlords and managers subscribe monthly and get their own private dashboard."
+        title="Grow Your Real Estate Business with Tadman Homes & Properties"
+        subtitle="Join our trusted merchant network to list properties, manage enquiries, reach qualified buyers and grow your business from one powerful dashboard."
       >
         <div className="flex flex-wrap justify-center gap-3">
           <Link
             to="/register"
             className="inline-flex h-12 items-center rounded-full bg-ink px-6 text-sm font-semibold text-ink-foreground"
           >
-            Create merchant account
+            Become a Merchant
           </Link>
           <Link
             to="/pricing"
@@ -71,11 +95,23 @@ function MerchantPage() {
       <Section title="How it works">
         <div className="grid gap-4 sm:grid-cols-4">
           {[
-            ["Register", "Create your merchant account in under two minutes."],
-            ["Subscribe", "Pick a monthly plan that matches your portfolio size."],
-            ["Publish", "Upload listings from your private dashboard."],
-            ["Convert", "Receive qualified enquiries and close deals faster."],
-          ].map(([t, d], i) => (
+            [
+              "Create Account",
+              "Register as a verified merchant on Tadman Homes & Properties.",
+            ],
+            [
+              "Choose a Plan",
+              "Select the subscription plan that best fits your business.",
+            ],
+            [
+              "List Your Properties",
+              "Publish and manage your property listings from your dashboard.",
+            ],
+            [
+              "Receive Enquiries",
+              "Connect directly with buyers, tenants and investors worldwide.",
+            ],
+            ].map(([t, d], i) => (
             <div key={t} className="surface-card rounded-2xl p-6">
               <p className="font-display text-3xl font-bold text-primary/30">0{i + 1}</p>
               <p className="mt-3 text-sm font-semibold text-foreground">{t}</p>
