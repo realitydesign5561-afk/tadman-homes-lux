@@ -10,7 +10,6 @@ export type ActivityRow = {
   entity: string | null;
   created_at: string;
 };
-
 export async function logActivity(action: string, entity?: string, entityId?: string) {
   const { data } = await supabase.auth.getUser();
   await supabase.from("activity_log").insert({
