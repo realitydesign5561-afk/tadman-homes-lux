@@ -201,7 +201,10 @@ function parse<T>(raw: unknown, fallback: T): T {
 
 export async function fetchSettings(): Promise<SiteSettings> {
   const { data, error } = await supabase.from("website_settings").select("key, value");
-  if (error) return defaultSettings;
+  if (error) {
+  console.error("Settings fetch error:", error);
+  throw error;
+}
   const map = new Map<string, unknown>((data ?? []).map((r: any) => [r.key, r.value]));
   return {
   brand: parse(map.get("brand"), defaultSettings.brand),
