@@ -144,8 +144,6 @@ if (error) {
           value={businessName}
           onChange={(e) => setBusinessName(e.target.value)}
           />
-        )}
-
         {error && (
           <p className="text-sm text-destructive">{error}</p>
         )}
