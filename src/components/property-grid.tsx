@@ -17,7 +17,7 @@ export function PropertyGrid({
   showCount?: boolean;
 }) {
   const { data, isLoading, error } = useQuery({
-    queryKey: ["properties", queryKey],
+    queryKey: ["properties", queryKey, options],
     queryFn: () => fetchProperties(options),
   });
 
@@ -43,7 +43,7 @@ export function PropertyGrid({
           Showing {properties.length} listing{properties.length === 1 ? "" : "s"}
         </p>
       )}
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {properties.map((p) => (
           <PropertyCard key={p.rowId} property={p} />
         ))}
