@@ -11,7 +11,7 @@ export const Route = createFileRoute("/pricing")({
       {
         name: "description",
         content:
-          "Simple monthly subscriptions for agents, agencies and developers. Advertise unlimited properties from a private dashboard.",
+         "Affordable merchant subscription plans for property owners, agencies and developers to advertise properties on Tadman Homes & Properties.",
       },
       { property: "og:title", content: "Merchant Pricing | Tadman Homes" },
       { property: "og:description", content: "Monthly plans for agents, agencies and developers." },
@@ -40,18 +40,18 @@ function PricingPage() {
     <>
       <PageHeader
         eyebrow="Pricing"
-        title="Simple monthly plans"
-        subtitle="Cancel any time. Every plan includes your own private merchant dashboard."
+        title="Merchant Subscription Plans"
+        subtitle="Choose a subscription plan to list your properties, manage enquiries and grow your real estate business."
       />
       <Section>
         {isLoading ? (
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Loader2 className="size-4 animate-spin" /> Loading plans…
+            <Loader2 className="size-4 animate-spin" /> Loading subscription plans...
           </p>
         ) : error ? (
-          <p className="text-sm text-destructive">Plans could not be loaded right now.</p>
+          <p className="text-sm text-destructive">Unable to load subscription plans. Please try again.</p>
         ) : (plans ?? []).length === 0 ? (
-          <p className="text-sm text-muted-foreground">No subscription plans are published yet.</p>
+          <p className="text-sm text-muted-foreground">Merchant subscription plans will be available soon.</p>
         ) : (
           <div className="grid gap-5 lg:grid-cols-3">
             {(plans ?? []).map((plan, index) => {
@@ -94,8 +94,8 @@ function PricingPage() {
                     }
                   >
                     {plan.listing_limit == null
-                      ? "Unlimited active listings"
-                      : `Up to ${plan.listing_limit} active listings`}
+                      ? "Unlimited Property Listings"
+                      : `Up to ${plan.listing_limit} Property Listings`}
                   </p>
                   <ul className="mt-6 space-y-3">
                     {(plan.features ?? []).map((f) => (
@@ -113,7 +113,7 @@ function PricingPage() {
                         : "mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-secondary text-sm font-semibold text-foreground transition-colors hover:bg-ink hover:text-ink-foreground"
                     }
                   >
-                    Choose {plan.name}
+                    Subscribe Now
                   </Link>
                 </div>
               );
@@ -123,7 +123,7 @@ function PricingPage() {
       </Section>
 
       {(faqs ?? []).length > 0 && (
-        <Section title="Frequently asked questions">
+        <Section title=title="Frequently Asked Questions">
           <div className="grid gap-4 sm:grid-cols-2">
             {(faqs ?? []).map((item) => (
               <div key={item.id} className="surface-card rounded-2xl p-6">
