@@ -43,13 +43,17 @@ const columns = [
 ];
 
 export function SiteFooter() {
-  const { brand, contact, footer } = useSettings();
+  const { 
+  brand = {},
+  contact = {},
+  footer = {},
+} = useSettings();
   const socials = [
-    { Icon: Twitter, href: footer.socials?.x },
-    { Icon: Facebook, href: footer.socials?.facebook },
-    { Icon: Linkedin, href: footer.socials?.linkedin },
-    { Icon: Instagram, href: footer.socials?.instagram },
-  ];
+  { Icon: Twitter, href: footer.socials?.x },
+  { Icon: Facebook, href: footer.socials?.facebook },
+  { Icon: Linkedin, href: footer.socials?.linkedin },
+  { Icon: Instagram, href: footer.socials?.instagram },
+];
 
   return (
     <footer className="px-3 pb-4 sm:px-5">
@@ -59,14 +63,16 @@ export function SiteFooter() {
             <div className="flex items-center gap-3">
               <img
                 src={brand.logo_url || logo.url}
-                alt={brand.site_name}
+                alt={brand.site_name || "Tadman Homes"}
                 width={44}
                 height={44}
                 loading="lazy"
                 className="size-11 rounded-xl object-cover"
               />
               <div>
-                <p className="font-display text-base font-bold">{brand.site_name}</p>
+                <p className="font-display text-base font-bold">
+                  {brand.site_name || "Tadman Homes"}
+                </p>
                 <p className="text-xs text-ink-foreground/60">{brand.motto}</p>
               </div>
             </div>
