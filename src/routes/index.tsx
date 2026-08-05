@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+5import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowUpRight,
   BadgeCheck,
@@ -110,12 +110,10 @@ function Index() {
           <div className="fade-up flex flex-col justify-between gap-6">
             <div>
               <h1 className="text-[2rem] font-bold leading-[1.05] text-foreground sm:text-5xl xl:text-[3.4rem]">
-                Find Your Perfect Property with{" "}
+                Buy, Sell & Rent Properties Across the World With{" "}
                 <span className="text-gradient-brand">Confidence</span>
               </h1>
-              <p className="mt-5 max-w-md text-sm text-muted-foreground sm:text-base">
-                {settings.hero.subtitle}
-              </p>
+              <p className="mt-5 max-w-md text-sm text-muted-foreground sm:text-base">Browse verified houses, apartments, land and commercial properties from trusted agents worldwide. Secure your next investment with confidence.</p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <button
                   type="button"
@@ -153,8 +151,8 @@ function Index() {
                     TH
                   </span>
                   <div>
-                    <p className="text-sm font-semibold text-foreground"> Tadman Homes & Properties | Buy, Sell & Rent Properties Worldwide</p>
-                    <p className="text-xs text-muted-foreground">Buy, sell and rent verified properties worldwide with Tadman Homes & Properties. Explore houses, apartments, land, commercial properties and luxury homes.</p>
+                    <p className="text-sm font-semibold text-foreground">Tadman Homes & Properties</p>
+                    <p className="text-xs text-muted-foreground">Buy • Sell • Rent Worldwide</p>
                   </div>
                 </div>
               </div>
@@ -205,16 +203,17 @@ function Index() {
               Buy, Sell & Rent Premium Properties Worldwide
             </h2>
             <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
-              [
+              {[
                 "Verified Listings",
                 "Trusted Agents",
                 "Global Properties",
                 "Secure Transactions",
-               ] => (
-                <span key={t} className="flex items-center gap-1.5">
-                  <span className="size-1.5 rounded-full bg-primary" />
-                  {t}
-                </span>
+               ].map((t) => (
+  <span key={t} className="flex items-center gap-1.5">
+    <span className="size-1.5 rounded-full bg-primary" />
+    {t}
+  </span>
+))}
               ))}
             </div>
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
