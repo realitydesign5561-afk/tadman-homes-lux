@@ -192,6 +192,12 @@ console.log({
 merchant_id: merchantId,
 owner_id: userId,
 });
+  
+const { data: authData } = await supabase.auth.getUser();
+ console.log("AUTH USER:", authData.user);
+ console.log("USER ID PROP:", userId);
+ console.log("MERCHANT ID:", merchantId);
+  
 const { data, error } = await supabase
   .from("properties")
   .insert([{
