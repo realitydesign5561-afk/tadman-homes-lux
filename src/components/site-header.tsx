@@ -26,9 +26,9 @@ const nav: NavItem[] = [
   { to: "/contact", label: "Contact" },
   {
     to: "/merchant",
-    label: "List Property"
+    label: "List Property",
     children: [
-  { to: "/merchant", label: "Register as Merchant" },
+ { to: "/merchant", label: "List Your Property" },
   { to: "/merchant/login", label: "Merchant Login" },
 ],
   },
@@ -49,7 +49,7 @@ export function SiteHeader() {
             alt={`${settings.brand.site_name} logo`}
             width={36}
             height={36}
-            className="size-9 rounded-full object-cover"
+            className="h-10 w-10 rounded-full object-cover"
           />
           <div className="leading-tight">
   <h1 className="font-display text-sm font-extrabold">
