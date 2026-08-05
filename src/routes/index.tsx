@@ -153,8 +153,8 @@ function Index() {
                     TH
                   </span>
                   <div>
-                    <p className="text-sm font-semibold text-foreground"> Tadman Homes & Properties</p>
-                    <p className="text-xs text-muted-foreground"> Verified Property Partner</p>
+                    <p className="text-sm font-semibold text-foreground"> Tadman Homes & Properties | Buy, Sell & Rent Properties Worldwide</p>
+                    <p className="text-xs text-muted-foreground">Buy, sell and rent verified properties worldwide with Tadman Homes & Properties. Explore houses, apartments, land, commercial properties and luxury homes.</p>
                   </div>
                 </div>
               </div>
@@ -205,7 +205,12 @@ function Index() {
               Buy, Sell & Rent Premium Properties Worldwide
             </h2>
             <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
-              {["Cleanliness", "Honest", "Trusted", "Luxury"].map((t) => (
+              [
+                "Verified Listings",
+                "Trusted Agents",
+                "Global Properties",
+                "Secure Transactions",
+               ] => (
                 <span key={t} className="flex items-center gap-1.5">
                   <span className="size-1.5 rounded-full bg-primary" />
                   {t}
@@ -362,9 +367,9 @@ function Index() {
             <div className="absolute inset-x-6 bottom-6 text-ink-foreground">
               <Quote className="size-6 opacity-70" />
               <p className="mt-2 max-w-md text-lg font-medium">
-                “Tadman made my first home purchase smooth and stress free.”
+                “Finding the right property was simple and transparent from start to finish”
               </p>
-              <p className="mt-2 text-xs opacity-70">— Mrs Benson</p>
+              <p className="mt-2 text-xs opacity-70">— Happy Client</p>
             </div>
           </div>
         </div>
@@ -418,10 +423,10 @@ function Index() {
           </div>
           <div className="grid grid-cols-2 gap-3">
             {[
-              ["500+", "Verified Properties"],
-              ["100+", "Active Merchants"],
-              ["20+", "Locations"],
-              ["24/7", "Customer Support"],
+              Verified Listings
+              Professional Agents
+              Global Reach
+              24/7 Support,
              ].map(([n, l]) => (
               <div key={l} className="rounded-2xl border border-ink-foreground/12 p-5">
                 <p className="font-display text-3xl font-bold">{n}</p>
@@ -487,7 +492,7 @@ function Index() {
           />
           <div className="absolute inset-0 bg-ink/45" />
           <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center text-ink-foreground">
-            <h2 className="max-w-2xl text-2xl font-bold sm:text-4xl">Get New Property Opportunities First</h2>
+            <h2 className="max-w-2xl text-2xl font-bold sm:text-4xl">Stay Updated with the Latest Properties</h2>
 
             <p className="mt-3 max-w-lg text-sm text-ink-foreground/80">Receive verified listings, price updates and investment opportunities.</p>
             <form
