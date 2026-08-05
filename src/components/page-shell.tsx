@@ -13,7 +13,7 @@ export function PageHeader({
 }) {
   return (
     <section className="px-3 pt-8 sm:px-5 sm:pt-12">
-      <div className="mx-auto max-w-[1240px] rounded-[2rem] bg-secondary/70 px-6 py-14 text-center sm:px-12 sm:py-20">
+      <div className="mx-auto max-w-[1240px] rounded-[2rem] bg-gradient-to-br from-[#071B2C] to-[#102A43] px-6 py-16 text-center text-white sm:px-12 sm:py-24">
         {eyebrow && (
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
             {eyebrow}
