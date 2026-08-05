@@ -369,9 +369,17 @@ className="surface-card grid gap-4 rounded-2xl p-6 sm:grid-cols-2"
 
   <div className="flex flex-wrap gap-3 sm:col-span-2">  
     <div className="w-full sm:w-auto">  
-      <PrimaryButton type="submit" disabled={busy}>  
-        {busy ? "Saving…" : property?.id ? "Save changes" : "Save listing"}  
-      </PrimaryButton>  
+      <PrimaryButton
+  type="button"
+  disabled={busy}
+  onClick={() => {
+    alert("BUTTON CLICKED");
+    console.log("BUTTON CLICKED");
+    save();
+  }}
+>
+  {busy ? "Saving..." : property?.id ? "Save changes" : "Save listing"}
+</PrimaryButton>
     </div>  
     <button  
       type="button"  
