@@ -127,15 +127,15 @@ uploaded.push(url);
 }
 const allImages = [...gallery, ...uploaded];
 const payload: Record<string, any> = {
-title: form.title,
-slug: form.slug || slugify(form.title),
-description: form.description,
+ title: form.title,
+ slug: form.slug || slugify(form.title),
+ description: form.description,
 
-price: form.price ? Number(form.price) : null,
-currency: form.currency,
+ price: form.price ? Number(form.price) : null,
+ currency: form.currency,
 
-listing_type: form.listing_type,
-property_type: form.property_type,
+ listing_type: form.listing_type,
+ property_type: form.property_type,
 
 country: form.country,
 state: form.state,
@@ -191,16 +191,19 @@ merchant_id: merchantId,
 owner_id: userId,
 });
 const { data, error } = await supabase
-.from("properties")
-.insert({
-...payload,
-merchant_id: merchantId ?? null,
-owner_id: userId,
-})
-.select();
+  .from("properties")
+  .insert([{
+    ...payload,
+    merchant_id: merchantId || null,
+    owner_id: userId,
+  }])
+  .select("*");
 
-console.log("Inserted:", data);
-console.log("Insert error:", error);
+console.log("USER ID:", userId);
+console.log("MERCHANT ID:", merchantId);
+console.log("PAYLOAD:", payload);
+console.log("RESULT:", data);
+console.log("ERROR:", error);
 
 if (error) throw error;
 
