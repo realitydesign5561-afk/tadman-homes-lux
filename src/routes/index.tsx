@@ -37,9 +37,9 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Tadman Homes & Properties is a premium Real Estate Marketplace SaaS for buying, selling, and renting properties globally.",
+          "Buy, sell and rent verified properties worldwide with Tadman Homes & Properties. Explore houses, apartments, land, commercial properties and luxury homes.",
       },
-      { property: "og:title", content: "Tadman Homes And Properties" },
+      { property: "og:title", content: "Tadman Homes & Properties | Buy, Sell & Rent Properties Worldwide" },
       {
         property: "og:description",
         content: "Tadman Homes & Properties is a premium Real Estate Marketplace SaaS for buying, selling, and renting properties globally.",
@@ -50,13 +50,13 @@ export const Route = createFileRoute("/")({
 });
 
 const categories = [
-  { label: "Apartment", icon: Building2, count: 1240 },
-  { label: "House", icon: Home, count: 986 },
-  { label: "Villa", icon: Sparkles, count: 412 },
-  { label: "Penthouse", icon: LayoutGrid, count: 168 },
-  { label: "Duplex", icon: Landmark, count: 233 },
-  { label: "Land", icon: Trees, count: 519 },
-  { label: "Commercial", icon: Warehouse, count: 307 },
+  { label: "Apartment", icon: Building2 },
+  { label: "House", icon: Home },
+  { label: "Villa", icon: Sparkles },
+  { label: "Penthouse", icon: LayoutGrid },
+  { label: "Duplex", icon: Landmark },
+  { label: "Land", icon: Trees },
+  { label: "Commercial", icon: Warehouse },
 ];
 
 const reasons = [
@@ -214,7 +214,6 @@ function Index() {
     {t}
   </span>
 ))}
-              ))}
             </div>
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
               {reasons.map((r) => (
@@ -422,14 +421,16 @@ function Index() {
           </div>
           <div className="grid grid-cols-2 gap-3">
             {[
-              Verified Listings
-              Professional Agents
-              Global Reach
-              24/7 Support,
+              ["500+", "Verified Listings"],
+              ["150+", "Professional Agents"],
+              ["40+", "Countries Covered"],
+              ["24/7", "Customer Support"],
              ].map(([n, l]) => (
-              <div key={l} className="rounded-2xl border border-ink-foreground/12 p-5">
-                <p className="font-display text-3xl font-bold">{n}</p>
-                <p className="mt-1 text-xs text-ink-foreground/60">{l}</p>
+  <div key={l} className="rounded-2xl border border-ink-foreground/12 p-5">
+    <p className="font-display text-3xl font-bold">{n}</p>
+    <p className="mt-1 text-xs text-ink-foreground/60">{l}</p>
+  </div>
+))}
               </div>
             ))}
           </div>
