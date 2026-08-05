@@ -5,7 +5,7 @@ import { slugify, type PropertyRow } from "@/lib/properties";
 import { uploadPropertyImage } from "@/lib/storage";
 import { propertyTypes } from "@/data/properties";
 import { logActivity } from "@/lib/admin";
-// import { canCreateProperty } from "@/lib/subscriptions";
+import { canCreateProperty } from "@/lib/subscriptions";
 
 export const PROPERTY_STATUSES = [
 "draft",
@@ -106,18 +106,18 @@ setError(null);
 
 try {
 
-// if (!property?.id && merchantId) {  
+if (!property?.id && merchantId) {  
 
-  // const allowed = await canCreateProperty(  
+  const allowed = await canCreateProperty(  
     merchantId  
   );  
 
- // if (!allowed) {  
-   // throw new Error(  
-//      "Your subscription listing limit has been reached. Upgrade your plan to add more properties."  
-//    );  
-//  }  
-// }
+ if (!allowed) {  
+    throw new Error(  
+    "Your subscription listing limit has been reached. Upgrade your plan to add more properties."  
+   );  
+ }  
+}
 
 const uploaded: string[] = [];
 
