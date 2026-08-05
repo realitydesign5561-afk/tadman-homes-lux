@@ -40,24 +40,36 @@ function ContactPage() {
     <>
       <PageHeader
         eyebrow="Contact"
-        title="Let's talk property"
-        subtitle="Questions about a listing, your subscription or selling with us? We're here."
+        title="Contact Tadman Homes & Properties"
+        subtitle="Need help buying, selling, renting or listing a property? Our team is ready to assist you."
       />
       <Section>
         <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
           <div className="space-y-4">
             {[
-              { icon: Mail, t: "Email", d: "support@tadmanhomes.com" },
-              { icon: Phone, t: "Phone", d: "+1 (555) 010 8890" },
-              { icon: MapPin, t: "Head office", d: "Unit 12, Harbour Plaza, Global City" },
-            ].map((c) => (
+              {
+                icon: Mail,
+                t: "Email",
+                d: "tadmanhomes@gmail.com\nralphconsult99@gmail.com",
+              },
+              {
+                icon: Phone,
+                t: "Hotline",
+                d: "07031556176\nWhatsApp: 09117511768",
+              },
+              {
+                icon: MapPin,
+                t: "Office Address",
+                d: "26 Adisa Akintoye Street, Ketu Alapere, Lagos, Nigeria",
+               },
+              ].map((c) => (
               <div key={c.t} className="surface-card flex items-center gap-4 rounded-2xl p-6">
                 <span className="flex size-10 items-center justify-center rounded-full bg-secondary text-primary">
                   <c.icon className="size-5" />
                 </span>
                 <div>
                   <p className="text-xs uppercase tracking-widest text-muted-foreground">{c.t}</p>
-                  <p className="mt-1 text-sm font-semibold text-foreground">{c.d}</p>
+                  <p className="mt-1 whitespace-pre-line text-sm font-semibold text-foreground">{c.d}</p>
                 </div>
               </div>
             ))}
@@ -67,7 +79,7 @@ function ContactPage() {
             <Field
               label="Full name"
               required
-              placeholder="Jane Doe"
+              placeholder="Your full name"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
             />
@@ -75,13 +87,13 @@ function ContactPage() {
               label="Email"
               type="email"
               required
-              placeholder="jane@email.com"
+              placeholder="Enter your email"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
             />
             <Field
               label="Subject"
-              placeholder="How can we help?"
+              placeholder="Subject"
               value={form.subject}
               onChange={(e) => setForm({ ...form, subject: e.target.value })}
             />
@@ -94,15 +106,15 @@ function ContactPage() {
                 required
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
-                placeholder="Tell us a little more…"
+                placeholder="Tell us how we can help..."
                 className="w-full rounded-2xl border border-border bg-secondary/60 p-4 text-sm outline-none focus:border-primary"
               />
             </label>
             {status === "sent" && (
-              <p className="text-sm text-primary">Thanks — we'll reply within one business day.</p>
+              <p className="text-sm text-primary">Your message has been received. Our team will contact you shortly.</p>
             )}
             {status === "error" && (
-              <p className="text-sm text-destructive">Your message could not be sent.</p>
+              <p className="text-sm text-destructive">Unable to send your message. Please try again later.</p>
             )}
             <PrimaryButton type="submit" disabled={status === "sending"}>
               {status === "sending" ? "Sending…" : "Send message"}
