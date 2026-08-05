@@ -172,8 +172,8 @@ function Index() {
               />
               <div className="glass-panel absolute right-4 top-4 flex items-center gap-2 rounded-full px-3 py-1.5">
                 <Star className="size-3.5 fill-primary text-primary" />
-                <span className="text-xs font-semibold text-foreground">4.9</span>
-                <span className="text-xs text-muted-foreground">2.5k reviews</span>
+                <span className="text-xs font-semibold text-foreground">Verified</span>
+                <span className="text-xs text-muted-foreground">Trusted Properties</span>
               </div>
             </div>
             <div className="grid grid-cols-3 gap-3">
@@ -202,7 +202,7 @@ function Index() {
         <div className="grid gap-5 rounded-[2rem] bg-secondary/70 p-6 sm:p-10 lg:grid-cols-[1.3fr_1fr]">
           <div>
             <h2 className="text-2xl font-bold text-foreground sm:text-4xl">
-              Discover and secure beautiful homes in the world&apos;s best cities
+              Buy, Sell & Rent Premium Properties Worldwide
             </h2>
             <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
               {["Cleanliness", "Honest", "Trusted", "Luxury"].map((t) => (
@@ -236,10 +236,8 @@ function Index() {
               <p className="text-sm font-semibold text-foreground">Tadman Luxury Residence</p>
               <p className="mt-1 text-xs text-muted-foreground">Premium homes · Verified listings · Global properties</p>
 
-<div className="mt-3 flex items-center justify-between">
-  <p className="font-display text-lg font-bold text-foreground">
-    Contact for price
-  </p>
+            <div className="mt-3 flex items-center justify-between">
+            <p className="font-display text-lg font-bold text-foreground">Contact for price</p>
                 <Link
                   to="/properties"
                   className="rounded-full bg-ink px-4 py-2 text-xs font-semibold text-ink-foreground"
@@ -366,7 +364,7 @@ function Index() {
               <p className="mt-2 max-w-md text-lg font-medium">
                 “Tadman made my first home purchase smooth and stress free.”
               </p>
-              <p className="mt-2 text-xs opacity-70">— Amanda Ricky, Jakarta</p>
+              <p className="mt-2 text-xs opacity-70">— Mrs Benson</p>
             </div>
           </div>
         </div>
