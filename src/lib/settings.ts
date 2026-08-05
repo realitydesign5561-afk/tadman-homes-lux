@@ -256,14 +256,14 @@ export async function fetchSettings(): Promise<SiteSettings> {
     ),
 
     legal_team_page: parse(
-      map.get("legal_team_page"),
-      defaultSettings.legal_team_page
-    ),
+  map.get("legal_team"),
+  defaultSettings.legal_team_page
+),
 
-    contact_page: parse(
-      map.get("contact_page"),
-      defaultSettings.contact_page
-    ),
+    contact: {
+  ...defaultSettings.contact,
+  ...(parse(map.get("contact"), defaultSettings.contact))
+},
   };
 }
 export async function saveSetting(key: keyof SiteSettings, value: unknown) {
