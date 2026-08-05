@@ -42,10 +42,10 @@ function AboutPage() {
              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">Beyond property listings, we are committed to transparency, innovation and exceptional customer service. Our platform is designed to provide verified listings, powerful search tools, secure communication and professional support that help clients make informed real estate decisions with confidence.</p>
             <div className="mt-8 grid grid-cols-3 gap-4">
               {[
-                ["Verified", "Property Listings"],
-                ["Trusted", "Marketplace"],
-                ["Global", "Reach"],
-              ].map(([n, l]) => (
+                ["Verified", "Listings"],
+                ["Secure", "Transactions"],
+                ["Global", "Marketplace"],
+               ].map(([n, l]) => (
                 <div key={l} className="surface-card rounded-2xl p-4 text-center">
                   <p className="font-display text-2xl font-bold text-foreground">{n}</p>
                   <p className="mt-1 text-[11px] text-muted-foreground">{l}</p>
@@ -81,8 +81,14 @@ function AboutPage() {
       <Section title="Our Mission">
         <div className="surface-card rounded-3xl p-8">
           <p className="text-sm leading-8 text-muted-foreground">
-          Our mission is to become Africa's most trusted digital real estate marketplace by connecting
-          property owners, merchants, agencies, developers and investors through technology that is  secure, transparent and easy to use.</p>
+          Our mission is to provide a secure, transparent and technology-driven real estate marketplace where buyers, sellers, landlords, developers and agencies can connect with confidence. We are committed to simplifying property transactions while delivering exceptional customer service and trusted property solutions across Nigeria and beyond.</p>
+     </div>
+    </Section>
+      <Section title="Our Vision">
+        <div className="surface-card rounded-3xl p-8">
+         <p className="text-sm leading-8 text-muted-foreground">
+         To become one of the world's leading digital real estate platforms by making property buying,
+         selling and renting easier, safer and more accessible for everyone.</p>
      </div>
     </Section>
     </>
