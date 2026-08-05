@@ -13,7 +13,7 @@ export const Route = createFileRoute("/login")({
       {
         name: "description",
         content:
-          "Sign in to your Tadman account to manage saved properties and listings.",
+         "Merchant login for Tadman Homes & Properties. Access your dashboard, manage listings and enquiries.",
       },
       {
         property: "og:title",
@@ -87,7 +87,7 @@ function LoginPage() {
     setBusy(false);
 
     if (error) {
-      setError(error.message);
+      setError("Invalid email or password.");
       return;
     }
 
@@ -98,16 +98,16 @@ function LoginPage() {
   return (
     <form onSubmit={handleSubmit}>
       <AuthCard
-        title="Welcome back"
-        subtitle="Sign in to manage your favourites, enquiries and property listings."
+        title="Merchant Login"
+        subtitle="Sign in to access your merchant dashboard and manage your property listings."
         footer={
           <>
-            New here?{" "}
+            Don't have a merchant account?{" "}
             <Link
               to="/register"
               className="font-semibold text-primary"
             >
-              Create an account
+              Register Here
             </Link>
           </>
         }
@@ -116,7 +116,7 @@ function LoginPage() {
           label="Email"
           type="email"
           required
-          placeholder="you@email.com"
+          placeholder="Enter your email"
           value={email}
           onChange={(e) =>
             setEmail(e.target.value)
@@ -127,7 +127,7 @@ function LoginPage() {
           label="Password"
           type="password"
           required
-          placeholder="••••••••"
+          placeholder="Enter your password"
           value={password}
           onChange={(e) =>
             setPassword(e.target.value)
@@ -153,7 +153,7 @@ function LoginPage() {
           type="submit"
           disabled={busy}
         >
-          {busy ? "Signing in..." : "Sign in"}
+         {busy ? "Signing In..." : "Login"}
         </PrimaryButton>
       </AuthCard>
     </form>
