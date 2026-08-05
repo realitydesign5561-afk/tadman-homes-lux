@@ -31,7 +31,7 @@ function RegisterPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"customer" | "merchant">("customer");
+  const [role] = useState<"merchant">("merchant");
   const [businessName, setBusinessName] = useState("");
 
   const [error, setError] = useState<string | null>(null);
@@ -99,11 +99,11 @@ if (error) {
   return (
     <form onSubmit={handleSubmit}>
       <AuthCard
-        title="Create your account"
-        subtitle="Save favourites as a buyer, or subscribe as a merchant to advertise properties."
+        title="Create Your Merchant Account"
+        subtitle="Register as a property merchant to publish listings, manage enquiries and grow your business on Tadman Homes & Properties."
         footer={
           <>
-            Already registered?{" "}
+            Already have a merchant account?{" "}
             <Link to="/login" className="font-semibold text-primary">
               Sign in
             </Link>
@@ -137,31 +137,12 @@ if (error) {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <label className="block">
-          <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-            Account type
-          </span>
-
-          <select
-            value={role}
-            onChange={(e) =>
-              setRole(e.target.value as "customer" | "merchant")
-            }
-            className="h-11 w-full rounded-2xl border border-border bg-secondary/60 px-4 text-sm outline-none focus:border-primary"
-          >
-            <option value="customer">Buyer / Tenant</option>
-            <option value="merchant">
-              Merchant (Agent, Agency, Developer, Landlord)
-            </option>
-          </select>
-        </label>
-
-        {role === "merchant" && (
-          <Field
-            label="Business name"
-            placeholder="Tadman Realty Ltd"
-            value={businessName}
-            onChange={(e) => setBusinessName(e.target.value)}
+        <Field
+          label="Business Name"
+          required
+          placeholder="ABC Properties Ltd"
+          value={businessName}
+          onChange={(e) => setBusinessName(e.target.value)}
           />
         )}
 
@@ -174,7 +155,7 @@ if (error) {
         )}
 
         <PrimaryButton type="submit" disabled={busy}>
-          {busy ? "Creating account..." : "Create account"}
+         {busy ? "Creating Merchant Account..." : "Create Merchant Account"}
         </PrimaryButton>
       </AuthCard>
     </form>
