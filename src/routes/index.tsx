@@ -433,6 +433,8 @@ function Index() {
     <p className="mt-1 text-xs text-ink-foreground/60">{l}</p>
   </div>
 ))}
+    </div>
+          
    </div>
       </Section>
 
