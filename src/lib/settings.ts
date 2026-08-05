@@ -282,7 +282,7 @@ export async function fetchSettings(): Promise<SiteSettings> {
     },
 
     property_management_page: parse(
-      map.get("property_management_page"),
+      map.get("property_management"),
       defaultSettings.property_management_page
     ),
 
@@ -301,13 +301,20 @@ export async function saveSetting(
   key: string,
   value: unknown
 ) {
-  console.log("Saving setting:", key, value);
+
+  const keyMap: Record<string,string> = {
+    legal_team_page: "legal_team",
+  };
+
+  const databaseKey = keyMap[key] ?? key;
+
+  console.log("Saving:", databaseKey, value);
 
   const { data, error } = await supabase
     .from("website_settings")
     .upsert(
       {
-        key,
+        key: databaseKey,
         value: JSON.stringify(value),
         updated_at: new Date().toISOString(),
       },
@@ -317,16 +324,13 @@ export async function saveSetting(
     )
     .select();
 
-  console.log("Save response:", data);
-  console.log("Save error:", error);
+  console.log("Result:", data);
+  console.log("Error:", error);
 
-  if (error) {
-    throw error;
-  }
+  if (error) throw error;
 
   return data;
 }
-
 /** Digits-only international WhatsApp number (Nigeria default). */
 export function whatsappLink(raw: string, message?: string) {
   let digits = (raw || "").replace(/\D/g, "");
