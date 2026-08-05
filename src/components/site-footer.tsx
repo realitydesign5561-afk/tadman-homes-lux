@@ -85,7 +85,6 @@ const footer = settings?.footer ?? {};
              <div>ralphconsult99@gmail.com</div>
          </div>
         </li>
-              )}
             </ul>
 
             <div className="mt-5 flex gap-2">
