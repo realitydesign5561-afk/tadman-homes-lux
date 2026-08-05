@@ -9,30 +9,32 @@ type NavItem = { to: string; label: string; children?: { to: string; label: stri
 
 const nav: NavItem[] = [
   { to: "/", label: "Home" },
+
   {
     to: "/properties",
     label: "Properties",
     children: [
+      { to: "/properties", label: "All Properties" },
       { to: "/buy", label: "Buy" },
-      { to: "/sell", label: "Sell" },
       { to: "/rent", label: "Rent" },
+      { to: "/sell", label: "Sell" },
+    ],
+  },
+
+  {
+    to: "/merchant",
+    label: "Merchants",
+    children: [
+      { to: "/merchant", label: "Become a Merchant" },
+      { to: "/merchant/login", label: "Merchant Login" },
       { to: "/pricing", label: "Pricing" },
     ],
   },
-  { to: "/agents", label: "Our Agents" },
-  { to: "/property-management", label: "Property Management" },
-  { to: "/legal-team", label: "Legal Team" },
-  { to: "/about", label: "About" },
+
+  { to: "/about", label: "About Us" },
+  { to: "/blog", label: "Blog" },
   { to: "/contact", label: "Contact" },
-  {
-    to: "/merchant",
-    label: "List Property",
-    children: [
- { to: "/merchant", label: "List Your Property" },
-  { to: "/merchant/login", label: "Merchant Login" },
-   ],
-  },
-];  
+];
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const { session, isAdmin } = useAuth();
