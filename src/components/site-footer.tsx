@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Facebook, Instagram, Linkedin, Twitter, MapPin, Phone, Mail, Clock } from "lucide-react";
 import { useSettings } from "@/hooks/use-settings";
-import logo from "@/assets/tadman-logo.jpg.asset.json";
+import logo from "@/assets/tadman-logo.jpg";
 
 const columns = [
   {
@@ -62,7 +62,7 @@ const footer = settings?.footer ?? {};
           <div>
             <div className="flex items-center gap-3">
               <img
-                src={brand.logo_url || logo.url}
+                src={brand.logo_url || logo}
                 alt={brand.site_name || "Tadman Homes"}
                 width={44}
                 height={44}
