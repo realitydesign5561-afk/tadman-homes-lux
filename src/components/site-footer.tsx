@@ -43,16 +43,16 @@ const columns = [
 ];
 
 export function SiteFooter() {
-  const { 
-  brand = {},
-  contact = {},
-  footer = {},
-} = useSettings();
+  const settings = useSettings();
+
+const brand = settings?.brand ?? {};
+const contact = settings?.contact ?? {};
+const footer = settings?.footer ?? {};
   const socials = [
-  { Icon: Twitter, href: footer.socials?.x },
-  { Icon: Facebook, href: footer.socials?.facebook },
-  { Icon: Linkedin, href: footer.socials?.linkedin },
-  { Icon: Instagram, href: footer.socials?.instagram },
+  { Icon: Twitter, href: footer?.socials?.x },
+  { Icon: Facebook, href: footer?.socials?.facebook },
+  { Icon: Linkedin, href: footer?.socials?.linkedin },
+  { Icon: Instagram, href: footer?.socials?.instagram },
 ];
 
   return (
