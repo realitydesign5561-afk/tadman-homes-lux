@@ -214,16 +214,21 @@ function Index() {
     {t}
   </span>
 ))}
-            </div>
-            <div className="mt-6 grid gap-3 sm:grid-cols-3">
-              {reasons.map((r) => (
-                <div key={r.title} className="surface-card rounded-2xl p-4">
-                  <r.icon className="size-5 text-primary" />
-                  <p className="mt-3 text-sm font-semibold text-foreground">{r.title}</p>
-                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{r.body}</p>
-                </div>
+</div>
+<div className="mt-6 grid gap-3 sm:grid-cols-3">
+  {reasons.map((r) => (
+    <div key={r.title} className="surface-card rounded-2xl p-4">
+      <r.icon className="size-5 text-primary" />
+      <p className="mt-3 text-sm font-semibold text-foreground">{r.title}</p>
+      <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+        {r.body}
+      </p>
+    </div>
+  ))}
+</div>
+</div>
 
-          <div className="relative overflow-hidden rounded-[1.75rem]">
+<div className="relative overflow-hidden rounded-[1.75rem]">
             <img
               src={heroVilla}
               alt="Tadman Luxury Residence"
@@ -428,6 +433,9 @@ function Index() {
     <p className="mt-1 text-xs text-ink-foreground/60">{l}</p>
   </div>
 ))}
+   </div>
+  </div>
+</div>
         </div>
       </Section>
 
