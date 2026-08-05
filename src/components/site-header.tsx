@@ -32,8 +32,7 @@ const nav: NavItem[] = [
   { to: "/merchant/login", label: "Merchant Login" },
 ],
   },
-];
-
+  
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const { session, isAdmin } = useAuth();
