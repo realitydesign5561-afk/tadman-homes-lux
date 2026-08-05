@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Menu, X, Search, UserRound, LayoutDashboard, Heart, ChevronDown } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useSettings } from "@/hooks/use-settings";
-import logo from "@/assets/tadman-logo.jpg.asset.json";
+import logo from "@/assets/tadman-logo.jpg";
 
 type NavItem = { to: string; label: string; children?: { to: string; label: string }[] };
 
@@ -26,11 +26,11 @@ const nav: NavItem[] = [
   { to: "/contact", label: "Contact" },
   {
     to: "/merchant",
-    label: "Become a Merchant",
+    label: "List Property"
     children: [
-      { to: "/merchant", label: "Become a Merchant" },
-      { to: "/merchant/login", label: "Merchant Login" },
-    ],
+  { to: "/merchant", label: "Register as Merchant" },
+  { to: "/merchant/login", label: "Merchant Login" },
+],
   },
 ];
 
@@ -38,7 +38,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const { session, isAdmin } = useAuth();
   const settings = useSettings();
-  const logoUrl = settings.brand.logo_url || logo.url;
+  const logoUrl = settings.brand.logo_url || logo;
 
   return (
     <header className="sticky top-0 z-50 px-3 pt-3 sm:px-5">
@@ -51,9 +51,14 @@ export function SiteHeader() {
             height={36}
             className="size-9 rounded-full object-cover"
           />
-          <span className="font-display text-sm font-extrabold tracking-tight text-foreground sm:text-base">
-            TADMAN
-          </span>
+          <div className="leading-tight">
+  <h1 className="font-display text-sm font-extrabold">
+    TADMAN
+  </h1>
+  <p className="text-[10px] text-muted-foreground">
+    Homes & Properties
+  </p>
+</div>
         </Link>
 
         <nav className="mx-auto hidden items-center gap-0.5 xl:flex">
