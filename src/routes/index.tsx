@@ -112,7 +112,7 @@ function Index() {
                 Buy, Sell & Rent Properties Across the World With{" "}
                 <span className="text-gradient-brand">Confidence</span>
               </h1>
-              <p className="mt-5 max-w-md text-sm text-muted-foreground sm:text-base">Browse verified houses, apartments, land and commercial properties from trusted agents worldwide. Secure your next investment with confidence.</p>
+              <p className="mt-5 max-w-md text-sm text-muted-foreground sm:text-base">Discover verified houses, apartments, land and commercial properties from trusted property owners, agencies and developers. Search confidently and invest with peace of mind.</p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <button
                   type="button"
@@ -143,14 +143,14 @@ function Index() {
               />
               <div className="min-w-0">
                 <p className="truncate rounded-full bg-secondary px-3 py-1.5 text-xs text-muted-foreground">
-                  {settings.contact.email}
+                  tadmanhomes@gmail.com
                 </p>
                 <div className="mt-2.5 flex items-center gap-2">
                   <span className="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-glow text-xs font-bold text-primary-foreground">
                     TH
                   </span>
                   <div>
-                    <p className="text-sm font-semibold text-foreground">Tadman Homes & Properties</p>
+                    <p className="text-sm font-semibold text-foreground">Tadman Homes And Properties</p>
                     <p className="text-xs text-muted-foreground">Buy • Sell • Rent Worldwide</p>
                   </div>
                 </div>
@@ -199,14 +199,14 @@ function Index() {
         <div className="grid gap-5 rounded-[2rem] bg-secondary/70 p-6 sm:p-10 lg:grid-cols-[1.3fr_1fr]">
           <div>
             <h2 className="text-2xl font-bold text-foreground sm:text-4xl">
-              Buy, Sell & Rent Premium Properties Worldwide
+             Discover Verified Properties For Sale & Rent
             </h2>
             <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
               {[
                 "Verified Listings",
-                "Trusted Agents",
-                "Global Properties",
-                "Secure Transactions",
+                "Trusted Merchants",
+                "Premium Properties",
+                "Nationwide Coverage",
                ].map((t) => (
   <span key={t} className="flex items-center gap-1.5">
     <span className="size-1.5 rounded-full bg-primary" />
@@ -241,7 +241,7 @@ function Index() {
               <p className="mt-1 text-xs text-muted-foreground">Premium homes · Verified listings · Global properties</p>
 
             <div className="mt-3 flex items-center justify-between">
-            <p className="font-display text-lg font-bold text-foreground">Contact for price</p>
+            <p className="font-display text-lg font-bold text-foreground">Browse Available Listings</p>
                 <Link
                   to="/properties"
                   className="rounded-full bg-ink px-4 py-2 text-xs font-semibold text-ink-foreground"
@@ -256,8 +256,8 @@ function Index() {
 
       {/* Featured properties */}
       <Section
-        title="Discover Best Properties Tailored to You"
-        subtitle="Hand-selected listings from verified agents and developers this month."
+        title="Featured Properties"
+        subtitle="Browse hand-picked verified properties from trusted merchants."
         action={
           <Link
             to="/properties"
@@ -275,7 +275,7 @@ function Index() {
       </Section>
 
       {/* Categories */}
-      <Section title="Property Categories" subtitle="Browse by the type of space you need.">
+      <Section title="Property Categories" subtitle="Explore different property categories available on Tadman Homes And Properties.">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
           {categories.map((c) => (
             <Link
@@ -295,7 +295,7 @@ function Index() {
       {/* Latest listings */}
       <Section
         title="Latest Listings"
-        subtitle="Fresh on the market, updated daily."
+        subtitle="Recently published verified properties from our trusted merchants."
         action={
           <Link
             to="/properties"
@@ -320,11 +320,10 @@ function Index() {
               Become a Merchant
             </p>
             <h2 className="mt-3 text-2xl font-bold sm:text-4xl">
-              Advertise your properties to a worldwide audience
+              List Your Properties On Tadman Homes And Properties
             </h2>
             <p className="mt-4 max-w-md text-sm text-ink-foreground/70">
-              Subscribe monthly, get your own private dashboard, publish unlimited listings and
-              receive qualified enquiries directly from buyers and tenants.
+              Create a merchant account, subscribe to a plan, publish your property listings, manage enquiries and reach thousands of buyers and tenants from one professional dashboard.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Link
