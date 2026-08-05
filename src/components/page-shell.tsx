@@ -11,22 +11,22 @@ export function PageHeader({
   children?: ReactNode;
 }) {
   return (
-    <section className="px-3 pt-8 sm:px-5 sm:pt-12">
-      <div className="mx-auto max-w-[1240px] rounded-[2rem] bg-gradient-to-br from-[#0A1F33] via-[#12304A] to-[#D4AF37] px-6 py-16 text-center text-white shadow-xl sm:px-12 sm:py-24">
-        {eyebrow && (
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#FFD369]">
-            {eyebrow}
-          </p>
-        )}
+   <section className="px-3 pt-8 sm:px-5 sm:pt-12">
+      <div className="mx-auto max-w-[1240px] overflow-hidden rounded-[2rem] border border-primary/20 bg-[linear-gradient(135deg,#0B3A5B_0%,#155E75_55%,#D4AF37_100%)] px-6 py-16 text-center text-white shadow-lift sm:px-12 sm:py-24">
+      {eyebrow && (
+        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#FFE8A3]">
+        {eyebrow}
+       </p>
+       )}
 
         <h1 className="mt-3 text-3xl font-bold text-white sm:text-5xl">
-          {title}
-        </h1>
+         {title}
+         </h1>
 
-        {subtitle && (
-          <p className="mx-auto mt-4 max-w-2xl text-sm text-white/85 sm:text-base">
-            {subtitle}
-          </p>
+         {subtitle && (
+         <p className="mx-auto mt-4 max-w-2xl text-sm text-white/90 sm:text-base">
+         {subtitle}
+       </p>
         )}
 
         {children && <div className="mt-8">{children}</div>}
