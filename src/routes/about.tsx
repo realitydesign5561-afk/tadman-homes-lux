@@ -9,10 +9,10 @@ export const Route = createFileRoute("/about")({
       {
         name: "description",
         content:
-          "Tadman Homes & Properties connects buyers to sellers with ease — a global marketplace for premium property.",
+        "Tadman Homes & Properties is a trusted global real estate marketplace helping buyers, sellers, landlords and investors discover verified properties worldwide.",
       },
       { property: "og:title", content: "About Tadman Homes & Properties" },
-      { property: "og:description", content: "Connecting buyers to sellers with ease, worldwide." },
+      { property: "og:description", content: "Trusted global marketplace for buying, selling and renting verified properties." },
     ],
   }),
   component: AboutPage,
@@ -23,8 +23,8 @@ function AboutPage() {
     <>
       <PageHeader
         eyebrow="About"
-        title="Connecting buyers to sellers with ease"
-        subtitle="We built Tadman so that finding, listing and closing on property feels as simple as booking a stay."
+        title="About Tadman Homes & Properties"
+        subtitle="A trusted real estate marketplace connecting buyers, sellers, landlords and investors with verified property opportunities across the world."
       />
       <Section>
         <div className="grid items-center gap-8 lg:grid-cols-2">
@@ -38,22 +38,13 @@ function AboutPage() {
           />
           <div>
             <h2 className="text-2xl font-bold text-foreground sm:text-3xl">Our story</h2>
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-              Tadman Homes &amp; Properties started with a simple frustration: property listings
-              were scattered, unverified and hard to trust. We set out to build a single premium
-              marketplace where every home is checked, every agent is accountable and every buyer
-              knows exactly what they are getting.
-            </p>
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-              Today we serve buyers, sellers, landlords, agencies, developers and investors across
-              more than forty countries — with a merchant platform that gives professionals the
-              tools to run their portfolio from anywhere.
-            </p>
+             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">Tadman Homes & Properties was created to simplify the way people buy, sell and rent properties. Our mission is to build a trusted marketplace where property owners, developers, agencies and independent merchants can connect with genuine buyers and tenants through a secure digital platform.</p>
+             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">Beyond property listings, we are committed to transparency, innovation and exceptional customer service. Our platform is designed to provide verified listings, powerful search tools, secure communication and professional support that help clients make informed real estate decisions with confidence.</p>
             <div className="mt-8 grid grid-cols-3 gap-4">
               {[
-                ["18k", "Active listings"],
-                ["6.4k", "Merchants"],
-                ["40+", "Countries"],
+                ["Verified", "Property Listings"],
+                ["Trusted", "Marketplace"],
+                ["Global", "Reach"],
               ].map(([n, l]) => (
                 <div key={l} className="surface-card rounded-2xl p-4 text-center">
                   <p className="font-display text-2xl font-bold text-foreground">{n}</p>
@@ -64,13 +55,22 @@ function AboutPage() {
           </div>
         </div>
       </Section>
-      <Section title="What we stand for">
+      <Section title="Why Choose Tadman Homes & Properties">
         <div className="grid gap-4 sm:grid-cols-3">
           {[
-            ["Transparency", "Clear pricing, honest descriptions and verified ownership."],
-            ["Craft", "A premium experience for a decision that changes people's lives."],
-            ["Access", "Global reach for professionals of every size, at a fair monthly price."],
-          ].map(([t, d]) => (
+             [
+               "Verified Listings",
+               "Every property is reviewed before publication to improve trust and reduce fraudulent listings.",
+             ],
+             [
+               "Global Marketplace",
+               "Buy, sell and rent properties across multiple cities and countries from one trusted platform.",
+             ],
+             [
+    "Professional Support",
+    "Our experienced team assists buyers, sellers and merchants throughout their property journey.",
+  ],
+].map(([t, d]) => (
             <div key={t} className="surface-card rounded-2xl p-6">
               <p className="text-sm font-semibold text-foreground">{t}</p>
               <p className="mt-2 text-sm text-muted-foreground">{d}</p>
@@ -78,6 +78,13 @@ function AboutPage() {
           ))}
         </div>
       </Section>
+      <Section title="Our Mission">
+        <div className="surface-card rounded-3xl p-8">
+          <p className="text-sm leading-8 text-muted-foreground">
+          Our mission is to become Africa's most trusted digital real estate marketplace by connecting
+          property owners, merchants, agencies, developers and investors through technology that is  secure, transparent and easy to use.</p>
+     </div>
+    </Section>
     </>
   );
 }
