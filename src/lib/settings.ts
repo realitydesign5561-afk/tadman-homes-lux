@@ -233,55 +233,74 @@ export async function fetchSettings(): Promise<SiteSettings> {
   );
 
   return {
-  footer: parse(map.get("footer"), defaultSettings.footer),
+    footer: parse(map.get("footer"), defaultSettings.footer),
 
-  brand: parse(map.get("brand"), defaultSettings.brand),
+    brand: parse(
+      map.get("brand"),
+      defaultSettings.brand
+    ),
 
-  contact: parse(map.get("contact"), defaultSettings.contact),
+    contact: parse(
+      map.get("contact"),
+      defaultSettings.contact
+    ),
 
-  hero: parse(map.get("hero"), defaultSettings.hero),
+    hero: parse(
+      map.get("hero"),
+      defaultSettings.hero
+    ),
 
-  homepage: parse(map.get("homepage"), defaultSettings.homepage),
+    homepage: parse(
+      map.get("homepage"),
+      defaultSettings.homepage
+    ),
 
-  seo: parse(map.get("seo"), defaultSettings.seo),
+    seo: parse(
+      map.get("seo"),
+      defaultSettings.seo
+    ),
 
-  social: parse(map.get("social"), defaultSettings.social),
+    social: parse(
+      map.get("social"),
+      defaultSettings.social
+    ),
 
-  appearance: parse(
-    map.get("appearance"),
-    defaultSettings.appearance
-  ),
+    appearance: parse(
+      map.get("appearance"),
+      defaultSettings.appearance
+    ),
 
-  about_page: {
-    heading:
-      String(map.get("about_heading") ?? defaultSettings.about_page.heading),
+    about_page: {
+      heading: String(
+        map.get("about_heading") ??
+        defaultSettings.about_page.heading
+      ),
+      body: String(
+        map.get("about_text") ??
+        defaultSettings.about_page.body
+      ),
+    },
 
-    body:
-      String(map.get("about_text") ?? defaultSettings.about_page.body),
-  },
+    property_management_page: parse(
+      map.get("property_management_page"),
+      defaultSettings.property_management_page
+    ),
 
-  property_management_page: parse(
-    map.get("property_management_page"),
-    defaultSettings.property_management_page
-  ),
+    legal_team_page: parse(
+      map.get("legal_team"),
+      defaultSettings.legal_team_page
+    ),
 
-  legal_team_page: parse(
-    map.get("legal_team"),
-    defaultSettings.legal_team_page
-  ),
-
-  contact_page: parse(
-    map.get("contact_page"),
-    defaultSettings.contact_page
-  ),
-};
-    contact: {
-  ...defaultSettings.contact,
-  ...(parse(map.get("contact"), defaultSettings.contact))
-},
+    contact_page: parse(
+      map.get("contact_page"),
+      defaultSettings.contact_page
+    ),
   };
 }
-export async function saveSetting(key: keyof SiteSettings, value: unknown) {
+export async function saveSetting(
+  key: string,
+  value: unknown
+){
   const { error } = await supabase
     .from("website_settings")
     .upsert({ key, value: JSON.stringify(value), updated_at: new Date().toISOString() });
