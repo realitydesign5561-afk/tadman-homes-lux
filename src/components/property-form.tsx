@@ -207,8 +207,11 @@ console.log("PAYLOAD:", payload);
 console.log("RESULT:", data);
 console.log("ERROR:", error);
 
-if (error) throw error;
-
+if (error) {
+  console.log("SUPABASE ERROR", error);
+  alert(JSON.stringify(error, null, 2));
+  throw error;
+}
 await logActivity("Created property", "property");
 }
 
