@@ -25,6 +25,9 @@ import { PropertyGrid } from "@/components/property-grid";
 import { fetchLocations, fetchPosts, fetchTestimonials, subscribeNewsletter } from "@/lib/content";
 import { propertyImages } from "@/data/properties";
 import heroVilla from "@/assets/hero-villa.jpg";
+import prop1 from "@/assets/prop-1.jpg";
+import prop2 from "@/assets/prop-2.jpg";
+import prop3 from "@/assets/prop-3.jpg";
 import ctaBeach from "@/assets/cta-beach.jpg";
 
 export const Route = createFileRoute("/")({
@@ -223,17 +226,20 @@ function Index() {
           <div className="relative overflow-hidden rounded-[1.75rem]">
             <img
               src={heroVilla}
-              alt="Sunny Meadows Estate"
+              alt="Tadman Luxury Residence"
               loading="lazy"
               width={1400}
               height={1000}
               className="h-full min-h-[260px] w-full object-cover"
             />
             <div className="glass-panel absolute inset-x-4 bottom-4 rounded-2xl p-4">
-              <p className="text-sm font-semibold text-foreground">Sunny Meadows Estate</p>
-              <p className="mt-1 text-xs text-muted-foreground">4 beds · 3 baths · 280 m²</p>
-              <div className="mt-3 flex items-center justify-between">
-                <p className="font-display text-lg font-bold text-foreground">$10,000</p>
+              <p className="text-sm font-semibold text-foreground">Tadman Luxury Residence</p>
+              <p className="mt-1 text-xs text-muted-foreground">Premium homes · Verified listings · Global properties</p>
+
+<div className="mt-3 flex items-center justify-between">
+  <p className="font-display text-lg font-bold text-foreground">
+    Contact for price
+  </p>
                 <Link
                   to="/properties"
                   className="rounded-full bg-ink px-4 py-2 text-xs font-semibold text-ink-foreground"
@@ -483,12 +489,9 @@ function Index() {
           />
           <div className="absolute inset-0 bg-ink/45" />
           <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center text-ink-foreground">
-            <h2 className="max-w-2xl text-2xl font-bold sm:text-4xl">Get New Property Opportunities First
-               Receive verified listings, price updates and investment opportunities.</h2>
-            <p className="mt-3 max-w-lg text-sm text-ink-foreground/80">
-              Join our newsletter for new listings, price drops and market intelligence — curated
-              to your search.
-            </p>
+            <h2 className="max-w-2xl text-2xl font-bold sm:text-4xl">Get New Property Opportunities First</h2>
+
+            <p className="mt-3 max-w-lg text-sm text-ink-foreground/80">Receive verified listings, price updates and investment opportunities.</p>
             <form
               onSubmit={handleSubscribe}
               className="glass-panel mt-7 flex w-full max-w-md items-center gap-2 rounded-full p-1.5"
