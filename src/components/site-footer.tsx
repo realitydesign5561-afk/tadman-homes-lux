@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Facebook, Instagram, Linkedin, Twitter, MapPin, Phone, Mail, Clock } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Twitter, MapPin, Phone, Mail } from "lucide-react";
 import { useSettings } from "@/hooks/use-settings";
 import logo from "@/assets/tadman-logo.jpg";
 
@@ -8,36 +8,34 @@ const columns = [
     title: "Company",
     links: [
       { to: "/", label: "Home" },
-      { to: "/about", label: "About" },
-      { to: "/agents", label: "Our Agents" },
+      { to: "/about", label: "About Us" },
       { to: "/contact", label: "Contact" },
     ],
   },
   {
     title: "Marketplace",
     links: [
-      { to: "/properties", label: "Properties" },
-      { to: "/buy", label: "Buy" },
-      { to: "/rent", label: "Rent" },
-      { to: "/sell", label: "Sell" },
+      { to: "/properties", label: "All Properties" },
+      { to: "/properties?type=buy", label: "Buy" },
+      { to: "/properties?type=rent", label: "Rent" },
+      { to: "/properties?type=land", label: "Land" },
     ],
   },
   {
     title: "Services",
     links: [
-      { to: "/property-management", label: "Property Management" },
-      { to: "/legal-team", label: "Legal Team" },
       { to: "/pricing", label: "Pricing" },
       { to: "/blog", label: "Blog" },
-    ],
+      { to: "/faq", label: "FAQ" },
+     ],
   },
   {
     title: "Merchants",
     links: [
       { to: "/merchant", label: "Become a Merchant" },
-      { to: "/merchant/login", label: "Merchant Login" },
+      { to: "/merchant/login", label: "Merchant Dashboard" },
       { to: "/privacy", label: "Privacy Policy" },
-      { to: "/terms", label: "Terms" },
+      { to: "/terms", label: "Terms & Conditions" },
     ],
   },
 ];
@@ -76,46 +74,17 @@ const footer = settings?.footer ?? {};
                 <p className="text-xs text-ink-foreground/60">{brand.motto}</p>
               </div>
             </div>
-            <p className="mt-5 max-w-sm text-sm text-ink-foreground/60">{footer.about}</p>
-
+            <p className="mt-5 max-w-sm text-sm text-ink-foreground/60">Buy, sell and rent verified properties worldwide with confidence. Connecting buyers, sellers and investors through a trusted real estate marketplace.</p>
             <ul className="mt-5 space-y-2 text-sm text-ink-foreground/70">
-              <li className="flex gap-2">
-                <MapPin className="mt-0.5 size-4 shrink-0" />
-                {contact.address}
-              </li>
-              <li className="flex gap-2">
-                <Phone className="mt-0.5 size-4 shrink-0" />
-                <span>
-                  <a href={`tel:${contact.phone}`} className="hover:text-ink-foreground">
-                    {contact.phone}
-                  </a>
-                  {contact.whatsapp && <> · WhatsApp {contact.whatsapp}</>}
-                </span>
-              </li>
-              <li className="flex gap-2">
-                <Mail className="mt-0.5 size-4 shrink-0" />
-                <span>
-                  <a href={`mailto:${contact.email}`} className="hover:text-ink-foreground">
-                    {contact.email}
-                  </a>
-                  {contact.email_secondary && (
-                    <>
-                      {" · "}
-                      <a
-                        href={`mailto:${contact.email_secondary}`}
-                        className="hover:text-ink-foreground"
-                      >
-                        {contact.email_secondary}
-                      </a>
-                    </>
-                  )}
-                </span>
-              </li>
-              {contact.hours && (
-                <li className="flex gap-2">
-                  <Clock className="mt-0.5 size-4 shrink-0" />
-                  {contact.hours}
-                </li>
+              <li className="flex gap-2"><MapPin className="mt-0.5 size-4 shrink-0" />26 Adisa Akintoye Street, Ketu Alapere, Lagos.</li>
+              <li className="flex gap-2"><Phone className="mt-0.5 size-4 shrink-0" />Hotline: 07031556176</li>
+              <li className="flex gap-2"><Phone className="mt-0.5 size-4 shrink-0" />WhatsApp: 09117511768</li>
+              <li className="flex gap-2"><Mail className="mt-0.5 size-4 shrink-0" />
+                <div>
+             <div>tadmanhomes@gmail.com</div>
+             <div>ralphconsult99@gmail.com</div>
+         </div>
+        </li>
               )}
             </ul>
 
@@ -170,7 +139,7 @@ const footer = settings?.footer ?? {};
           <p>
   © {new Date().getFullYear()} {brand.site_name || "Tadman Homes"}. All rights reserved.
 </p>
-          <p>{brand.motto || ""}</p>
+          <p>Buy • Sell • Rent Premium Properties Worldwide</p>
         </div>
       </div>
     </footer>
