@@ -60,17 +60,15 @@ const footer = settings?.footer ?? {};
             <div className="flex items-center gap-3">
               <img
                 src={brand.logo_url || logo}
-                alt={brand.site_name || "Tadman Homes"}
+                alt="Tadman Homes & Properties"
                 width={44}
                 height={44}
                 loading="lazy"
                 className="size-11 rounded-xl object-cover"
               />
               <div>
-                <p className="font-display text-base font-bold">
-                  {brand.site_name || "Tadman Homes"}
-                </p>
-                <p className="text-xs text-ink-foreground/60">{brand.motto}</p>
+                <p className="font-display text-base font-bold">Tadman Homes & Properties</p>
+                <p className="text-xs text-ink-foreground/60">• Sell • Rent Premium Properties Worldwide</p>
               </div>
             </div>
             <p className="mt-5 max-w-sm text-sm text-ink-foreground/60">Buy, sell and rent verified properties worldwide with confidence. Connecting buyers, sellers and investors through a trusted real estate marketplace.</p>
@@ -135,7 +133,7 @@ const footer = settings?.footer ?? {};
 
         <div className="mt-10 flex flex-col gap-2 border-t border-ink-foreground/10 pt-6 text-xs text-ink-foreground/50 sm:flex-row sm:items-center sm:justify-between">
           <p>
-  © {new Date().getFullYear()} {brand.site_name || "Tadman Homes"}. All rights reserved.
+  © {new Date().getFullYear()} Tadman Homes & Properties. All rights reserved.
 </p>
           <p>Buy • Sell • Rent Premium Properties Worldwide</p>
         </div>
