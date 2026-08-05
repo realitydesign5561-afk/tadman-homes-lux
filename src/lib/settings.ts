@@ -300,11 +300,31 @@ export async function fetchSettings(): Promise<SiteSettings> {
 export async function saveSetting(
   key: string,
   value: unknown
-){
-  const { error } = await supabase
+) {
+  console.log("Saving setting:", key, value);
+
+  const { data, error } = await supabase
     .from("website_settings")
-    .upsert({ key, value: JSON.stringify(value), updated_at: new Date().toISOString() });
-  if (error) throw error;
+    .upsert(
+      {
+        key,
+        value: JSON.stringify(value),
+        updated_at: new Date().toISOString(),
+      },
+      {
+        onConflict: "key",
+      }
+    )
+    .select();
+
+  console.log("Save response:", data);
+  console.log("Save error:", error);
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
 }
 
 /** Digits-only international WhatsApp number (Nigeria default). */
