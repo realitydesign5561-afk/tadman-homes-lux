@@ -63,6 +63,11 @@ export type SocialSettings = {
   tiktok: string;
 };
 
+export type FooterSettings = {
+  about: string;
+  socials: SocialSettings;
+};
+
 export type AppearanceSettings = {
   primary_color: string;
   secondary_color: string;
@@ -74,6 +79,7 @@ export type AppearanceSettings = {
   favicon: string;
 };
 export type SiteSettings = {
+  footer: FooterSettings;
   brand: BrandSettings;
   contact: ContactSettings;
   hero: HeroSettings;
@@ -169,7 +175,20 @@ appearance: {
 
   favicon: "",
 },
-
+  
+footer: {
+  about:
+    "Tadman Homes and Properties helps clients buy, sell, rent and manage premium properties with confidence.",
+  socials: {
+    facebook: "",
+    instagram: "",
+    linkedin: "",
+    x: "",
+    youtube: "",
+    tiktok: "",
+  },
+},
+  
   about_page: {
     heading: "About Tadman Homes and Properties",
     body: "Tadman Homes and Properties is a Lagos-based real estate company helping clients buy, sell, rent and manage premium properties with confidence.",
@@ -207,6 +226,8 @@ export async function fetchSettings(): Promise<SiteSettings> {
 }
   const map = new Map<string, unknown>((data ?? []).map((r: any) => [r.key, r.value]));
   return {
+  return {
+  footer: parse(map.get("footer"), defaultSettings.footer),
   brand: parse(map.get("brand"), defaultSettings.brand),
   contact: parse(map.get("contact"), defaultSettings.contact),
   hero: parse(map.get("hero"), defaultSettings.hero),
