@@ -58,8 +58,8 @@ function PropertiesPage() {
     <>
       <PageHeader
         eyebrow="Marketplace"
-        title="All Properties"
-        subtitle="Filter by country, city, price, bedrooms, type and status to find the right home."
+        title="Browse Verified Properties"
+        subtitle="Explore verified houses, apartments, land and commercial properties from trusted merchants worldwide."
       />
       <Section>
         <SearchPanel initial={search} />
