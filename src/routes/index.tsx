@@ -343,10 +343,10 @@ function Index() {
           </div>
           <div className="grid grid-cols-2 gap-3">
             {[
-              ["500+", "Verified Listings"],
-              ["100+", "Registered Merchants"],
-              ["Worldwide", "Property Reach"],
-              ["24/7", "Customer Support"],
+              ["Unlimited", "Property Listings"],
+              ["Monthly", "Flexible Subscription"],
+              ["Global", "Property Marketplace"],
+              ["24/7", "Dashboard Access"],
              ].map(([n, l]) => (
   <div key={l} className="rounded-2xl border border-ink-foreground/12 p-5">
     <p className="font-display text-3xl font-bold">{n}</p>
