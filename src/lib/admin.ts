@@ -188,13 +188,26 @@ export async function fetchAllAgents(): Promise<AdminAgentRow[]> {
 }
 
 export async function upsertAgent(agent: Partial<AdminAgentRow>) {
-  const { error } = await supabase.from("agents").upsert(agent);
-  if (error) throw error;
-  await logActivity(agent.id ? "Updated agent" : "Added agent", "agent", agent.id);
+  const { data, error } = await supabase
+  .from("agents")
+  .upsert(agent)
+  .select()
+  .single();
+
+if (error) throw error;
+
+await logActivity(
+  agent.id ? "Updated agent" : "Added agent",
+  "agent",
+  data.id
+);
 }
 
 export async function deleteAgent(id: string) {
-  const { error } = await supabase.from("agents").delete().eq("id", id);
+  const { error } = await supabase
+    .from("agents")
+    .delete()
+    .eq("id", id);
   if (error) throw error;
   await logActivity("Deleted agent", "agent", id);
 }
