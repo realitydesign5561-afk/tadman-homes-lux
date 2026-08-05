@@ -100,9 +100,11 @@ setForm((f) => ({ ...f, [key]: e.target.value }));
 }
 
 async function save(targetStatus?: string) {
+  alert("save() started");
+  console.log("SAVE STARTED");
 
-setBusy(true);
-setError(null);
+  setBusy(true);
+  setError(null);
 
 try {
 
