@@ -904,7 +904,10 @@ function SettingsTab() {
       setMsg("Saved.");
       qc.invalidateQueries({ queryKey: ["website-settings"] });
     },
-    onError: (e: unknown) => setMsg(e instanceof Error ? e.message : "Could not save."),
+    onError: (e: any) => {
+  console.error("Save settings error:", e);
+  setMsg(e?.message || "Could not save.");
+},
   });
 
   function patch<K extends keyof SiteSettings>(key: K, part: Partial<SiteSettings[K]>) {
