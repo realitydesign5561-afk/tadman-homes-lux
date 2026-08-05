@@ -434,9 +434,6 @@ function Index() {
   </div>
 ))}
    </div>
-  </div>
-</div>
-        </div>
       </Section>
 
       {/* Blog */}
