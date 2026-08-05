@@ -30,9 +30,9 @@ const nav: NavItem[] = [
     children: [
  { to: "/merchant", label: "List Your Property" },
   { to: "/merchant/login", label: "Merchant Login" },
-],
+   ],
   },
-  
+];  
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const { session, isAdmin } = useAuth();
