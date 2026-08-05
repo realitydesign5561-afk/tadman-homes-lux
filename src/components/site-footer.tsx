@@ -167,8 +167,10 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-10 flex flex-col gap-2 border-t border-ink-foreground/10 pt-6 text-xs text-ink-foreground/50 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} {brand.site_name}. All rights reserved.</p>
-          <p>{brand.motto}</p>
+          <p>
+  © {new Date().getFullYear()} {brand.site_name || "Tadman Homes"}. All rights reserved.
+</p>
+          <p>{brand.motto || ""}</p>
         </div>
       </div>
     </footer>
