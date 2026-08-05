@@ -10,30 +10,29 @@ const columns = [
       { to: "/", label: "Home" },
       { to: "/about", label: "About Us" },
       { to: "/contact", label: "Contact" },
+      { to: "/blog", label: "Blog" },
     ],
   },
   {
-    title: "Marketplace",
+    title: "Properties",
     links: [
       { to: "/properties", label: "All Properties" },
-      { to: "/properties?type=buy", label: "Buy" },
-      { to: "/properties?type=rent", label: "Rent" },
-      { to: "/properties?type=land", label: "Land" },
+      { to: "/buy", label: "Buy Property" },
+      { to: "/rent", label: "Rent Property" },
+      { to: "/sell", label: "Sell Property" },
     ],
-  },
-  {
-    title: "Services",
-    links: [
-      { to: "/pricing", label: "Pricing" },
-      { to: "/blog", label: "Blog" },
-      { to: "/faq", label: "FAQ" },
-     ],
   },
   {
     title: "Merchants",
     links: [
       { to: "/merchant", label: "Become a Merchant" },
-      { to: "/merchant/login", label: "Merchant Dashboard" },
+      { to: "/merchant/login", label: "Merchant Login" },
+      { to: "/pricing", label: "Pricing" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
       { to: "/privacy", label: "Privacy Policy" },
       { to: "/terms", label: "Terms & Conditions" },
     ],
