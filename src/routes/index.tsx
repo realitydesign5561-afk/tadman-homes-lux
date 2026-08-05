@@ -25,9 +25,6 @@ import { PropertyGrid } from "@/components/property-grid";
 import { fetchLocations, fetchPosts, fetchTestimonials, subscribeNewsletter } from "@/lib/content";
 import { propertyImages } from "@/data/properties";
 import heroVilla from "@/assets/hero-villa.jpg";
-import prop1 from "@/assets/prop-1.jpg";
-import prop2 from "@/assets/prop-2.jpg";
-import prop3 from "@/assets/prop-3.jpg";
 import ctaBeach from "@/assets/cta-beach.jpg";
 
 export const Route = createFileRoute("/")({
@@ -150,11 +147,11 @@ function Index() {
                 </p>
                 <div className="mt-2.5 flex items-center gap-2">
                   <span className="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-glow text-xs font-bold text-primary-foreground">
-                    DR
+                    TH
                   </span>
                   <div>
-                    <p className="text-sm font-semibold text-foreground">Diana Russell</p>
-                    <p className="text-xs text-muted-foreground">Lead Agent</p>
+                    <p className="text-sm font-semibold text-foreground"> Tadman Homes & Properties</p>
+                    <p className="text-xs text-muted-foreground"> Verified Property Partner</p>
                   </div>
                 </div>
               </div>
@@ -417,11 +414,11 @@ function Index() {
           </div>
           <div className="grid grid-cols-2 gap-3">
             {[
-              ["40+", "Countries covered"],
-              ["18k", "Active listings"],
-              ["6.4k", "Verified merchants"],
-              ["120k", "Monthly buyers"],
-            ].map(([n, l]) => (
+              ["500+", "Verified Properties"],
+              ["100+", "Active Merchants"],
+              ["20+", "Locations"],
+              ["24/7", "Customer Support"],
+             ].map(([n, l]) => (
               <div key={l} className="rounded-2xl border border-ink-foreground/12 p-5">
                 <p className="font-display text-3xl font-bold">{n}</p>
                 <p className="mt-1 text-xs text-ink-foreground/60">{l}</p>
@@ -486,7 +483,8 @@ function Index() {
           />
           <div className="absolute inset-0 bg-ink/45" />
           <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center text-ink-foreground">
-            <h2 className="max-w-2xl text-2xl font-bold sm:text-4xl">Find Your Dream Home Faster</h2>
+            <h2 className="max-w-2xl text-2xl font-bold sm:text-4xl">Get New Property Opportunities First
+               Receive verified listings, price updates and investment opportunities.</h2>
             <p className="mt-3 max-w-lg text-sm text-ink-foreground/80">
               Join our newsletter for new listings, price drops and market intelligence — curated
               to your search.
