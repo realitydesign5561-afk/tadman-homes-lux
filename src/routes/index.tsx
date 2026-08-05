@@ -222,9 +222,6 @@ function Index() {
                   <p className="mt-3 text-sm font-semibold text-foreground">{r.title}</p>
                   <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{r.body}</p>
                 </div>
-              ))}
-            </div>
-          </div>
 
           <div className="relative overflow-hidden rounded-[1.75rem]">
             <img
@@ -431,9 +428,6 @@ function Index() {
     <p className="mt-1 text-xs text-ink-foreground/60">{l}</p>
   </div>
 ))}
-              </div>
-            ))}
-          </div>
         </div>
       </Section>
 
