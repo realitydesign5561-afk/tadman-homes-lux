@@ -1,5 +1,4 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
-
 export function PageHeader({
   eyebrow,
   title,
@@ -13,24 +12,28 @@ export function PageHeader({
 }) {
   return (
     <section className="px-3 pt-8 sm:px-5 sm:pt-12">
-      <div className="mx-auto max-w-[1240px] rounded-[2rem] bg-gradient-to-br from-[#071B2C] to-[#102A43] px-6 py-16 text-center text-white sm:px-12 sm:py-24">
+      <div className="mx-auto max-w-[1240px] rounded-[2rem] bg-gradient-to-br from-[#0A1F33] via-[#12304A] to-[#D4AF37] px-6 py-16 text-center text-white shadow-xl sm:px-12 sm:py-24">
         {eyebrow && (
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#FFD369]">
             {eyebrow}
           </p>
         )}
-        <h1 className="mt-3 text-3xl font-bold text-foreground sm:text-5xl">{title}</h1>
+
+        <h1 className="mt-3 text-3xl font-bold text-white sm:text-5xl">
+          {title}
+        </h1>
+
         {subtitle && (
-          <p className="mx-auto mt-4 max-w-2xl text-sm text-muted-foreground sm:text-base">
+          <p className="mx-auto mt-4 max-w-2xl text-sm text-white/85 sm:text-base">
             {subtitle}
           </p>
         )}
+
         {children && <div className="mt-8">{children}</div>}
       </div>
     </section>
   );
 }
-
 export function Section({
   title,
   subtitle,
