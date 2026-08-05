@@ -28,7 +28,7 @@ export function PropertyCard({ property }: { property: Property }) {
 
   return (
     <article className="surface-card group overflow-hidden rounded-[1.6rem] transition-all duration-300 hover:-translate-y-1 hover:shadow-lift">
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="relative aspect-[5/4] overflow-hidden">
         <img
           src={property.image}
           alt={`${property.title} in ${property.city}`}
