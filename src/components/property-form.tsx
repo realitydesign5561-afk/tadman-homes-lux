@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Field, PrimaryButton } from "@/components/page-shell";
 import { supabase } from "@/lib/supabase";
 import { slugify, type PropertyRow } from "@/lib/properties";
@@ -126,7 +126,12 @@ for (const file of files) {
   uploaded.push(url);
 }
 
-const allImages = [...gallery, ...uploaded];
+const uploaded: string[] = [];
+
+for (const file of files) {
+  const url = await uploadPropertyImage(file, merchantId ?? userId);
+  uploaded.push(url);
+}
   const payload: Record<string, any> = {
   title: form.title,
   slug: form.slug || slugify(form.title),
