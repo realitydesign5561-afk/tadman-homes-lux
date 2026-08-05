@@ -233,33 +233,48 @@ export async function fetchSettings(): Promise<SiteSettings> {
   );
 
   return {
-    footer: parse(map.get("footer"), defaultSettings.footer),
-    brand: parse(map.get("brand"), defaultSettings.brand),
-    contact: parse(map.get("contact"), defaultSettings.contact),
-    hero: parse(map.get("hero"), defaultSettings.hero),
+  footer: parse(map.get("footer"), defaultSettings.footer),
 
-    homepage: parse(map.get("homepage"), defaultSettings.homepage),
-    seo: parse(map.get("seo"), defaultSettings.seo),
-    social: parse(map.get("social"), defaultSettings.social),
-    appearance: parse(map.get("appearance"), defaultSettings.appearance),
+  brand: parse(map.get("brand"), defaultSettings.brand),
 
-    about_page: {
-  heading:
-    String(map.get("about_heading") ?? defaultSettings.about_page.heading),
-  body:
-    String(map.get("about_text") ?? defaultSettings.about_page.body),
-},
+  contact: parse(map.get("contact"), defaultSettings.contact),
 
-    property_management_page: parse(
-      map.get("property_management_page"),
-      defaultSettings.property_management_page
-    ),
+  hero: parse(map.get("hero"), defaultSettings.hero),
 
-    legal_team_page: parse(
-  map.get("legal_team"),
-  defaultSettings.legal_team_page
-),
+  homepage: parse(map.get("homepage"), defaultSettings.homepage),
 
+  seo: parse(map.get("seo"), defaultSettings.seo),
+
+  social: parse(map.get("social"), defaultSettings.social),
+
+  appearance: parse(
+    map.get("appearance"),
+    defaultSettings.appearance
+  ),
+
+  about_page: {
+    heading:
+      String(map.get("about_heading") ?? defaultSettings.about_page.heading),
+
+    body:
+      String(map.get("about_text") ?? defaultSettings.about_page.body),
+  },
+
+  property_management_page: parse(
+    map.get("property_management_page"),
+    defaultSettings.property_management_page
+  ),
+
+  legal_team_page: parse(
+    map.get("legal_team"),
+    defaultSettings.legal_team_page
+  ),
+
+  contact_page: parse(
+    map.get("contact_page"),
+    defaultSettings.contact_page
+  ),
+};
     contact: {
   ...defaultSettings.contact,
   ...(parse(map.get("contact"), defaultSettings.contact))
