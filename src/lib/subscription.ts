@@ -1,6 +1,6 @@
 import { supabase } from "./supabase";
 
-export async function canCreateProperty(merchantId: string) {
+export async function canCreateProperty(...) {
 
   const { data: subscription, error } = await supabase
     .from("subscriptions")
