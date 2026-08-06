@@ -97,14 +97,24 @@ function PropertyManagementPage() {
   const settings = useSettings();
   const page = settings.property_management_page;
   const [form, setForm] = useState({
-    full_name: "",
-    email: "",
-    phone: "",
-    property_address: "",
-    property_type: "",
-    service: "Full property management",
-    message: "",
-  });
+  full_name: "",
+  email: "",
+  phone: "",
+  whatsapp: "",
+  property_address: "",
+  city: "",
+  state: "",
+  country: "",
+  property_type: "",
+  property_name: "",
+  units: "",
+  occupancy_status: "",
+  service: "Full property management",
+  preferred_contact: "Phone",
+  inspection_date: "",
+  budget: "",
+  message: "",
+});
   const [state, setState] = useState<"idle" | "busy" | "done" | "error">("idle");
 
   const set = (k: keyof typeof form) => (v: string) => setForm((p) => ({ ...p, [k]: v }));
@@ -115,14 +125,24 @@ function PropertyManagementPage() {
     try {
       await submitManagementRequest(form);
       setForm({
-        full_name: "",
-        email: "",
-        phone: "",
-        property_address: "",
-        property_type: "",
-        service: "Full property management",
-        message: "",
-      });
+  full_name: "",
+  email: "",
+  phone: "",
+  whatsapp: "",
+  property_address: "",
+  city: "",
+  state: "",
+  country: "",
+  property_type: "",
+  property_name: "",
+  units: "",
+  occupancy_status: "",
+  service: "Full property management",
+  preferred_contact: "Phone",
+  inspection_date: "",
+  budget: "",
+  message: "",
+});
       setState("done");
     } catch {
       setState("error");
@@ -145,10 +165,53 @@ function PropertyManagementPage() {
         </div>
       </Section>
 
-      <Section
-        title="Request property management"
-        subtitle="Tell us about your property and our management team will get back to you."
+     <Section
+  title="How It Works"
+  subtitle="Our simple four-step process for managing your property."
+>
+  <div className="mb-16 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+    {process.map((item) => (
+      <div
+        key={item.step}
+        className="surface-card rounded-2xl p-6"
       >
+        <div className="mb-4 text-3xl font-bold text-primary">
+          {item.step}
+        </div>
+
+        <h3 className="text-lg font-semibold">
+          {item.title}
+        </h3>
+
+        <p className="mt-3 text-sm text-muted-foreground">
+          {item.description}
+        </p>
+      </div>
+    ))}
+  </div>
+
+  <div className="mb-12 rounded-3xl bg-secondary/30 p-8">
+    <h3 className="mb-4 text-2xl font-bold">
+      Why Choose Tadman Homes?
+    </h3>
+
+    <div className="grid gap-4 md:grid-cols-2">
+      <div>✔ Experienced Property Managers</div>
+      <div>✔ Transparent Financial Reports</div>
+      <div>✔ Verified Maintenance Professionals</div>
+      <div>✔ Tenant Screening & Management</div>
+      <div>✔ Regular Property Inspections</div>
+      <div>✔ Increased Property Value</div>
+    </div>
+  </div>
+
+  <h2 className="mb-3 text-3xl font-bold">
+    Request Property Management
+  </h2>
+
+  <p className="mb-8 text-muted-foreground">
+    Complete the form below and one of our property managers will contact you shortly.
+  </p>
         <form onSubmit={handleSubmit} className="surface-card grid gap-4 rounded-[1.75rem] p-6 sm:grid-cols-2">
           <Field label="Full name" required value={form.full_name} onChange={(e) => set("full_name")(e.target.value)} />
           <Field label="Email" type="email" value={form.email} onChange={(e) => set("email")(e.target.value)} />
