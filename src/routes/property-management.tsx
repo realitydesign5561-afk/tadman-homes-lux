@@ -1,8 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { Building2, ClipboardCheck, Coins, Hammer, ShieldCheck, Users } from "lucide-react";
-import { PageHeader, Section, Field, PrimaryButton } from "@/components/page-shell";
+import {
+  Building2,
+  ClipboardCheck,
+  Coins,
+  Hammer,
+  ShieldCheck,
+  Users,
+} from "lucide-react";
+import {
+  PageHeader,
+  Section,
+  Field,
+  PrimaryButton,
+} from "@/components/page-shell";
 import { useSettings } from "@/hooks/use-settings";
 import { submitManagementRequest } from "@/lib/content";
 
@@ -111,7 +123,6 @@ function PropertyManagementPage() {
   const [state, setState] = useState<"idle" | "busy" | "done" | "error">("idle");
 
   const set = (k: keyof typeof form) => (v: string) => setForm((p) => ({ ...p, [k]: v }));
-import type { FormEvent } from "react";
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setState("busy");
