@@ -147,13 +147,15 @@ export async function fetchPropertyById(idOrSlug: string): Promise<Property | nu
   return data ? mapProperty(data as PropertyRow) : null;
 }
 
-export async function fetchMyProperties(ownerId: string): Promise<PropertyRow[]> {
+export async function fetchMyProperties(merchantId: string): Promise<PropertyRow[]> {
   const { data, error } = await supabase
     .from("properties")
     .select(SELECT)
-    .eq("owner_id", ownerId)
+    .eq("merchant_id", merchantId)
     .order("created_at", { ascending: false });
+
   if (error) throw error;
+
   return data as PropertyRow[];
 }
 
