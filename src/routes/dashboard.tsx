@@ -44,14 +44,8 @@ function DashboardPage() {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<PropertyRow | null>(null);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("all");
-
-  const listings = useQuery({
-  queryKey: ["my-properties", merchant.data?.id],
-  queryFn: () => fetchMyProperties(merchant.data!.id),
-  enabled: Boolean(merchant.data?.id),
-});
-
-  const merchant = useQuery({
+  
+const merchant = useQuery({
     queryKey: ["my-merchant", user?.id],
     queryFn: async () => {
       const { data } = await supabase
@@ -63,6 +57,14 @@ function DashboardPage() {
     },
     enabled: Boolean(user?.id),
   });
+  
+  const listings = useQuery({
+  queryKey: ["my-properties", merchant.data?.id],
+  queryFn: () => fetchMyProperties(merchant.data!.id),
+  enabled: Boolean(merchant.data?.id),
+});
+
+  
 
   const enquiries = useQuery({
     queryKey: ["merchant-enquiries", user?.id],
@@ -110,7 +112,7 @@ function DashboardPage() {
     total: rows.length,
     live: rows.filter((r) => r.status === "approved").length,
     pending: rows.filter((r) => r.status === "pending").length,
-    views: rows.reduce((sum, r) => sum + (r.views ?? 0), 0),
+    views: rows.reduce((sum, r) => sum + (r.views_count ?? 0), 0),
   };
 
   function closeForm() {
