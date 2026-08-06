@@ -139,7 +139,14 @@ export async function fetchPropertyById(idOrSlug: string): Promise<Property | nu
   const isUuid = /^[0-9a-f-]{36}$/i.test(idOrSlug);
   const { data, error } = await supabase
     .from("properties")
-    .select(SELECT)
+    .select(`
+     *,
+      merchants (
+         business_name,
+         whatsapp,
+         phone
+       )
+     `)
     .eq(isUuid ? "id" : "slug", idOrSlug)
     .eq("status", "approved")
     .maybeSingle();
