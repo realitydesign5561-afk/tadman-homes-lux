@@ -89,7 +89,7 @@ onCancel?: () => void;
 const [form, setForm] = useState<FormState>(initial(property));
 const [files, setFiles] = useState<File[]>([]);
 const [gallery, setGallery] = useState<string[]>(
-  Array.isArray(property?.gallery) ? property.gallery : []
+  Array.isArray(property?.images) ? property.images : []
 );
 const [error, setError] = useState<string | null>(null);
 const [busy, setBusy] = useState(false);
@@ -156,8 +156,8 @@ const payload: Record<string, any> = {
     .filter(Boolean),
 
   featured_image: allImages[0] ?? null,
-  gallery: allImages,
-
+images: allImages,
+  
   agent_id: form.agent_id || null,
 
   status: targetStatus ?? form.status,
