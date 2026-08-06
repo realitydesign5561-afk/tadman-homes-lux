@@ -170,13 +170,14 @@ payload.published_at = new Date().toISOString();
 }
 if (property?.id) {
 const { data, error } = await supabase
-.from("properties")
-.update({
-  ...payload,
-  merchant_id: merchantId ?? null,
-})
-.eq("id", property.id)
-.select();
+  .from("properties")
+  .insert([
+    {
+      ...payload,
+      merchant_id: merchantId,
+    },
+  ])
+  .select("*");
 
 console.log(data);
 console.log(error);
@@ -189,6 +190,11 @@ throw error;
 await logActivity("Updated property", "property", property.id);
 
 } else {
+
+if (!merchantId) {
+  throw new Error("Merchant account not found. Please login again.");
+}
+
 console.log(payload);
 console.log({
 merchant_id: merchantId,
