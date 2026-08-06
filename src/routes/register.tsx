@@ -45,18 +45,22 @@ function RegisterPage() {
     setError(null);
     setNotice(null);
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/login`,
-   data: {
-          full_name: fullName,
-          business_name: businessName,
-          role: "merchant",
-        },
-      },
-    });
+    const response = await supabase.auth.signUp({
+  email,
+  password,
+  options: {
+    emailRedirectTo: `${window.location.origin}/login`,
+    data: {
+      full_name: fullName,
+      business_name: businessName,
+      role: "merchant",
+    },
+  },
+});
+
+console.log("Signup Response:", response);
+
+const { data, error } = response;
 if (error) {
   console.error("Signup error:", error);
 
