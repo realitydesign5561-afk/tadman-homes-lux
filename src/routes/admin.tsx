@@ -13,6 +13,8 @@ import {
   deleteEnquiry,
   deleteManagementRequest,
   deleteMerchant,
+  fetchExpiringSubscriptions,
+  fetchExpiredSubscriptions,
   deleteProperty,
   fetchActivity,
   fetchAdminUsers,
@@ -147,6 +149,15 @@ function AdminPage() {
 
 function OverviewTab() {
   const overview = useQuery({ queryKey: ["admin-overview"], queryFn: fetchOverview });
+  const expiring = useQuery({
+  queryKey: ["expiring-subscriptions"],
+  queryFn: fetchExpiringSubscriptions,
+});
+
+const expired = useQuery({
+  queryKey: ["expired-subscriptions"],
+  queryFn: fetchExpiredSubscriptions,
+});
   const activity = useQuery({ queryKey: ["admin-activity"], queryFn: () => fetchActivity(8) });
 
   const o = overview.data;
@@ -156,6 +167,8 @@ function OverviewTab() {
     { label: "Agents", value: o?.agents ?? 0 },
     { label: "Enquiries", value: o?.enquiries ?? 0 },
     { label: "Management requests", value: o?.management ?? 0 },
+    { label: "Expiring Subscriptions",value: expiring.data?.length ?? 0,},
+    {label: "Expired Subscriptions",value: expired.data?.length ?? 0,},
   ];
 
   return (
@@ -168,6 +181,35 @@ function OverviewTab() {
           </div>
         ))}
       </div>
+      <div className="space-y-3">
+  <h3 className="text-lg font-semibold">
+    Expiring Subscriptions
+  </h3>
+
+  {(expiring.data ?? []).length === 0 ? (
+    <p>No subscriptions expiring soon.</p>
+  ) : (
+    <table className="w-full">
+      <thead>
+        <tr>
+          <th>Business</th>
+          <th>Expiry</th>
+          <th>WhatsApp</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {expiring.data?.map((subscription) => (
+          <tr key={subscription.id}>
+            <td>{subscription.business_name}</td>
+            <td>{subscription.expiry_date}</td>
+            <td>{subscription.whatsapp_number}</td>
+            </tr>
+            ))}
+            </tbody>
+            </table>
+           )}
+       </div>
       <div>
         <h3 className="mb-3 text-sm font-semibold text-foreground">Recent activity</h3>
         <div className="space-y-2">
