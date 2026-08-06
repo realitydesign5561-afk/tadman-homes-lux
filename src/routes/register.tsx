@@ -66,7 +66,26 @@ function RegisterPage() {
 console.log("Signup Response:", response);
 
 const { data, error } = response;
-console.log("SIGNUP RESPONSE", { data, error });
+
+console.log("USER:", data?.user);
+console.log("SESSION:", data?.session);
+console.log("ERROR MESSAGE:", error?.message);
+console.log("ERROR STATUS:", error?.status);
+console.log("ERROR CODE:", (error as any)?.code);
+console.log("FULL ERROR:", JSON.stringify(error));
+
+alert(
+  JSON.stringify(
+    {
+      hasUser: !!data?.user,
+      hasSession: !!data?.session,
+      error: error?.message ?? null,
+      code: (error as any)?.code ?? null,
+    },
+    null,
+    2
+  )
+);
 
 if (error) {
   console.error(error);
@@ -74,25 +93,25 @@ if (error) {
   setError(JSON.stringify(error, null, 2));
   return;
 }
-    if (!data.user) {
-      setBusy(false);
-      setError("Unable to create account.");
-      return;
-    }
 
-    setBusy(false);
+if (!data?.user) {
+  setBusy(false);
+  setError("Unable to create account.");
+  return;
+}
 
-    if (data.session) {
-      navigate({
-        to: role === "merchant" ? "/dashboard" : "/",
-        replace: true,
-      });
-    } else {
-      setNotice(
-        "Account created successfully. Please check your email to verify your account before signing in."
-      );
-    }
-  }
+setBusy(false);
+
+if (data.session) {
+  navigate({
+    to: role === "merchant" ? "/dashboard" : "/",
+    replace: true,
+  });
+} else {
+  setNotice(
+    "Account created successfully. Please check your email to verify your account before signing in."
+  );
+}
 
   return (
     <form onSubmit={handleSubmit}>
