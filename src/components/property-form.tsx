@@ -89,7 +89,7 @@ onCancel?: () => void;
 const [form, setForm] = useState<FormState>(initial(property));
 const [files, setFiles] = useState<File[]>([]);
 const [gallery, setGallery] = useState<string[]>(
-Array.isArray(property?.images) ? property.images : []
+  Array.isArray(property?.gallery) ? property.gallery : []
 );
 const [error, setError] = useState<string | null>(null);
 const [busy, setBusy] = useState(false);
@@ -168,21 +168,25 @@ payload.published_at = new Date().toISOString();
 }
 if (property?.id) {
 
-const { error } = await supabase
-.from("properties")
-.update(payload)
-.eq("id", property.id);
+const { data, error } = await supabase
+  .from("properties")
+  .update(payload)
+  .eq("id", property.id)
+  .select("*")
+  .single();
 
-if(error) throw error;
+console.log("UPDATED:", data);
+console.log("UPDATE ERROR:", error);
+
+if (error) throw error;
 
 await logActivity(
-"Updated property",
-"property",
-property.id
+  "Updated property",
+  "property",
+  property.id
 );
 
 }
-  .select("*");
 
 console.log(data);
 console.log(error);
@@ -216,6 +220,7 @@ const { data, error } = await supabase
   .insert([{
   ...payload,
   merchant_id: merchantId,
+  owner_id: userId,
 }])
   .select("*");
 
