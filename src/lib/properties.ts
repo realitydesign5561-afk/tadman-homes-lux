@@ -21,7 +21,7 @@ export type PropertyRow = {
   size_unit: string | null;
   amenities: string[] | null;
   featured_image: string | null;
-  gallery: string[] | null;
+  images: string[] | null;
   status: string;
   is_featured: boolean;
   views_count: number;
@@ -91,8 +91,8 @@ export function mapProperty(row: PropertyRow, agentName = "Tadman Homes"): Prope
     beds: row.bedrooms ?? 0,
     baths: row.bathrooms ?? 0,
     area: row.size ? `${row.size} ${row.size_unit || "sqm"}` : "—",
-    image: row.featured_image || row.gallery?.[0] || propertyImages.prop1,
-    gallery: row.gallery?.length ? row.gallery : row.featured_image ? [row.featured_image] : [],
+    image: row.featured_image || row.images?.[0] || propertyImages.prop1,
+    gallery: row.images?.length ? row.images : row.featured_image ? [row.featured_image] : [],
     featured: row.is_featured,
     description: row.description || "",
     features: row.amenities ?? [],
