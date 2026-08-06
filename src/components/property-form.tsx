@@ -207,7 +207,6 @@ const { data, error } = await supabase
   .insert([{
   ...payload,
   merchant_id: merchantId,
-  owner_id: userId,
 }])
   .select("*");
 
