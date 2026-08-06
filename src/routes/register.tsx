@@ -106,12 +106,13 @@ if (data.session) {
   navigate({
     to: role === "merchant" ? "/dashboard" : "/",
     replace: true,
-  });
-} else {
-  setNotice(
+    });
+    } else {
+     setNotice(
     "Account created successfully. Please check your email to verify your account before signing in."
-  );
-}
+   );
+  }
+  }
 
   return (
     <form onSubmit={handleSubmit}>
