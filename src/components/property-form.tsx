@@ -209,10 +209,9 @@ const { data: authData } = await supabase.auth.getUser();
 const { data, error } = await supabase
   .from("properties")
   .insert([{
-    ...payload,
-    merchant_id: merchantId || null,
-    owner_id: userId,
-  }])
+  ...payload,
+  merchant_id: merchantId,
+}])
   .select("*");
 
 console.log("USER ID:", userId);
