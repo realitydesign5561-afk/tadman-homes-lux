@@ -63,29 +63,7 @@ function RegisterPage() {
   },
 });
 
-console.log("Signup Response:", response);
-
 const { data, error } = response;
-
-console.log("USER:", data?.user);
-console.log("SESSION:", data?.session);
-console.log("ERROR MESSAGE:", error?.message);
-console.log("ERROR STATUS:", error?.status);
-console.log("ERROR CODE:", (error as any)?.code);
-console.log("FULL ERROR:", JSON.stringify(error));
-
-alert(
-  JSON.stringify(
-    {
-      hasUser: !!data?.user,
-      hasSession: !!data?.session,
-      error: error?.message ?? null,
-      code: (error as any)?.code ?? null,
-    },
-    null,
-    2
-  )
-);
 
 if (error) {
   console.error(error);
