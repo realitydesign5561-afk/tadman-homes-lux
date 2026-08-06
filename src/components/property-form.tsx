@@ -147,8 +147,8 @@ const payload: Record<string, any> = {
   bedrooms: form.bedrooms ? Number(form.bedrooms) : null,
   bathrooms: form.bathrooms ? Number(form.bathrooms) : null,
 
-  size: form.size ? Number(form.size) : null,
-  size_unit: "sqm",
+  area: form.size ? Number(form.size) : null,
+  area_unit: "sqm",,
 
   amenities: form.amenities
     .split(",")
