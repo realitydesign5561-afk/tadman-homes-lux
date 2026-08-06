@@ -139,9 +139,8 @@ function PropertyDetails() {
             </p>
             <EnquiryForm propertyId={property.rowId} title={property.title} />
             <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                `Hello Tadman, I'm interested in "${property.title}".`,
-              )}`}
+              href={`https://wa.me/${property.merchants?.whatsapp}?text=${encodeURIComponent(`Hello, I'm interested in "${property.title}".`,
+            )}`}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-3 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-border text-sm font-semibold text-foreground"
