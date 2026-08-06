@@ -1141,8 +1141,8 @@ function SettingsTab() {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 /* -------------------------------- activity ------------------------------- */
 
@@ -1203,25 +1203,3 @@ export type FooterSettings = {
     tiktok: string;
   };
 };
-
-export async function fetchExpiringSubscriptions() {
-  const { data, error } = await supabase
-    .from("expiring_subscriptions")
-    .select("*")
-    .order("expiry_date", { ascending: true });
-
-  if (error) throw error;
-
-  return data ?? [];
-}
-
-export async function fetchExpiredSubscriptions() {
-  const { data, error } = await supabase
-    .from("expired_subscriptions")
-    .select("*")
-    .order("expiry_date", { ascending: true });
-
-  if (error) throw error;
-
-  return data ?? [];
-}
