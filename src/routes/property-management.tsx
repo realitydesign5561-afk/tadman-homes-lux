@@ -25,14 +25,74 @@ export const Route = createFileRoute("/property-management")({
 });
 
 const services = [
-  { icon: Users, t: "Tenant sourcing & screening", d: "We market your property, vet applicants and handle every viewing." },
-  { icon: Coins, t: "Rent collection", d: "Timely collection, remittance and clear statements every cycle." },
-  { icon: Hammer, t: "Maintenance & repairs", d: "Vetted artisans handle repairs quickly at fair, approved costs." },
-  { icon: ClipboardCheck, t: "Inspections & reporting", d: "Routine inspections with photo reports so you always know the condition." },
-  { icon: ShieldCheck, t: "Compliance & documentation", d: "Tenancy agreements, renewals, notices and statutory obligations." },
-  { icon: Building2, t: "Facility management", d: "Service charge administration for estates and commercial buildings." },
+  {
+    icon: Users,
+    t: "Tenant Sourcing & Screening",
+    d: "Professional marketing, tenant screening, interviews and lease execution.",
+  },
+  {
+    icon: Coins,
+    t: "Rent Collection",
+    d: "Automated rent reminders, payment tracking and transparent remittance.",
+  },
+  {
+    icon: Hammer,
+    t: "Maintenance & Repairs",
+    d: "Routine maintenance, emergency repairs and trusted contractors.",
+  },
+  {
+    icon: ClipboardCheck,
+    t: "Property Inspection",
+    d: "Scheduled inspections with detailed reports and photographs.",
+  },
+  {
+    icon: ShieldCheck,
+    t: "Legal & Compliance",
+    d: "Tenancy agreements, eviction procedures and regulatory compliance.",
+  },
+  {
+    icon: Building2,
+    t: "Facility Management",
+    d: "Cleaning, security, utilities and complete estate management.",
+  },
+  {
+    icon: Building2,
+    t: "Commercial Property Management",
+    d: "Office buildings, shopping complexes, warehouses and mixed-use properties.",
+  },
+  {
+    icon: ShieldCheck,
+    t: "Investment Advisory",
+    d: "Helping investors maximize rental income and long-term property value.",
+  },
 ];
 
+const process = [
+  {
+    step: "01",
+    title: "Request Consultation",
+    description:
+      "Tell us about your property and management requirements.",
+  },
+  {
+    step: "02",
+    title: "Property Inspection",
+    description:
+      "Our team visits your property for a full assessment.",
+  },
+  {
+    step: "03",
+    title: "Management Proposal",
+    description:
+      "We prepare a customized management plan and pricing.",
+  },
+  {
+    step: "04",
+    title: "Management Begins",
+    description:
+      "We handle everything while you receive regular reports.",
+  },
+];
 function PropertyManagementPage() {
   const settings = useSettings();
   const page = settings.property_management_page;
