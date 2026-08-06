@@ -44,12 +44,7 @@ function RegisterPage() {
     setBusy(true);
     setError(null);
     setNotice(null);
-   console.log("Submitting signup", {
-        email,
-        password,
-        fullName,
-        businessName,
-    });
+   
     const response = await supabase.auth.signUp({
   email,
   password,
@@ -68,7 +63,7 @@ const { data, error } = response;
 if (error) {
   console.error(error);
   setBusy(false);
-  setError(JSON.stringify(error, null, 2));
+  setError(error.message);
   return;
 }
 
