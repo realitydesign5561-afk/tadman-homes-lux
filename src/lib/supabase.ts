@@ -1,28 +1,31 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const anonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY ??
-  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY) as string | undefined;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const isSupabaseConfigured = Boolean(url && anonKey);
+console.log("SUPABASE URL:", supabaseUrl);
+console.log(
+  "SUPABASE KEY EXISTS:",
+  !!supabaseAnonKey,
+  supabaseAnonKey?.substring(0, 20)
+);
 
-if (!isSupabaseConfigured && typeof window !== "undefined") {
-  console.warn(
-    "Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment.",
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    "Missing Supabase environment variables. Check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY."
   );
 }
 
-// A client is always created so imports never crash during SSR/prerender; when the
-// environment is missing the placeholder host simply fails the request and the UI
-// falls back to its empty state.
 export const supabase: SupabaseClient = createClient(
-  url ?? "https://placeholder.supabase.co",
-  anonKey ?? "public-anon-key",
+  supabaseUrl,
+  supabaseAnonKey,
   {
     auth: {
-      persistSession: typeof window !== "undefined",
-      autoRefreshToken: typeof window !== "undefined",
-      detectSessionInUrl: typeof window !== "undefined",
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
     },
-  },
+  }
 );
+
+export const isSupabaseConfigured = true;
