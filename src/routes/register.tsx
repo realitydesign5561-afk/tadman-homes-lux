@@ -61,24 +61,12 @@ function RegisterPage() {
 console.log("Signup Response:", response);
 
 const { data, error } = response;
+console.log("SIGNUP RESPONSE", { data, error });
+
 if (error) {
-  console.error("Signup error:", error);
-
+  console.error(error);
   setBusy(false);
-
-  setError(
-    JSON.stringify(
-      {
-        message: error.message,
-        status: error.status,
-        code: (error as any).code,
-        name: error.name,
-      },
-      null,
-      2
-    )
-  );
-
+  setError(JSON.stringify(error, null, 2));
   return;
 }
     if (!data.user) {
