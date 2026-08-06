@@ -129,54 +129,59 @@ uploaded.push(url);
 }
 const allImages = [...gallery, ...uploaded];
 const payload: Record<string, any> = {
- title: form.title,
- slug: form.slug ||
-slugify(form.title),
- description: form.description,
+  title: form.title,
+  slug: form.slug || slugify(form.title),
+  description: form.description,
 
- price: form.price ? 
-Number(form.price) : null,
- currency: form.currency,
+  price: form.price ? Number(form.price) : null,
+  currency: form.currency,
 
- listing_type: form.listing_type,
- property_type: form.property_type,
+  listing_type: form.listing_type,
+  property_type: form.property_type,
 
-country: form.country,
-state: form.state,
-city: form.city,
-address: form.address,
+  country: form.country,
+  state: form.state,
+  city: form.city,
+  address: form.address,
 
-bedrooms: form.bedrooms ? Number(form.bedrooms) : null,
-bathrooms: form.bathrooms ? Number(form.bathrooms) : null,
+  bedrooms: form.bedrooms ? Number(form.bedrooms) : null,
+  bathrooms: form.bathrooms ? Number(form.bathrooms) : null,
 
-area: form.size ? Number(form.size) : null,
-area_unit: "sqm",
+  size: form.size ? Number(form.size) : null,
+  size_unit: "sqm",
 
-amenities: form.amenities
-.split(",")
-.map(a => a.trim())
-.filter(Boolean),
-featured_image: allImages[0] ?? null,
-images: allImages,
+  amenities: form.amenities
+    .split(",")
+    .map(a => a.trim())
+    .filter(Boolean),
 
-agent_id: form.agent_id || null,
+  featured_image: allImages[0] ?? null,
+  gallery: allImages,
 
-status: targetStatus ?? form.status,
-is_featured: form.is_featured,
+  agent_id: form.agent_id || null,
+
+  status: targetStatus ?? form.status,
+  is_featured: form.is_featured,
 };
-
 if (payload.status === "approved") {
 payload.published_at = new Date().toISOString();
 }
 if (property?.id) {
-const { data, error } = await supabase
-  .from("properties")
-  .insert([
-    {
-      ...payload,
-      merchant_id: merchantId,
-    },
-  ])
+
+const { error } = await supabase
+.from("properties")
+.update(payload)
+.eq("id", property.id);
+
+if(error) throw error;
+
+await logActivity(
+"Updated property",
+"property",
+property.id
+);
+
+}
   .select("*");
 
 console.log(data);
