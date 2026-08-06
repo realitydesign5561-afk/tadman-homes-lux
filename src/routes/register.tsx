@@ -44,7 +44,12 @@ function RegisterPage() {
     setBusy(true);
     setError(null);
     setNotice(null);
-
+   console.log("Submitting signup", {
+        email,
+        password,
+        fullName,
+        businessName,
+    });
     const response = await supabase.auth.signUp({
   email,
   password,
