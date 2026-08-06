@@ -215,10 +215,22 @@ console.log("MERCHANT ID:", merchantId);
 console.log("PAYLOAD:", payload);
 console.log("RESULT:", data);
 console.log("ERROR:", error);
-
 if (error) {
-  console.log("SUPABASE ERROR", error);
-  alert(JSON.stringify(error, null, 2));
+  console.error("INSERT ERROR:", error);
+
+  alert(
+    JSON.stringify(
+      {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+      },
+      null,
+      2
+    )
+  );
+
   throw error;
 }
 await logActivity("Created property", "property");
