@@ -124,7 +124,10 @@ if (!property?.id && merchantId) {
 const uploaded: string[] = [];
 
 for (const file of files) {
-const url = await uploadPropertyImage(file, merchantId ?? userId);
+const url = await uploadPropertyImage(
+  merchantId ?? userId,
+  file
+);
 uploaded.push(url);
 }
 const allImages = [...gallery, ...uploaded];
@@ -241,11 +244,8 @@ onDone();
 console.error("SAVE ERROR:", err);
 alert(JSON.stringify(err, null, 2));
 
-setError(
-err instanceof Error
-? err.message
-: JSON.stringify(err)
-);
+console.log(err);
+throw err;
 } finally {
 setBusy(false);
 }
