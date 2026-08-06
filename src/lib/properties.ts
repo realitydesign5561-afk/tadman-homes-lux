@@ -28,6 +28,12 @@ export type PropertyRow = {
   owner_id: string;
   merchant_id: string | null;
   created_at: string;
+
+  merchants?: {
+    business_name: string;
+    whatsapp: string | null;
+    phone: string | null;
+  } | null;
 };
 
 export type Property = {
@@ -49,6 +55,12 @@ export type Property = {
   description: string;
   features: string[];
   agent: string;
+
+  merchant?: {
+    business_name: string;
+    whatsapp: string | null;
+    phone: string | null;
+  } | null;
 };
 
 export function formatPrice(price: number | null, currency = "NGN") {
@@ -85,6 +97,7 @@ export function mapProperty(row: PropertyRow, agentName = "Tadman Homes"): Prope
     description: row.description || "",
     features: row.amenities ?? [],
     agent: agentName,
+    merchant: row.merchants ?? null,
   };
 }
 
@@ -107,8 +120,15 @@ export async function fetchProperties(options: {
   minBaths?: number;
 } = {}): Promise<Property[]> {
   let query = supabase
-    .from("properties")
-    .select(SELECT)
+  .from("properties")
+  .select(`
+    *,
+    merchants (
+      business_name,
+      whatsapp,
+      phone
+    )
+  `)
     .eq("status", "approved")
     .order("created_at", { ascending: false });
 
