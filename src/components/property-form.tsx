@@ -53,7 +53,7 @@ city: r?.city ?? "",
 address: r?.address ?? "",
 bedrooms: r?.bedrooms != null ? String(r.bedrooms) : "",
 bathrooms: r?.bathrooms != null ? String(r.bathrooms) : "",
-size: r?.size != null ? String(r.size) : "",
+size: r?.area != null ? String(r.area) : "",
 amenities: Array.isArray(r?.amenities)
 ? r.amenities.join(", ")
 : "",
@@ -148,7 +148,7 @@ const payload: Record<string, any> = {
   bathrooms: form.bathrooms ? Number(form.bathrooms) : null,
 
   area: form.size ? Number(form.size) : null,
-  area_unit: "sqm",,
+  area_unit: "sqm",
 
   amenities: form.amenities
     .split(",")
