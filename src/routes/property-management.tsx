@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import type { FormEvent } from "react";
 import { Building2, ClipboardCheck, Coins, Hammer, ShieldCheck, Users } from "lucide-react";
 import { PageHeader, Section, Field, PrimaryButton } from "@/components/page-shell";
 import { useSettings } from "@/hooks/use-settings";
@@ -95,31 +96,23 @@ const process = [
 ];
 function PropertyManagementPage() {
   const settings = useSettings();
-  const page = settings.property_management_page;
+  const page = settings.property_management_page ?? {
+  heading: "Property Management Services",
+  body: "Professional property management solutions for residential and commercial properties.",
+};
   const [form, setForm] = useState({
   full_name: "",
   email: "",
   phone: "",
-  whatsapp: "",
-  property_address: "",
-  city: "",
-  state: "",
-  country: "",
   property_type: "",
-  property_name: "",
-  units: "",
-  occupancy_status: "",
-  service: "Full property management",
-  preferred_contact: "Phone",
-  inspection_date: "",
-  budget: "",
+  service: "Full Property Management",
   message: "",
 });
   const [state, setState] = useState<"idle" | "busy" | "done" | "error">("idle");
 
   const set = (k: keyof typeof form) => (v: string) => setForm((p) => ({ ...p, [k]: v }));
-
-  async function handleSubmit(e: React.FormEvent) {
+import type { FormEvent } from "react";
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setState("busy");
     try {
@@ -128,19 +121,8 @@ function PropertyManagementPage() {
   full_name: "",
   email: "",
   phone: "",
-  whatsapp: "",
-  property_address: "",
-  city: "",
-  state: "",
-  country: "",
   property_type: "",
-  property_name: "",
-  units: "",
-  occupancy_status: "",
-  service: "Full property management",
-  preferred_contact: "Phone",
-  inspection_date: "",
-  budget: "",
+  service: "Full Property Management",
   message: "",
 });
       setState("done");
@@ -237,8 +219,18 @@ function PropertyManagementPage() {
               value={form.service}
               onChange={(e) => set("service")(e.target.value)}
               className="h-11 w-full rounded-2xl border border-border bg-secondary/60 px-4 text-sm text-foreground outline-none focus:border-primary focus:bg-card"
-            >
-              {["Full property management", "Tenant sourcing only", "Rent collection", "Facility management", "Other"].map(
+            >{[
+  "Full Property Management",
+  "Tenant Sourcing",
+  "Rent Collection",
+  "Facility Management",
+  "Commercial Property Management",
+  "Investment Advisory",
+  "Property Inspection",
+  "Maintenance Only",
+  "Legal & Compliance",
+  "Other",
+].map(
                 (o) => (
                   <option key={o}>{o}</option>
                 ),
