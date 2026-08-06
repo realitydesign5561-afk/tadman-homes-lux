@@ -362,13 +362,15 @@ function MerchantsTab() {
         return (
           <div key={m.id} className={card}>
             <p className="text-sm font-semibold text-foreground">{m.business_name}</p>
-            <p className="text-xs text-muted-foreground">{m.email ?? m.phone ?? "—"}</p>
+            <p className="text-xs text-muted-foreground">{m.whatsapp_number ?? "—"}</p>
             <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-primary">
               {m.status}
-              {m.verified ? " • verified" : ""}
+    
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Subscription: {sub ? `${sub.status} (${sub.provider ?? "paystack"})` : "none"}
+              {sub
+                ? `${sub.status} (${sub.subscription_plans?.name ?? "Plan"})`
+              : "none"}
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
               <button
