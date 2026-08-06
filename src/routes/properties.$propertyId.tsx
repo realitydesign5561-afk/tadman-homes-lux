@@ -6,7 +6,6 @@ import { PropertyGrid } from "@/components/property-grid";
 import { fetchPropertyById } from "@/lib/properties";
 import { submitContactRequest } from "@/lib/content";
 
-const WHATSAPP_NUMBER = "2348074883126";
 
 export const Route = createFileRoute("/properties/$propertyId")({
   loader: async ({ params }) => {
