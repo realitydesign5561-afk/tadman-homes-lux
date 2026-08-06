@@ -137,6 +137,13 @@ export type SubscriptionRow = {
   updated_at: string;
   plan_id: string | null;
   status: string;
+
+  merchants?: {
+    id: string;
+    business_name: string;
+    whatsapp_number: string | null;
+  } | null;
+
   subscription_plans?: {
     name: string;
     price: number;
@@ -144,12 +151,16 @@ export type SubscriptionRow = {
   } | null;
 };
 
-
 export async function fetchSubscriptions(): Promise<SubscriptionRow[]> {
   const { data, error } = await supabase
     .from("subscriptions")
     .select(`
       *,
+      merchants (
+        id,
+        business_name,
+        whatsapp_number
+      ),
       subscription_plans (
         name,
         price,
@@ -163,6 +174,62 @@ export async function fetchSubscriptions(): Promise<SubscriptionRow[]> {
   return (data ?? []) as SubscriptionRow[];
 }
 
+export async function fetchExpiringSubscriptions() {
+  const today = new Date();
+  const inThreeDays = new Date();
+  inThreeDays.setDate(today.getDate() + 3);
+
+  const { data, error } = await supabase
+    .from("subscriptions")
+    .select(`
+      *,
+      merchants (
+        id,
+        business_name,
+        whatsapp_number
+      ),
+      subscription_plans (
+        name,
+        price,
+        interval
+      )
+    `)
+    .gte("expiry_date", today.toISOString())
+    .lte("expiry_date", inThreeDays.toISOString())
+    .eq("status", "active")
+    .order("expiry_date", { ascending: true });
+
+  if (error) throw error;
+
+  return data ?? [];
+}
+
+export async function fetchExpiredSubscriptions() {
+  const today = new Date();
+
+  const { data, error } = await supabase
+    .from("subscriptions")
+    .select(`
+      *,
+      merchants (
+        id,
+        business_name,
+        whatsapp_number
+      ),
+      subscription_plans (
+        name,
+        price,
+        interval
+      )
+    `)
+    .lt("expiry_date", today.toISOString())
+    .eq("status", "active")
+    .order("expiry_date", { ascending: false });
+
+  if (error) throw error;
+
+  return data ?? [];
+}
 /* --------------------------------- agents -------------------------------- */
 
 export type AdminAgentRow = {
