@@ -185,19 +185,6 @@ await logActivity(
   "property",
   property.id
 );
-
-}
-
-console.log(data);
-console.log(error);
-
-if (error) {
-alert(JSON.stringify(error));
-throw error;
-}
-
-await logActivity("Updated property", "property", property.id);
-
 } else {
 
 if (!merchantId) {
