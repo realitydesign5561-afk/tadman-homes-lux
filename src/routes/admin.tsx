@@ -201,9 +201,9 @@ const expired = useQuery({
       <tbody>
         {expiring.data?.map((subscription) => (
           <tr key={subscription.id}>
-            <td>{subscription.business_name}</td>
+            <td>{subscription.merchants?.business_name}</td>
             <td>{subscription.expiry_date}</td>
-            <td>{subscription.whatsapp_number}</td>
+            <td>{subscription.merchants?.whatsapp_number}</td>
             </tr>
             ))}
             </tbody>
