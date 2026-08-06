@@ -50,9 +50,10 @@ function RegisterPage() {
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/login`,
-        data: {
+   data: {
           full_name: fullName,
-          role,
+          business_name: businessName,
+          role: "merchant",
         },
       },
     });
