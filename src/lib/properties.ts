@@ -16,16 +16,15 @@ export type PropertyRow = {
   listing_type: "buy" | "sell" | "rent" | "shortlet";
   bedrooms: number | null;
   bathrooms: number | null;
-  parking: number | null;
-  size: number | null;
-  size_unit: string | null;
+  toilets: number | null;
+  area: number | null;
+  area_unit: string | null;
   amenities: string[] | null;
   featured_image: string | null;
   images: string[] | null;
   status: string;
   is_featured: boolean;
-  views_count: number;
-  owner_id: string;
+  views: number;
   merchant_id: string | null;
   created_at: string;
 
@@ -90,7 +89,7 @@ export function mapProperty(row: PropertyRow, agentName = "Tadman Homes"): Prope
     country: row.country || "",
     beds: row.bedrooms ?? 0,
     baths: row.bathrooms ?? 0,
-    area: row.size ? `${row.size} ${row.size_unit || "sqm"}` : "—",
+    area: row.area ? `${row.area} ${row.area_unit || "sqm"}` : "—",
     image: row.featured_image || row.images?.[0] || propertyImages.prop1,
     gallery: row.images?.length ? row.images : row.featured_image ? [row.featured_image] : [],
     featured: row.is_featured,
