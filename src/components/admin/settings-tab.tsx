@@ -19,7 +19,6 @@ export default function SettingsTab() {
         setSettings(data);
       } catch (error) {
         console.error("Failed to load settings:", error);
-        setMessage("Using default settings.");
       } finally {
         setLoading(false);
       }
@@ -33,17 +32,19 @@ export default function SettingsTab() {
     setMessage("");
 
     try {
-      await saveSetting("brand", settings.brand);
-      await saveSetting("contact", settings.contact);
-      await saveSetting("hero", settings.hero);
-      await saveSetting("footer", settings.footer);
-      await saveSetting("about_page", settings.about_page);
-      await saveSetting(
-        "property_management_page",
-        settings.property_management_page,
-      );
-      await saveSetting("legal_team_page", settings.legal_team_page);
-      await saveSetting("contact_page", settings.contact_page);
+      await Promise.all([
+        saveSetting("brand", settings.brand),
+        saveSetting("contact", settings.contact),
+        saveSetting("hero", settings.hero),
+        saveSetting("footer", settings.footer),
+        saveSetting("about_page", settings.about_page),
+        saveSetting(
+          "property_management_page",
+          settings.property_management_page,
+        ),
+        saveSetting("legal_team_page", settings.legal_team_page),
+        saveSetting("contact_page", settings.contact_page),
+      ]);
 
       setMessage("Settings saved successfully.");
     } catch (error) {
@@ -55,28 +56,25 @@ export default function SettingsTab() {
   }
 
   if (loading) {
-    return (
-      <div className="rounded-xl border p-6">
-        <p>Loading settings...</p>
-      </div>
-    );
+    return <p>Loading settings...</p>;
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold">Site Settings</h2>
+        <h2 className="text-2xl font-bold">Website Settings</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Manage the main website information and contact details.
+          Manage the public website content and contact information.
         </p>
       </div>
 
       {/* Brand */}
-      <section className="rounded-xl border p-6 space-y-4">
+      <section className="space-y-4">
         <h3 className="text-lg font-semibold">Brand</h3>
 
         <input
           className="w-full rounded-lg border p-3"
+          placeholder="Site name"
           value={settings.brand.site_name}
           onChange={(e) =>
             setSettings({
@@ -87,11 +85,11 @@ export default function SettingsTab() {
               },
             })
           }
-          placeholder="Site name"
         />
 
         <input
           className="w-full rounded-lg border p-3"
+          placeholder="Motto"
           value={settings.brand.motto}
           onChange={(e) =>
             setSettings({
@@ -102,11 +100,11 @@ export default function SettingsTab() {
               },
             })
           }
-          placeholder="Motto"
         />
 
         <input
           className="w-full rounded-lg border p-3"
+          placeholder="Logo URL"
           value={settings.brand.logo_url}
           onChange={(e) =>
             setSettings({
@@ -117,11 +115,11 @@ export default function SettingsTab() {
               },
             })
           }
-          placeholder="Logo URL"
         />
 
         <input
           className="w-full rounded-lg border p-3"
+          placeholder="Favicon URL"
           value={settings.brand.favicon_url}
           onChange={(e) =>
             setSettings({
@@ -132,16 +130,16 @@ export default function SettingsTab() {
               },
             })
           }
-          placeholder="Favicon URL"
         />
       </section>
 
       {/* Contact */}
-      <section className="rounded-xl border p-6 space-y-4">
+      <section className="space-y-4">
         <h3 className="text-lg font-semibold">Contact Information</h3>
 
         <input
           className="w-full rounded-lg border p-3"
+          placeholder="Address"
           value={settings.contact.address}
           onChange={(e) =>
             setSettings({
@@ -152,11 +150,11 @@ export default function SettingsTab() {
               },
             })
           }
-          placeholder="Address"
         />
 
         <input
           className="w-full rounded-lg border p-3"
+          placeholder="Primary email"
           value={settings.contact.email}
           onChange={(e) =>
             setSettings({
@@ -167,11 +165,11 @@ export default function SettingsTab() {
               },
             })
           }
-          placeholder="Primary email"
         />
 
         <input
           className="w-full rounded-lg border p-3"
+          placeholder="Secondary email"
           value={settings.contact.email_secondary}
           onChange={(e) =>
             setSettings({
@@ -182,11 +180,11 @@ export default function SettingsTab() {
               },
             })
           }
-          placeholder="Secondary email"
         />
 
         <input
           className="w-full rounded-lg border p-3"
+          placeholder="Phone"
           value={settings.contact.phone}
           onChange={(e) =>
             setSettings({
@@ -197,11 +195,11 @@ export default function SettingsTab() {
               },
             })
           }
-          placeholder="Phone"
         />
 
         <input
           className="w-full rounded-lg border p-3"
+          placeholder="WhatsApp"
           value={settings.contact.whatsapp}
           onChange={(e) =>
             setSettings({
@@ -212,11 +210,11 @@ export default function SettingsTab() {
               },
             })
           }
-          placeholder="WhatsApp"
         />
 
         <input
           className="w-full rounded-lg border p-3"
+          placeholder="Opening hours"
           value={settings.contact.hours}
           onChange={(e) =>
             setSettings({
@@ -227,16 +225,16 @@ export default function SettingsTab() {
               },
             })
           }
-          placeholder="Opening hours"
         />
       </section>
 
       {/* Hero */}
-      <section className="rounded-xl border p-6 space-y-4">
+      <section className="space-y-4">
         <h3 className="text-lg font-semibold">Homepage Hero</h3>
 
         <input
           className="w-full rounded-lg border p-3"
+          placeholder="Hero title"
           value={settings.hero.title}
           onChange={(e) =>
             setSettings({
@@ -247,11 +245,11 @@ export default function SettingsTab() {
               },
             })
           }
-          placeholder="Hero title"
         />
 
         <textarea
-          className="w-full rounded-lg border p-3 min-h-24"
+          className="w-full rounded-lg border p-3 min-h-28"
+          placeholder="Hero subtitle"
           value={settings.hero.subtitle}
           onChange={(e) =>
             setSettings({
@@ -262,11 +260,11 @@ export default function SettingsTab() {
               },
             })
           }
-          placeholder="Hero subtitle"
         />
 
         <input
           className="w-full rounded-lg border p-3"
+          placeholder="Primary CTA"
           value={settings.hero.cta_label}
           onChange={(e) =>
             setSettings({
@@ -277,11 +275,11 @@ export default function SettingsTab() {
               },
             })
           }
-          placeholder="Primary CTA"
         />
 
         <input
           className="w-full rounded-lg border p-3"
+          placeholder="Secondary CTA"
           value={settings.hero.cta_secondary_label}
           onChange={(e) =>
             setSettings({
@@ -292,16 +290,16 @@ export default function SettingsTab() {
               },
             })
           }
-          placeholder="Secondary CTA"
         />
       </section>
 
       {/* Footer */}
-      <section className="rounded-xl border p-6 space-y-4">
+      <section className="space-y-4">
         <h3 className="text-lg font-semibold">Footer</h3>
 
         <textarea
-          className="w-full rounded-lg border p-3 min-h-24"
+          className="w-full rounded-lg border p-3 min-h-28"
+          placeholder="Footer about text"
           value={settings.footer.about}
           onChange={(e) =>
             setSettings({
@@ -312,79 +310,88 @@ export default function SettingsTab() {
               },
             })
           }
-          placeholder="Footer description"
-        />
-
-        <input
-          className="w-full rounded-lg border p-3"
-          value={settings.footer.socials.facebook}
-          onChange={(e) =>
-            setSettings({
-              ...settings,
-              footer: {
-                ...settings.footer,
-                socials: {
-                  ...settings.footer.socials,
-                  facebook: e.target.value,
-                },
-              },
-            })
-          }
-          placeholder="Facebook URL"
-        />
-
-        <input
-          className="w-full rounded-lg border p-3"
-          value={settings.footer.socials.instagram}
-          onChange={(e) =>
-            setSettings({
-              ...settings,
-              footer: {
-                ...settings.footer,
-                socials: {
-                  ...settings.footer.socials,
-                  instagram: e.target.value,
-                },
-              },
-            })
-          }
-          placeholder="Instagram URL"
-        />
-
-        <input
-          className="w-full rounded-lg border p-3"
-          value={settings.footer.socials.linkedin}
-          onChange={(e) =>
-            setSettings({
-              ...settings,
-              footer: {
-                ...settings.footer,
-                socials: {
-                  ...settings.footer.socials,
-                  linkedin: e.target.value,
-                },
-              },
-            })
-          }
-          placeholder="LinkedIn URL"
         />
       </section>
 
-      {/* Save */}
+      {/* Pages */}
+      <section className="space-y-6">
+        <h3 className="text-lg font-semibold">Website Pages</h3>
+
+        <textarea
+          className="w-full rounded-lg border p-3 min-h-28"
+          placeholder="About page content"
+          value={settings.about_page.body}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              about_page: {
+                ...settings.about_page,
+                body: e.target.value,
+              },
+            })
+          }
+        />
+
+        <textarea
+          className="w-full rounded-lg border p-3 min-h-28"
+          placeholder="Property management page content"
+          value={settings.property_management_page.body}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              property_management_page: {
+                ...settings.property_management_page,
+                body: e.target.value,
+              },
+            })
+          }
+        />
+
+        <textarea
+          className="w-full rounded-lg border p-3 min-h-28"
+          placeholder="Legal team page content"
+          value={settings.legal_team_page.body}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              legal_team_page: {
+                ...settings.legal_team_page,
+                body: e.target.value,
+              },
+            })
+          }
+        />
+
+        <textarea
+          className="w-full rounded-lg border p-3 min-h-28"
+          placeholder="Contact page content"
+          value={settings.contact_page.body}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              contact_page: {
+                ...settings.contact_page,
+                body: e.target.value,
+              },
+            })
+          }
+        />
+      </section>
+
       <div className="flex items-center gap-4">
         <button
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="rounded-lg bg-black px-6 py-3 text-white font-semibold disabled:opacity-50"
+          className="rounded-lg bg-black px-6 py-3 font-semibold text-white disabled:opacity-50"
         >
           {saving ? "Saving..." : "Save Settings"}
         </button>
 
         {message && (
-          <p className="text-sm font-medium">
+          <span className="text-sm font-medium">
             {message}
-          </p>
+          </span>
         )}
       </div>
     </div>
