@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Building2, MapPin, Phone, MessageCircle } from "lucide-react";
 import { PageHeader, Section, PrimaryButton } from "@/components/page-shell";
 import { useParams } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { fetchPropertyById } from "@/lib/properties";
 
 export const Route = createFileRoute("/properties/$id")({
   component: PropertyDetailsPage,
@@ -10,16 +12,26 @@ export const Route = createFileRoute("/properties/$id")({
 function PropertyDetailsPage() {
   const { id } = useParams({ from: "/properties/$id" });
 
-  const property = {
-    title: "Luxury Property",
-    location: "Lagos, Nigeria",
-    price: "₦0",
-    description:
-      "Premium property listing details will appear here once approved by our merchant system.",
-    type: "Residential",
-    bedrooms: "3",
-    bathrooms: "2",
-  };
+  const { data: property, isLoading } = useQuery({
+  queryKey: ["property", propertyId],
+  queryFn: () => fetchPropertyById(propertyId),
+});
+
+  if (isLoading) {
+  return (
+    <Section>
+      <p>Loading property details...</p>
+    </Section>
+  );
+}
+
+if (!property) {
+  return (
+    <Section>
+      <p>Property not found or no longer available.</p>
+    </Section>
+  );
+}
 
   return (
     <>
@@ -43,7 +55,7 @@ function PropertyDetailsPage() {
 
             <div className="flex items-center gap-2 text-muted-foreground">
               <MapPin className="size-4" />
-              {property.location}
+              {property.city}, {property.country}
             </div>
 
             <p className="text-muted-foreground">
@@ -65,7 +77,7 @@ function PropertyDetailsPage() {
                   Bedrooms
                 </p>
                 <p className="font-semibold">
-                  {property.bedrooms}
+                 {property.beds}
                 </p>
               </div>
 
@@ -74,7 +86,7 @@ function PropertyDetailsPage() {
                   Bathrooms
                 </p>
                 <p className="font-semibold">
-                  {property.bathrooms}
+                  {property.baths}
                 </p>
               </div>
             </div>
