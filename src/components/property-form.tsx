@@ -112,8 +112,8 @@ export function PropertyForm({
   const [files, setFiles] = useState<File[]>([]);
 
   const [gallery, setGallery] = useState<string[]>(
-    property?.images ?? []
-  );
+  Array.isArray(property?.images) ? property.images : []
+);
 
   function update<K extends keyof FormData>(key: K) {
     return (
@@ -156,73 +156,49 @@ export function PropertyForm({
       const images = await uploadImages();
       console.log("Amenities value:", form.amenities);
 
-      const payload = {
-        title: form.title,
-        slug:
-          form.slug.trim() || slugify(form.title),
+      const amenities =
+  (form.amenities ?? "")
+    .split(",")
+    .map(a => a.trim())
+    .filter(Boolean);
 
-        description: form.description,
+const payload = {
+  title: form.title,
+  slug: form.slug.trim() || slugify(form.title),
+  description: form.description,
 
-        price: form.price
-          ? Number(form.price)
-          : null,
+  price: form.price ? Number(form.price) : null,
+  currency: form.currency,
 
-        currency: form.currency,
+  listing_type: form.listing_type,
+  property_type: form.property_type,
 
-        listing_type: form.listing_type,
+  country: form.country,
+  state: form.state,
+  city: form.city,
+  address: form.address,
 
-        property_type: form.property_type,
+  bedrooms: form.bedrooms ? Number(form.bedrooms) : null,
+  bathrooms: form.bathrooms ? Number(form.bathrooms) : null,
+  area: form.area ? Number(form.area) : null,
+  area_unit: "sqm",
 
-        country: form.country,
+  amenities,
 
-        state: form.state,
+  featured_image: images[0] ?? null,
+  images,
 
-        city: form.city,
+  merchant_id: merchantId,
 
-        address: form.address,
+  status,
+  is_featured: canFeature ? form.is_featured : false,
+  agent_id: form.agent_id || null,
 
-        bedrooms: form.bedrooms
-          ? Number(form.bedrooms)
-          : null,
-
-        bathrooms: form.bathrooms
-          ? Number(form.bathrooms)
-          : null,
-
-        area: form.area
-          ? Number(form.area)
-          : null,
-
-        area_unit: "sqm",
-
-        
-const amenities =
-  form.amenities
-    ? form.amenities.split(",").map((a) => a.trim()).filter(Boolean)
-    : [];
-
-        featured_image:
-          images[0] ?? null,
-
-        images,
-
-        merchant_id: merchantId,
-
-        status,
-
-        is_featured:
-          canFeature
-            ? form.is_featured
-            : false,
-
-        agent_id:
-          form.agent_id || null,
-
-        published_at:
-          status === "approved"
-            ? new Date().toISOString()
-            : null,
-      };
+  published_at:
+    status === "approved"
+      ? new Date().toISOString()
+      : null,
+};
 
       if (property?.id) {
         const { error } = await supabase
