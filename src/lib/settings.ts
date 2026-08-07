@@ -160,3 +160,6 @@ export async function saveSetting<K extends keyof SiteSettings>(
     throw error;
   }
 }
+
+export const whatsappLink =
+  "https://wa.me/2349117511768";
