@@ -13,93 +13,21 @@ async function fetchMerchants() {
   return data ?? [];
 }
 
-async function logActivity(
-  action: string,
-  entityType: string,
-  entityId: string,
-  metadata: Record<string, unknown> = {},
+
+async function updateMerchantStatus(
+  id: string,
+  status: "active" | "suspended" | "pending_approval"
 ) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    throw new Error("You must be logged in to record activity.");
-  }
-
-  const { error } = await supabase.from("activity_logs").insert({
-    user_id: user.id,
-    action,
-    entity_type: entityType,
-    entity_id: entityId,
-    metadata,
-  });
+  const { error } = await supabase
+    .from("merchants")
+    .update({
+      status,
+    })
+    .eq("id", id);
 
   if (error) throw error;
 }
 
-async function createMerchantSubscription(
-  merchantId: string,
-) {
-
-  // Check if subscription already exists
-
-  const {
-    data: existing,
-    error: checkError,
-  } = await supabase
-    .from("subscriptions")
-    .select("id")
-    .eq("merchant_id", merchantId)
-    .maybeSingle();
-
-
-  if (checkError) throw checkError;
-
-
-  if (existing) {
-    return;
-  }
-
-
-  const startDate = new Date();
-
-  const expiryDate = new Date();
-
-  expiryDate.setDate(
-    expiryDate.getDate() + 30
-  );
-
-
-  const {
-    error,
-  } = await supabase
-    .from("subscriptions")
-    .insert({
-
-      merchant_id: merchantId,
-
-      start_date:
-        startDate.toISOString(),
-
-      expiry_date:
-        expiryDate.toISOString(),
-
-      status: "active",
-
-      notes:
-        "Created after admin approval",
-
-      reminder_sent_3_days:false,
-
-      reminder_sent_expired:false,
-
-    });
-
-
-  if (error) throw error;
-
-}
 
 async function deleteMerchant(id: string) {
   const { error } = await supabase
@@ -110,8 +38,11 @@ async function deleteMerchant(id: string) {
   if (error) throw error;
 }
 
+
 export default function MerchantsTab() {
+
   const qc = useQueryClient();
+
 
   const {
     data = [],
@@ -121,108 +52,59 @@ export default function MerchantsTab() {
     queryFn: fetchMerchants,
   });
 
+
+
   const statusMutation = useMutation({
 
-mutationFn: async ({
-id,
-status,
-businessName,
-}:{
-id:string;
-status:string;
-businessName:string;
-})=>{
-
-
-await updateMerchantStatus(
-id,
-status
-);
-
-
-
-if(status==="approved"){
-
-await createMerchantSubscription(
-id
-);
-
-}
-
-
-
-await logActivity(
-`merchant_${status}`,
-"merchant",
-id,
-{
-business_name:businessName,
-status,
-}
-);
-
-
-
-},
-
-
-onSuccess(){
-
-qc.invalidateQueries({
-queryKey:["admin-merchants"],
-});
-
-
-qc.invalidateQueries({
-queryKey:["admin-activity"],
-});
-
-
-},
-
-
-});
-
-  const deleteMutation = useMutation({
-    mutationFn: async ({
+    mutationFn: ({
       id,
-      businessName,
+      status,
     }: {
       id: string;
-      businessName: string;
-    }) => {
-      await deleteMerchant(id);
+      status: "active" | "suspended" | "pending_approval";
+    }) =>
+      updateMerchantStatus(id, status),
 
-      await logActivity(
-        "merchant_deleted",
-        "merchant",
-        id,
-        {
-          business_name: businessName,
-        },
-      );
-    },
 
     onSuccess() {
       qc.invalidateQueries({
         queryKey: ["admin-merchants"],
       });
+    },
 
+  });
+
+
+
+  const deleteMutation = useMutation({
+
+    mutationFn: deleteMerchant,
+
+
+    onSuccess() {
       qc.invalidateQueries({
-        queryKey: ["admin-activity"],
+        queryKey: ["admin-merchants"],
       });
     },
+
   });
+
+
 
   if (isLoading) {
     return <p>Loading merchants...</p>;
   }
 
+
+
   return (
+
     <div className="space-y-5">
+
       <h2 className="text-xl font-bold">
         Merchants
       </h2>
+
 
       {data.length === 0 && (
         <p className="text-sm text-muted-foreground">
@@ -230,107 +112,120 @@ queryKey:["admin-activity"],
         </p>
       )}
 
+
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {data.map((merchant: any) => (
+
+        {data.map((merchant:any)=>(
+
           <div
             key={merchant.id}
             className="rounded-2xl border border-border bg-card p-5"
           >
+
             <div className="flex justify-between">
+
               <div>
+
                 <h3 className="font-semibold">
                   {merchant.business_name}
                 </h3>
 
-                <p className="text-sm text-muted-foreground">
-                  {merchant.email}
-                </p>
 
                 <p className="text-sm text-muted-foreground">
-                  {merchant.phone || merchant.whatsapp || ""}
-                </p>
-
-                <p className="mt-2 text-xs font-bold uppercase">
                   {merchant.status}
                 </p>
+
+
               </div>
+
+
 
               <button
                 type="button"
                 className="text-red-500"
-                disabled={deleteMutation.isPending}
                 onClick={() =>
-                  deleteMutation.mutate({
-                    id: merchant.id,
-                    businessName: merchant.business_name,
-                  })
+                  deleteMutation.mutate(merchant.id)
                 }
               >
-                <Trash2 size={18} />
+                <Trash2 size={18}/>
               </button>
+
+
             </div>
 
-            <div className="mt-4 flex gap-2 flex-wrap">
-              <button
-                type="button"
-                className="rounded-full border px-3 py-1 text-sm"
-                disabled={statusMutation.isPending}
-                onClick={() =>
-                  statusMutation.mutate({
-                    id: merchant.id,
-                    status: "approved",
-                    businessName: merchant.business_name,
-                  })
-                }
-              >
-                Approve
-              </button>
+
+
+            <div className="mt-4 flex flex-wrap gap-2">
+
+
+              {merchant.status !== "active" && (
+
+                <button
+                  type="button"
+                  className="rounded-full border px-3 py-1 text-sm"
+                  onClick={() =>
+                    statusMutation.mutate({
+                      id: merchant.id,
+                      status:"active",
+                    })
+                  }
+                >
+                  Approve
+                </button>
+
+              )}
+
+
 
               <button
                 type="button"
                 className="rounded-full border px-3 py-1 text-sm"
-                disabled={statusMutation.isPending}
                 onClick={() =>
                   statusMutation.mutate({
-                    id: merchant.id,
-                    status: "suspended",
-                    businessName: merchant.business_name,
+                    id:merchant.id,
+                    status:"suspended",
                   })
                 }
               >
                 Suspend
               </button>
 
+
+
               <button
                 type="button"
                 className="rounded-full border px-3 py-1 text-sm"
-                disabled={statusMutation.isPending}
                 onClick={() =>
                   statusMutation.mutate({
-                    id: merchant.id,
-                    status:"pending"
-                    businessName: merchant.business_name,
+                    id:merchant.id,
+                    status:"pending_approval",
                   })
                 }
               >
                 Pending
               </button>
+
+
             </div>
+
+
           </div>
+
         ))}
+
+
       </div>
+
 
       {statusMutation.isError && (
         <p className="text-sm text-red-600">
-          Failed to update merchant status.
+          Merchant status update failed.
         </p>
       )}
 
-      {deleteMutation.isError && (
-        <p className="text-sm text-red-600">
-          Failed to delete merchant.
-        </p>
-      )}
+
     </div>
+
   );
 }
