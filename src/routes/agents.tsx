@@ -45,19 +45,20 @@ function AgentsPage() {
               {a.photo_url ? (
                 <img
                   src={a.photo_url}
-                  alt={a.full_name}
+                  alt={a.full_name ?? "Agent"}
                   loading="lazy"
                   className="mx-auto size-16 rounded-full object-cover"
                 />
               ) : (
                 <span className="mx-auto flex size-16 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-glow font-display text-xl font-bold text-primary-foreground">
-                  {a.full_name
+                  {(a.full_name ?? "Agent")
                     .split(" ")
+                    .filter(Boolean)
                     .map((n) => n[0])
                     .join("")}
                 </span>
               )}
-              <p className="mt-4 text-base font-semibold text-foreground">{a.full_name}</p>
+              <p className="mt-4 text-base font-semibold text-foreground">{a.full_name ?? "Agent"}</p>
               {a.title && <p className="text-xs text-primary">{a.title}</p>}
               {a.bio && (
                 <p className="mt-2 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
