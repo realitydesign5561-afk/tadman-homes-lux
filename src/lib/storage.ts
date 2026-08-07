@@ -4,12 +4,12 @@ export async function uploadPropertyImage(
   userId: string,
   file: File
 ): Promise<string> {
-  if (!file || !(file instanceof File)) {
+  if (!file || typeof file.name !== "string") {
     throw new Error("Invalid property image file.");
   }
 
   const ext =
-    file.name.split(".").pop()?.toLowerCase() || "jpg";
+    file.name.toLowerCase().match(/\.([a-z0-9]+)$/)?.[1] ?? "jpg";
 
   const path =
     `${userId}/${Date.now()}-${Math.random()
@@ -25,23 +25,21 @@ export async function uploadPropertyImage(
 
   if (error) throw error;
 
-  const { data } = supabase.storage
+  return supabase.storage
     .from("property-images")
-    .getPublicUrl(path);
-
-  return data.publicUrl;
+    .getPublicUrl(path)
+    .data.publicUrl;
 }
-
 export async function uploadAvatar(
   userId: string,
   file: File
 ): Promise<string> {
-  if (!file || !(file instanceof File)) {
+  if (!file || typeof file.name !== "string") {
     throw new Error("Invalid profile image file.");
   }
 
   const ext =
-    file.name.split(".").pop()?.toLowerCase() || "jpg";
+    file.name.toLowerCase().match(/\.([a-z0-9]+)$/)?.[1] ?? "jpg";
 
   const path = `${userId}/avatar.${ext}`;
 
