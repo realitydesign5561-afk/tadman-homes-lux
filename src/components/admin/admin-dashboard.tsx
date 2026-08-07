@@ -9,6 +9,8 @@ import AgentsTab from "./agents-tab";
 import EnquiriesTab from "./enquiries-tab";
 import ManagementTab from "./management-tab";
 import SettingsTab from "./settings-tab";
+import ActivityTab from "./activity-tab";
+
 
 const tabs = [
   "Overview",
@@ -87,9 +89,7 @@ export default function AdminDashboard() {
 
         {active === "Settings" && <SettingsTab />}
 
-        {active === "Activity" &&
-          <p>Activity coming...</p>
-        }
+        {active === "Activity" && <ActivityTab />}
 
       </div>
 
