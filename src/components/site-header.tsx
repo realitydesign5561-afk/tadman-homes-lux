@@ -22,6 +22,14 @@ const nav: NavItem[] = [
   },
 
   {
+  title: "Property Management",
+  href: "/property-management",
+},
+{
+  title: "Legal Services",
+  href: "/legal-services",
+},
+  {
     to: "/merchant",
     label: "Merchants",
     children: [
