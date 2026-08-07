@@ -154,6 +154,7 @@ export function PropertyForm({
       }
 
       const images = await uploadImages();
+      console.log("Amenities value:", form.amenities);
 
       const payload = {
         title: form.title,
@@ -194,8 +195,7 @@ export function PropertyForm({
 
         area_unit: "sqm",
 
-        console.log("Amenities value:", form.amenities);
-
+        
 const amenities =
   form.amenities
     ? form.amenities.split(",").map((a) => a.trim()).filter(Boolean)
