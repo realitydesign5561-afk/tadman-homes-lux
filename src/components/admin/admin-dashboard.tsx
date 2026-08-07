@@ -2,6 +2,8 @@ import OverviewTab from "./overview-tab";
 import {useState} from "react";
 import PropertiesTab from "./properties-tab";
 import MerchantsTab from "./merchants-tab";
+import { useAuth } from "@/hooks/use-auth";
+import { useNavigate } from "@tanstack/react-router";
 
 
 const tabs=[
@@ -18,7 +20,8 @@ const tabs=[
 
 
 export default function AdminDashboard(){
-
+const { signOut } = useAuth();
+const navigate = useNavigate();
 const [active,setActive]=useState("Overview");
 
 
@@ -34,7 +37,17 @@ Tadman Admin Dashboard
 <div className="flex flex-wrap gap-3 mt-6">
 
 {tabs.map(tab=>(
-
+<button
+  type="button"
+  onClick={async () => {
+    await signOut();
+    navigate({ to: "/login", replace: true });
+  }}
+  className="rounded-full border border-border px-5 py-2 text-sm font-semibold"
+>
+  Logout
+</button>
+  
 <button
 key={tab}
 onClick={()=>setActive(tab)}
