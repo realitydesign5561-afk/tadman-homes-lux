@@ -1,4 +1,6 @@
+import OverviewTab from "./overview-tab";
 import {useState} from "react";
+
 
 const tabs=[
 "Overview",
@@ -48,10 +50,7 @@ active===tab
 
 
 <div className="mt-8">
-
-{active==="Overview" &&
-<p>Overview coming...</p>
-}
+{active==="Overview" && <OverviewTab />}
 
 
 {active==="Properties" &&
