@@ -38,19 +38,67 @@ async function logActivity(
   if (error) throw error;
 }
 
-async function updateMerchantStatus(
-  id: string,
-  status: string,
+async function createMerchantSubscription(
+  merchantId: string,
 ) {
-  const { error } = await supabase
-    .from("merchants")
-    .update({
-      status,
-      verified: status === "approved",
-    })
-    .eq("id", id);
+
+  // Check if subscription already exists
+
+  const {
+    data: existing,
+    error: checkError,
+  } = await supabase
+    .from("subscriptions")
+    .select("id")
+    .eq("merchant_id", merchantId)
+    .maybeSingle();
+
+
+  if (checkError) throw checkError;
+
+
+  if (existing) {
+    return;
+  }
+
+
+  const startDate = new Date();
+
+  const expiryDate = new Date();
+
+  expiryDate.setDate(
+    expiryDate.getDate() + 30
+  );
+
+
+  const {
+    error,
+  } = await supabase
+    .from("subscriptions")
+    .insert({
+
+      merchant_id: merchantId,
+
+      start_date:
+        startDate.toISOString(),
+
+      expiry_date:
+        expiryDate.toISOString(),
+
+      status: "active",
+
+      notes:
+        "Created after admin approval",
+
+      reminder_sent_3_days:false,
+
+      reminder_sent_expired:false,
+
+    });
+
 
   if (error) throw error;
+
 }
 
 async function deleteMerchant(id: string) {
@@ -74,38 +122,66 @@ export default function MerchantsTab() {
   });
 
   const statusMutation = useMutation({
-    mutationFn: async ({
-      id,
-      status,
-      businessName,
-    }: {
-      id: string;
-      status: string;
-      businessName: string;
-    }) => {
-      await updateMerchantStatus(id, status);
 
-      await logActivity(
-        `merchant_${status}`,
-        "merchant",
-        id,
-        {
-          business_name: businessName,
-          status,
-        },
-      );
-    },
+mutationFn: async ({
+id,
+status,
+businessName,
+}:{
+id:string;
+status:string;
+businessName:string;
+})=>{
 
-    onSuccess() {
-      qc.invalidateQueries({
-        queryKey: ["admin-merchants"],
-      });
 
-      qc.invalidateQueries({
-        queryKey: ["admin-activity"],
-      });
-    },
-  });
+await updateMerchantStatus(
+id,
+status
+);
+
+
+
+if(status==="approved"){
+
+await createMerchantSubscription(
+id
+);
+
+}
+
+
+
+await logActivity(
+`merchant_${status}`,
+"merchant",
+id,
+{
+business_name:businessName,
+status,
+}
+);
+
+
+
+},
+
+
+onSuccess(){
+
+qc.invalidateQueries({
+queryKey:["admin-merchants"],
+});
+
+
+qc.invalidateQueries({
+queryKey:["admin-activity"],
+});
+
+
+},
+
+
+});
 
   const deleteMutation = useMutation({
     mutationFn: async ({
@@ -232,7 +308,7 @@ export default function MerchantsTab() {
                 onClick={() =>
                   statusMutation.mutate({
                     id: merchant.id,
-                    status: "pending_approval",
+                    status:"pending"
                     businessName: merchant.business_name,
                   })
                 }
