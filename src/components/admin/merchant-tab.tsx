@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase";
 import { Trash2 } from "lucide-react";
 
 
+
 async function fetchMerchants(){
 
 const {data,error}=await supabase
