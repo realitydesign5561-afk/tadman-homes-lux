@@ -7,7 +7,7 @@ import { useNavigate } from "@tanstack/react-router";
 import SubscriptionsTab from "./subscriptions-tab";
 import AgentsTab from "./agents-tab";
 import EnquiriesTab from "./enquiries-tab";
-
+import ManagementTab from "./management-tab";
 
 
 const tabs = [
@@ -17,6 +17,7 @@ const tabs = [
   "Subscriptions",
   "Agents",
   "Enquiries",
+  "Management",
   "Settings",
   "Activity",
 ];
@@ -80,6 +81,8 @@ export default function AdminDashboard() {
         {active==="Agents" && <AgentsTab />}
         
         {active==="Enquiries" && <EnquiriesTab />}
+
+        {active === "Management" && <ManagementTab />}
 
         {active === "Settings" &&
           <p>Settings coming...</p>
