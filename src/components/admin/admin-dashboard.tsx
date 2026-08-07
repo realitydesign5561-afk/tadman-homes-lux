@@ -8,7 +8,7 @@ import SubscriptionsTab from "./subscriptions-tab";
 import AgentsTab from "./agents-tab";
 import EnquiriesTab from "./enquiries-tab";
 import ManagementTab from "./management-tab";
-import SettingsTab from "./settings-tab";
+import SettingsTab from "./settings-ts";
 
 const tabs = [
   "Overview",
