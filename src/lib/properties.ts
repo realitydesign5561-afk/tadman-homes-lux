@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+           import { supabase } from "@/lib/supabase";
 import { propertyImages } from "@/data/properties";
 
 export type PropertyRow = {
@@ -29,10 +29,10 @@ export type PropertyRow = {
   created_at: string;
 
   merchants?: {
-    business_name: string;
-    whatsapp: string | null;
-    phone: string | null;
-  } | null;
+  business_name: string;
+  whatsapp_number: string | null;
+  phone: string | null;
+} | null;
 };
 
 export type Property = {
@@ -55,11 +55,11 @@ export type Property = {
   features: string[];
   agent: string;
 
-  merchant?: {
-    business_name: string;
-    whatsapp: string | null;
-    phone: string | null;
-  } | null;
+  merchants?: {
+  business_name: string;
+  whatsapp_number: string | null;
+  phone: string | null;
+} | null;
 };
 
 export function formatPrice(price: number | null, currency = "NGN") {
@@ -123,10 +123,10 @@ export async function fetchProperties(options: {
   .select(`
     *,
     merchants (
-      business_name,
-      whatsapp,
-      phone
-    )
+  business_name,
+  whatsapp_number,
+  phone
+)
   `)
     .eq("status", "approved")
     .order("created_at", { ascending: false });
@@ -161,10 +161,10 @@ export async function fetchPropertyById(idOrSlug: string): Promise<Property | nu
     .select(`
      *,
       merchants (
-         business_name,
-         whatsapp,
-         phone
-       )
+  business_name,
+  whatsapp_number,
+  phone
+)
      `)
     .eq(isUuid ? "id" : "slug", idOrSlug)
     .eq("status", "approved")
