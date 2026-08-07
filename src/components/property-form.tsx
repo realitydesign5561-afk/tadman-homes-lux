@@ -156,11 +156,10 @@ export function PropertyForm({
       const images = await uploadImages();
       console.log("Amenities value:", form.amenities);
 
-      const amenities =
-  (form.amenities ?? "")
-    .split(",")
-    .map(a => a.trim())
-    .filter(Boolean);
+      const amenities = String(form.amenities ?? "")
+       .split(",")
+       .map((a) => a.trim())
+       .filter(Boolean);
 
 const payload = {
   title: form.title,
