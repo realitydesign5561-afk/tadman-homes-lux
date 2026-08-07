@@ -145,8 +145,11 @@ function DashboardPage() {
       : rows.filter((p) => p.status === filter);
 
   const stats = {
-    total: rows.length,
-    approved: rows.filter(
+  total: rows.length,
+  approved: rows.filter((p) => p.status === "approved").length,
+  pending: rows.filter((p) => p.status === "pending").length,
+  views: rows.reduce((sum, p) => sum + (p.views_count ?? 0), 0),
+};
 
         return (
     <>
