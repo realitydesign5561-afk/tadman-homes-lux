@@ -192,5 +192,3 @@ export function slugify(value: string) {
     .replace(/^-|-$/g, "")}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
-export const whatsappLink =
-  "https://wa.me/2349117511768";
