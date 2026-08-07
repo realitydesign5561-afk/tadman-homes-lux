@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "@tanstack/react-router";
 import SubscriptionsTab from "./subscriptions-tab";
 import AgentsTab from "./agents-tab";
-
+import EnquiriesTab from "./enquiries-tab";
 
 
 
@@ -78,10 +78,8 @@ export default function AdminDashboard() {
         {active==="Subscriptions" &&<SubscriptionsTab />}
 
         {active==="Agents" && <AgentsTab />}
-
-        {active === "Enquiries" &&
-          <p>Enquiries coming...</p>
-        }
+        
+        {active==="Enquiries" && <EnquiriesTab />}
 
         {active === "Settings" &&
           <p>Settings coming...</p>
