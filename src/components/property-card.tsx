@@ -81,12 +81,13 @@ export function PropertyCard({ property }: { property: Property }) {
         </div>
 
         <Link
-          to="/properties/$propertyId"
-          params={{ propertyId: property.id }}
-          className="inline-flex w-full items-center justify-center rounded-full bg-secondary px-4 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-ink hover:text-ink-foreground"
-        >
-          View details
-        </Link>
+  to="/properties/$id"
+  params={{ id: property.id }}
+>
+  <div className="surface-card rounded-2xl">
+    {/* existing property card content */}
+  </div>
+</Link>
       </div>
     </article>
   );
