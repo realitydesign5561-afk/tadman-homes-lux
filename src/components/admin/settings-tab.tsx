@@ -7,9 +7,7 @@ import {
 } from "@/lib/settings";
 
 export default function SettingsTab() {
-  const [settings, setSettings] =
-    useState<SiteSettings>(defaultSettings);
-
+  const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -21,7 +19,7 @@ export default function SettingsTab() {
         setSettings(data);
       } catch (error) {
         console.error("Failed to load settings:", error);
-        setSettings(defaultSettings);
+        setMessage("Using default settings.");
       } finally {
         setLoading(false);
       }
@@ -30,56 +28,22 @@ export default function SettingsTab() {
     loadSettings();
   }, []);
 
-  const updateSection = <
-    K extends keyof SiteSettings
-  >(
-    section: K,
-    field: string,
-    value: string
-  ) => {
-    setSettings((current) => ({
-      ...current,
-      [section]: {
-        ...(current[section] as Record<string, unknown>),
-        [field]: value,
-      },
-    }));
-  };
-
-  const updateSocial = (
-    field: keyof SiteSettings["footer"]["socials"],
-    value: string
-  ) => {
-    setSettings((current) => ({
-      ...current,
-      footer: {
-        ...current.footer,
-        socials: {
-          ...current.footer.socials,
-          [field]: value,
-        },
-      },
-    }));
-  };
-
-  const handleSave = async () => {
+  async function handleSave() {
     setSaving(true);
     setMessage("");
 
     try {
-      await Promise.all([
-        saveSetting("brand", settings.brand),
-        saveSetting("contact", settings.contact),
-        saveSetting("hero", settings.hero),
-        saveSetting("footer", settings.footer),
-        saveSetting("about_page", settings.about_page),
-        saveSetting(
-          "property_management_page",
-          settings.property_management_page
-        ),
-        saveSetting("legal_team_page", settings.legal_team_page),
-        saveSetting("contact_page", settings.contact_page),
-      ]);
+      await saveSetting("brand", settings.brand);
+      await saveSetting("contact", settings.contact);
+      await saveSetting("hero", settings.hero);
+      await saveSetting("footer", settings.footer);
+      await saveSetting("about_page", settings.about_page);
+      await saveSetting(
+        "property_management_page",
+        settings.property_management_page,
+      );
+      await saveSetting("legal_team_page", settings.legal_team_page);
+      await saveSetting("contact_page", settings.contact_page);
 
       setMessage("Settings saved successfully.");
     } catch (error) {
@@ -88,7 +52,7 @@ export default function SettingsTab() {
     } finally {
       setSaving(false);
     }
-  };
+  }
 
   if (loading) {
     return (
@@ -99,314 +63,320 @@ export default function SettingsTab() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold">
-          Website Settings
-        </h2>
-
-        <p className="mt-1 text-sm text-muted-foreground">
-          Manage Tadman Homes and Properties website content,
-          contact information and social links.
+        <h2 className="text-2xl font-bold">Site Settings</h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Manage the main website information and contact details.
         </p>
       </div>
 
-      {/* BRAND */}
-      <section className="rounded-xl border p-6 space-y-5">
-        <h3 className="text-lg font-semibold">
-          Brand
-        </h3>
+      {/* Brand */}
+      <section className="rounded-xl border p-6 space-y-4">
+        <h3 className="text-lg font-semibold">Brand</h3>
 
-        <div className="grid gap-5 md:grid-cols-2">
-          <Field
-            label="Site Name"
-            value={settings.brand.site_name}
-            onChange={(value) =>
-              updateSection("brand", "site_name", value)
-            }
-          />
+        <input
+          className="w-full rounded-lg border p-3"
+          value={settings.brand.site_name}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              brand: {
+                ...settings.brand,
+                site_name: e.target.value,
+              },
+            })
+          }
+          placeholder="Site name"
+        />
 
-          <Field
-            label="Motto"
-            value={settings.brand.motto}
-            onChange={(value) =>
-              updateSection("brand", "motto", value)
-            }
-          />
+        <input
+          className="w-full rounded-lg border p-3"
+          value={settings.brand.motto}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              brand: {
+                ...settings.brand,
+                motto: e.target.value,
+              },
+            })
+          }
+          placeholder="Motto"
+        />
 
-          <Field
-            label="Logo URL"
-            value={settings.brand.logo_url}
-            onChange={(value) =>
-              updateSection("brand", "logo_url", value)
-            }
-          />
+        <input
+          className="w-full rounded-lg border p-3"
+          value={settings.brand.logo_url}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              brand: {
+                ...settings.brand,
+                logo_url: e.target.value,
+              },
+            })
+          }
+          placeholder="Logo URL"
+        />
 
-          <Field
-            label="Favicon URL"
-            value={settings.brand.favicon_url}
-            onChange={(value) =>
-              updateSection("brand", "favicon_url", value)
-            }
-          />
-        </div>
+        <input
+          className="w-full rounded-lg border p-3"
+          value={settings.brand.favicon_url}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              brand: {
+                ...settings.brand,
+                favicon_url: e.target.value,
+              },
+            })
+          }
+          placeholder="Favicon URL"
+        />
       </section>
 
-      {/* CONTACT */}
-      <section className="rounded-xl border p-6 space-y-5">
-        <h3 className="text-lg font-semibold">
-          Contact Information
-        </h3>
+      {/* Contact */}
+      <section className="rounded-xl border p-6 space-y-4">
+        <h3 className="text-lg font-semibold">Contact Information</h3>
 
-        <div className="grid gap-5 md:grid-cols-2">
-          <Field
-            label="Address"
-            value={settings.contact.address}
-            onChange={(value) =>
-              updateSection("contact", "address", value)
-            }
-          />
+        <input
+          className="w-full rounded-lg border p-3"
+          value={settings.contact.address}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              contact: {
+                ...settings.contact,
+                address: e.target.value,
+              },
+            })
+          }
+          placeholder="Address"
+        />
 
-          <Field
-            label="Primary Email"
-            value={settings.contact.email}
-            onChange={(value) =>
-              updateSection("contact", "email", value)
-            }
-          />
+        <input
+          className="w-full rounded-lg border p-3"
+          value={settings.contact.email}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              contact: {
+                ...settings.contact,
+                email: e.target.value,
+              },
+            })
+          }
+          placeholder="Primary email"
+        />
 
-          <Field
-            label="Secondary Email"
-            value={settings.contact.email_secondary}
-            onChange={(value) =>
-              updateSection(
-                "contact",
-                "email_secondary",
-                value
-              )
-            }
-          />
+        <input
+          className="w-full rounded-lg border p-3"
+          value={settings.contact.email_secondary}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              contact: {
+                ...settings.contact,
+                email_secondary: e.target.value,
+              },
+            })
+          }
+          placeholder="Secondary email"
+        />
 
-          <Field
-            label="Phone"
-            value={settings.contact.phone}
-            onChange={(value) =>
-              updateSection("contact", "phone", value)
-            }
-          />
+        <input
+          className="w-full rounded-lg border p-3"
+          value={settings.contact.phone}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              contact: {
+                ...settings.contact,
+                phone: e.target.value,
+              },
+            })
+          }
+          placeholder="Phone"
+        />
 
-          <Field
-            label="WhatsApp"
-            value={settings.contact.whatsapp}
-            onChange={(value) =>
-              updateSection("contact", "whatsapp", value)
-            }
-          />
+        <input
+          className="w-full rounded-lg border p-3"
+          value={settings.contact.whatsapp}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              contact: {
+                ...settings.contact,
+                whatsapp: e.target.value,
+              },
+            })
+          }
+          placeholder="WhatsApp"
+        />
 
-          <Field
-            label="Business Hours"
-            value={settings.contact.hours}
-            onChange={(value) =>
-              updateSection("contact", "hours", value)
-            }
-          />
-        </div>
+        <input
+          className="w-full rounded-lg border p-3"
+          value={settings.contact.hours}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              contact: {
+                ...settings.contact,
+                hours: e.target.value,
+              },
+            })
+          }
+          placeholder="Opening hours"
+        />
       </section>
 
-      {/* HERO */}
-      <section className="rounded-xl border p-6 space-y-5">
-        <h3 className="text-lg font-semibold">
-          Homepage Hero
-        </h3>
+      {/* Hero */}
+      <section className="rounded-xl border p-6 space-y-4">
+        <h3 className="text-lg font-semibold">Homepage Hero</h3>
 
-        <Field
-          label="Title"
+        <input
+          className="w-full rounded-lg border p-3"
           value={settings.hero.title}
-          onChange={(value) =>
-            updateSection("hero", "title", value)
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              hero: {
+                ...settings.hero,
+                title: e.target.value,
+              },
+            })
           }
+          placeholder="Hero title"
         />
 
-        <Field
-          label="Subtitle"
+        <textarea
+          className="w-full rounded-lg border p-3 min-h-24"
           value={settings.hero.subtitle}
-          onChange={(value) =>
-            updateSection("hero", "subtitle", value)
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              hero: {
+                ...settings.hero,
+                subtitle: e.target.value,
+              },
+            })
           }
+          placeholder="Hero subtitle"
         />
 
-        <div className="grid gap-5 md:grid-cols-2">
-          <Field
-            label="Primary CTA"
-            value={settings.hero.cta_label}
-            onChange={(value) =>
-              updateSection("hero", "cta_label", value)
-            }
-          />
+        <input
+          className="w-full rounded-lg border p-3"
+          value={settings.hero.cta_label}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              hero: {
+                ...settings.hero,
+                cta_label: e.target.value,
+              },
+            })
+          }
+          placeholder="Primary CTA"
+        />
 
-          <Field
-            label="Secondary CTA"
-            value={settings.hero.cta_secondary_label}
-            onChange={(value) =>
-              updateSection(
-                "hero",
-                "cta_secondary_label",
-                value
-              )
-            }
-          />
-        </div>
+        <input
+          className="w-full rounded-lg border p-3"
+          value={settings.hero.cta_secondary_label}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              hero: {
+                ...settings.hero,
+                cta_secondary_label: e.target.value,
+              },
+            })
+          }
+          placeholder="Secondary CTA"
+        />
       </section>
 
-      {/* FOOTER */}
-      <section className="rounded-xl border p-6 space-y-5">
-        <h3 className="text-lg font-semibold">
-          Footer
-        </h3>
+      {/* Footer */}
+      <section className="rounded-xl border p-6 space-y-4">
+        <h3 className="text-lg font-semibold">Footer</h3>
 
-        <Field
-          label="About Text"
+        <textarea
+          className="w-full rounded-lg border p-3 min-h-24"
           value={settings.footer.about}
-          onChange={(value) =>
-            updateSection("footer", "about", value)
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              footer: {
+                ...settings.footer,
+                about: e.target.value,
+              },
+            })
           }
+          placeholder="Footer description"
         />
 
-        <h4 className="font-medium">
-          Social Media
-        </h4>
+        <input
+          className="w-full rounded-lg border p-3"
+          value={settings.footer.socials.facebook}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              footer: {
+                ...settings.footer,
+                socials: {
+                  ...settings.footer.socials,
+                  facebook: e.target.value,
+                },
+              },
+            })
+          }
+          placeholder="Facebook URL"
+        />
 
-        <div className="grid gap-5 md:grid-cols-2">
-          <Field
-            label="Facebook"
-            value={settings.footer.socials.facebook}
-            onChange={(value) =>
-              updateSocial("facebook", value)
-            }
-          />
+        <input
+          className="w-full rounded-lg border p-3"
+          value={settings.footer.socials.instagram}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              footer: {
+                ...settings.footer,
+                socials: {
+                  ...settings.footer.socials,
+                  instagram: e.target.value,
+                },
+              },
+            })
+          }
+          placeholder="Instagram URL"
+        />
 
-          <Field
-            label="Instagram"
-            value={settings.footer.socials.instagram}
-            onChange={(value) =>
-              updateSocial("instagram", value)
-            }
-          />
-
-          <Field
-            label="LinkedIn"
-            value={settings.footer.socials.linkedin}
-            onChange={(value) =>
-              updateSocial("linkedin", value)
-            }
-          />
-
-          <Field
-            label="X"
-            value={settings.footer.socials.x}
-            onChange={(value) =>
-              updateSocial("x", value)
-            }
-          />
-
-          <Field
-            label="YouTube"
-            value={settings.footer.socials.youtube}
-            onChange={(value) =>
-              updateSocial("youtube", value)
-            }
-          />
-
-          <Field
-            label="TikTok"
-            value={settings.footer.socials.tiktok}
-            onChange={(value) =>
-              updateSocial("tiktok", value)
-            }
-          />
-        </div>
+        <input
+          className="w-full rounded-lg border p-3"
+          value={settings.footer.socials.linkedin}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              footer: {
+                ...settings.footer,
+                socials: {
+                  ...settings.footer.socials,
+                  linkedin: e.target.value,
+                },
+              },
+            })
+          }
+          placeholder="LinkedIn URL"
+        />
       </section>
 
-      {/* PAGES */}
-      <PageSettings
-        title="About Page"
-        heading={settings.about_page.heading}
-        body={settings.about_page.body}
-        onHeading={(value) =>
-          updateSection("about_page", "heading", value)
-        }
-        onBody={(value) =>
-          updateSection("about_page", "body", value)
-        }
-      />
-
-      <PageSettings
-        title="Property Management Page"
-        heading={settings.property_management_page.heading}
-        body={settings.property_management_page.body}
-        onHeading={(value) =>
-          updateSection(
-            "property_management_page",
-            "heading",
-            value
-          )
-        }
-        onBody={(value) =>
-          updateSection(
-            "property_management_page",
-            "body",
-            value
-          )
-        }
-      />
-
-      <PageSettings
-        title="Legal Team Page"
-        heading={settings.legal_team_page.heading}
-        body={settings.legal_team_page.body}
-        onHeading={(value) =>
-          updateSection(
-            "legal_team_page",
-            "heading",
-            value
-          )
-        }
-        onBody={(value) =>
-          updateSection(
-            "legal_team_page",
-            "body",
-            value
-          )
-        }
-      />
-
-      <PageSettings
-        title="Contact Page"
-        heading={settings.contact_page.heading}
-        body={settings.contact_page.body}
-        onHeading={(value) =>
-          updateSection(
-            "contact_page",
-            "heading",
-            value
-          )
-        }
-        onBody={(value) =>
-          updateSection(
-            "contact_page",
-            "body",
-            value
-          )
-        }
-      />
-
-      {/* SAVE */}
+      {/* Save */}
       <div className="flex items-center gap-4">
         <button
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="rounded-lg bg-black px-6 py-3 font-semibold text-white disabled:opacity-50"
+          className="rounded-lg bg-black px-6 py-3 text-white font-semibold disabled:opacity-50"
         >
           {saving ? "Saving..." : "Save Settings"}
         </button>
@@ -418,70 +388,5 @@ export default function SettingsTab() {
         )}
       </div>
     </div>
-  );
-}
-
-function Field({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <div className="space-y-2">
-      <label className="text-sm font-medium">
-        {label}
-      </label>
-
-      <input
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border px-4 py-3"
-      />
-    </div>
-  );
-}
-
-function PageSettings({
-  title,
-  heading,
-  body,
-  onHeading,
-  onBody,
-}: {
-  title: string;
-  heading: string;
-  body: string;
-  onHeading: (value: string) => void;
-  onBody: (value: string) => void;
-}) {
-  return (
-    <section className="rounded-xl border p-6 space-y-5">
-      <h3 className="text-lg font-semibold">
-        {title}
-      </h3>
-
-      <Field
-        label="Heading"
-        value={heading}
-        onChange={onHeading}
-      />
-
-      <div className="space-y-2">
-        <label className="text-sm font-medium">
-          Body
-        </label>
-
-        <textarea
-          value={body}
-          onChange={(e) => onBody(e.target.value)}
-          rows={6}
-          className="w-full rounded-lg border px-4 py-3"
-        />
-      </div>
-    </section>
   );
 }
