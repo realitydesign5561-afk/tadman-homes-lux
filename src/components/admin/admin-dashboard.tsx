@@ -4,6 +4,11 @@ import PropertiesTab from "./properties-tab";
 import MerchantsTab from "./merchants-tab";
 import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "@tanstack/react-router";
+import SubscriptionsTab from "./subscriptions-tab";
+
+
+
+
 
 const tabs = [
   "Overview",
@@ -70,9 +75,7 @@ export default function AdminDashboard() {
 
         {active === "Merchants" && <MerchantsTab />}
 
-        {active === "Subscriptions" &&
-          <p>Subscriptions coming...</p>
-        }
+       {active==="Subscriptions" &&<SubscriptionsTab />}
 
         {active === "Agents" &&
           <p>Agents coming...</p>
