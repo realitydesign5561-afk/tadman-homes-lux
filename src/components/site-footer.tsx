@@ -78,8 +78,9 @@ const footer = settings?.footer ?? {};
               <li className="flex gap-2"><Phone className="mt-0.5 size-4 shrink-0" />WhatsApp: 09117511768</li>
               <li className="flex gap-2"><Mail className="mt-0.5 size-4 shrink-0" />
                 <div>
-             <div>tadmanhomes@gmail.com</div>
+             <div>info@tadmanhomesandproperties.com</div>
              <div>ralphconsult99@gmail.com</div>
+             <div>damilolaoshinowo3@gmail.com</div>  
          </div>
         </li>
             </ul>
