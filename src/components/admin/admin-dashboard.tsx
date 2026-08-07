@@ -22,6 +22,7 @@ const tabs = [
   "Activity",
 ];
 
+
 export default function AdminDashboard() {
   const { signOut } = useAuth();
   const navigate = useNavigate();
