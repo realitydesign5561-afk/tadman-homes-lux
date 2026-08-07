@@ -92,16 +92,30 @@ if (!property) {
             </div>
 
             <div className="flex gap-3">
-              <PrimaryButton>
-                <MessageCircle className="mr-2 size-4" />
-                WhatsApp Inquiry
-              </PrimaryButton>
+  <a
+    href={
+      property.merchant?.whatsapp
+        ? `https://wa.me/${property.merchant.whatsapp.replace(/\D/g, "")}`
+        : "https://wa.me/2349117511768"
+    }
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <PrimaryButton>
+      <MessageCircle className="mr-2 size-4" />
+      WhatsApp Inquiry
+    </PrimaryButton>
+  </a>
 
-              <PrimaryButton>
-                <Phone className="mr-2 size-4" />
-                Contact Agent
-              </PrimaryButton>
-            </div>
+  <a
+    href={`tel:${property.merchant?.phone || "07031556176"}`}
+  >
+    <PrimaryButton>
+      <Phone className="mr-2 size-4" />
+      Contact Agent
+    </PrimaryButton>
+  </a>
+</div>
           </div>
 
         </div>
