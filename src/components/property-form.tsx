@@ -194,11 +194,12 @@ export function PropertyForm({
 
         area_unit: "sqm",
 
-        const amenities =
-  (form.amenities ?? "")
-    .split(",")
-    .map((a) => a.trim())
-    .filter(Boolean);
+        console.log("Amenities value:", form.amenities);
+
+const amenities =
+  form.amenities
+    ? form.amenities.split(",").map((a) => a.trim()).filter(Boolean)
+    : [];
 
         featured_image:
           images[0] ?? null,
