@@ -84,7 +84,7 @@ export default function AdminDashboard() {
 
         {active === "Management" && <ManagementTab />}
 
-        {active === "Settings" && <SettingsTab />}
+        {active === "Settings" && <SettingsTs />}
 
         {active === "Activity" &&
           <p>Activity coming...</p>
