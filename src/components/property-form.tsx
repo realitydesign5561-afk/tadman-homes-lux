@@ -128,32 +128,67 @@ export function PropertyForm({
       }));
     };
   }
+async function uploadImages(actualMerchantId: string) {
+  const uploaded: string[] = [];
 
-    async function uploadImages() {
-    const uploaded: string[] = [];
+  for (const file of files) {
+    const url = await uploadPropertyImage(
+      actualMerchantId,
+      file,
+    );
 
-    for (const file of files) {
-      const url = await uploadPropertyImage(
-        merchantId ?? userId,
-        file
-      );
-
-      uploaded.push(url);
-    }
-
-    return [...gallery, ...uploaded];
+    uploaded.push(url);
   }
 
+  return [...gallery, ...uploaded];
+}
+
   async function submit(status: string) {
-    try {
-      setBusy(true);
-      setError("");
+  try {
+    setBusy(true);
+    setError("");
 
-      if (!merchantId) {
-        throw new Error("Merchant account not found.");
-      }
+    // Get the actual logged-in Supabase user.
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
-      const images = await uploadImages();
+    if (userError) {
+      throw userError;
+    }
+
+    if (!user) {
+      throw new Error("You are not logged in. Please sign in again.");
+    }
+
+    // Get the merchant belonging to the authenticated user.
+    const { data: merchant, error: merchantError } = await supabase
+      .from("merchants")
+      .select("id, user_id, status")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (merchantError) {
+      throw merchantError;
+    }
+
+    if (!merchant) {
+      throw new Error("Merchant account not found.");
+    }
+
+    if (merchant.status !== "active") {
+      throw new Error(
+        `Your merchant account is not active. Current status: ${merchant.status}`,
+      );
+    }
+
+    // IMPORTANT:
+    // Always use the merchant ID returned by Supabase,
+    // not a possibly stale merchantId prop.
+    const actualMerchantId = merchant.id;
+
+    const images = await uploadImages(actualMerchantId);
       console.log("Amenities value:", form.amenities);
 
       const amenities = String(form.amenities ?? "")
@@ -187,7 +222,7 @@ const payload = {
   featured_image: images[0] ?? null,
   images,
 
-  merchant_id: merchantId,
+  merchant_id: actualMerchantId,
 
   status,
   is_featured: canFeature ? form.is_featured : false,
@@ -224,9 +259,14 @@ const payload = {
   return (
     <form
       onSubmit={(e) => {
-        e.preventDefault();
-        void submit(form.status);
-      }}
+  e.preventDefault();
+
+  const status = canPublish
+    ? form.status
+    : "pending";
+
+  void submit(status);
+}}
       className="surface-card grid gap-4 rounded-2xl p-6 sm:grid-cols-2"
     >
       <Field
@@ -410,20 +450,21 @@ const payload = {
           Status
         </span>
 
-        <select
-          className={selectClass}
-          value={form.status}
-          onChange={update("status")}
-        >
-          {PROPERTY_STATUSES.map((status) => (
-            <option
-              key={status}
-              value={status}
-            >
-              {status}
-            </option>
-          ))}
-        </select>
+ <select
+  className={selectClass}
+  value={form.status}
+  onChange={update("status")}
+  disabled={!canPublish}
+ >
+  {PROPERTY_STATUSES.map((status) => (
+    <option
+      key={status}
+      value={status}
+    >
+      {status}
+    </option>
+  ))}
+</select>
       </label>
 
       {canFeature && (
