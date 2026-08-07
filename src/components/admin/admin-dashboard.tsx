@@ -1,6 +1,8 @@
 import OverviewTab from "./overview-tab";
 import {useState} from "react";
 import PropertiesTab from "./properties-tab";
+import MerchantsTab from "./merchants-tab";
+
 
 const tabs=[
 "Overview",
@@ -54,10 +56,7 @@ active===tab
 
 {active==="Properties" && <PropertiesTab />}
 
-
-{active==="Merchants" &&
-<p>Merchants coming...</p>
-}
+{active==="Merchants" && <MerchantsTab />}
 
 
 {active==="Subscriptions" &&
