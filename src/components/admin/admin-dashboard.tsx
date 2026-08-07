@@ -56,6 +56,7 @@ active===tab
 {active==="Overview" && <OverviewTab />}
 
 {active==="Properties" && <PropertiesTab />}
+  
 
 {active==="Merchants" && <MerchantsTab />}
 
