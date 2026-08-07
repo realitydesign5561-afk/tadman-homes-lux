@@ -15,7 +15,6 @@ export const Route = createFileRoute("/admin")({
       });
     }
 
-
     const {data:role}=await supabase
       .from("user_roles")
       .select("role")
