@@ -536,79 +536,137 @@ BEGIN
 END $$;
 
 -- ============================================================================
--- ROW LEVEL SECURITY POLICIES (MATCHING LIVE SCHEMA)
+-- ROW LEVEL SECURITY POLICIES
 -- ============================================================================
 
 -- Profiles
+DROP POLICY IF EXISTS "profiles_select_own_or_admin" ON public.profiles;
 CREATE POLICY "profiles_select_own_or_admin" ON public.profiles FOR SELECT TO authenticated USING ((auth.uid() = id) OR is_admin(auth.uid()));
+
+DROP POLICY IF EXISTS "profiles_insert_own" ON public.profiles;
 CREATE POLICY "profiles_insert_own" ON public.profiles FOR INSERT TO authenticated WITH CHECK (auth.uid() = id);
+
+DROP POLICY IF EXISTS "profiles_update_own" ON public.profiles;
 CREATE POLICY "profiles_update_own" ON public.profiles FOR UPDATE TO public USING (auth.uid() = id);
 
 -- User Roles
-CREATE POLICY "user_roles_select_own" ON public.user_roles FOR SELECT TO authenticated USING ((user_id = auth.uid()) OR is_admin());
+DROP POLICY IF EXISTS "user_roles_select_own" ON public.user_roles;
+CREATE POLICY "user_roles_select_own" ON public.user_roles FOR SELECT TO authenticated USING ((user_id = auth.uid()) OR is_admin(auth.uid()));
 
 -- Merchants
+DROP POLICY IF EXISTS "merchants_select_public" ON public.merchants;
 CREATE POLICY "merchants_select_public" ON public.merchants FOR SELECT TO anon, authenticated USING (true);
-CREATE POLICY "merchants_manage_own" ON public.merchants FOR ALL TO authenticated USING ((user_id = auth.uid()) OR is_admin()) WITH CHECK ((user_id = auth.uid()) OR is_admin());
+
+DROP POLICY IF EXISTS "merchants_manage_own" ON public.merchants;
+CREATE POLICY "merchants_manage_own" ON public.merchants FOR ALL TO authenticated USING ((user_id = auth.uid()) OR is_admin(auth.uid())) WITH CHECK ((user_id = auth.uid()) OR is_admin(auth.uid()));
 
 -- Subscription Plans
-CREATE POLICY "plans_select_public" ON public.subscription_plans FOR SELECT TO anon, authenticated USING (is_active OR is_admin());
-CREATE POLICY "plans_admin_write" ON public.subscription_plans FOR ALL TO authenticated USING (is_admin()) WITH CHECK (is_admin());
+DROP POLICY IF EXISTS "plans_select_public" ON public.subscription_plans;
+CREATE POLICY "plans_select_public" ON public.subscription_plans FOR SELECT TO anon, authenticated USING (is_active OR is_admin(auth.uid()));
+
+DROP POLICY IF EXISTS "plans_admin_write" ON public.subscription_plans;
+CREATE POLICY "plans_admin_write" ON public.subscription_plans FOR ALL TO authenticated USING (is_admin(auth.uid())) WITH CHECK (is_admin(auth.uid()));
 
 -- Subscriptions
+DROP POLICY IF EXISTS "subscriptions_read_own" ON public.subscriptions;
 CREATE POLICY "subscriptions_read_own" ON public.subscriptions FOR SELECT TO public USING ((merchant_id IN (SELECT merchants.id FROM public.merchants WHERE merchants.user_id = auth.uid())) OR is_admin(auth.uid()));
+
+DROP POLICY IF EXISTS "subscriptions_admin_manage" ON public.subscriptions;
 CREATE POLICY "subscriptions_admin_manage" ON public.subscriptions FOR ALL TO authenticated USING (is_admin(auth.uid())) WITH CHECK (is_admin(auth.uid()));
 
 -- Properties
+DROP POLICY IF EXISTS "properties_select_public" ON public.properties;
 CREATE POLICY "properties_select_public" ON public.properties FOR SELECT TO anon, authenticated USING (status = ANY (ARRAY['approved'::property_status, 'sold'::property_status, 'rented'::property_status]));
-CREATE POLICY "properties_select_own" ON public.properties FOR SELECT TO authenticated USING ((owner_id = auth.uid()) OR is_admin());
-CREATE POLICY "properties_insert_own" ON public.properties FOR INSERT TO authenticated WITH CHECK ((owner_id = auth.uid()) OR is_admin());
-CREATE POLICY "properties_update_own" ON public.properties FOR UPDATE TO authenticated USING ((owner_id = auth.uid()) OR is_admin());
-CREATE POLICY "properties_delete_own" ON public.properties FOR DELETE TO authenticated USING ((owner_id = auth.uid()) OR is_admin());
+
+DROP POLICY IF EXISTS "properties_select_own" ON public.properties;
+CREATE POLICY "properties_select_own" ON public.properties FOR SELECT TO authenticated USING ((owner_id = auth.uid()) OR is_admin(auth.uid()));
+
+DROP POLICY IF EXISTS "properties_insert_own" ON public.properties;
+CREATE POLICY "properties_insert_own" ON public.properties FOR INSERT TO authenticated WITH CHECK ((owner_id = auth.uid()) OR is_admin(auth.uid()));
+
+DROP POLICY IF EXISTS "properties_update_own" ON public.properties;
+CREATE POLICY "properties_update_own" ON public.properties FOR UPDATE TO authenticated USING ((owner_id = auth.uid()) OR is_admin(auth.uid()));
+
+DROP POLICY IF EXISTS "properties_delete_own" ON public.properties;
+CREATE POLICY "properties_delete_own" ON public.properties FOR DELETE TO authenticated USING ((owner_id = auth.uid()) OR is_admin(auth.uid()));
 
 -- Agents
+DROP POLICY IF EXISTS "agents_select_public" ON public.agents;
 CREATE POLICY "agents_select_public" ON public.agents FOR SELECT TO anon, authenticated USING (true);
-CREATE POLICY "agents_admin_manage" ON public.agents FOR ALL TO authenticated USING (is_admin()) WITH CHECK (is_admin());
+
+DROP POLICY IF EXISTS "agents_admin_manage" ON public.agents;
+CREATE POLICY "agents_admin_manage" ON public.agents FOR ALL TO authenticated USING (is_admin(auth.uid())) WITH CHECK (is_admin(auth.uid()));
 
 -- Contact Requests
+DROP POLICY IF EXISTS "contact_insert_public" ON public.contact_requests;
 CREATE POLICY "contact_insert_public" ON public.contact_requests FOR INSERT TO anon, authenticated WITH CHECK (true);
-CREATE POLICY "contact_admin_manage" ON public.contact_requests FOR ALL TO authenticated USING (is_admin()) WITH CHECK (is_admin());
+
+DROP POLICY IF EXISTS "contact_admin_manage" ON public.contact_requests;
+CREATE POLICY "contact_admin_manage" ON public.contact_requests FOR ALL TO authenticated USING (is_admin(auth.uid())) WITH CHECK (is_admin(auth.uid()));
 
 -- Property Management Requests
+DROP POLICY IF EXISTS "mgmt_insert_public" ON public.property_management_requests;
 CREATE POLICY "mgmt_insert_public" ON public.property_management_requests FOR INSERT TO anon, authenticated WITH CHECK (true);
-CREATE POLICY "mgmt_admin_manage" ON public.property_management_requests FOR ALL TO authenticated USING (is_admin()) WITH CHECK (is_admin());
+
+DROP POLICY IF EXISTS "mgmt_admin_manage" ON public.property_management_requests;
+CREATE POLICY "mgmt_admin_manage" ON public.property_management_requests FOR ALL TO authenticated USING (is_admin(auth.uid())) WITH CHECK (is_admin(auth.uid()));
 
 -- Favorites
+DROP POLICY IF EXISTS "favorites_select_own" ON public.favorites;
 CREATE POLICY "favorites_select_own" ON public.favorites FOR SELECT TO authenticated USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "favorites_insert_own" ON public.favorites;
 CREATE POLICY "favorites_insert_own" ON public.favorites FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "favorites_delete_own" ON public.favorites;
 CREATE POLICY "favorites_delete_own" ON public.favorites FOR DELETE TO authenticated USING (auth.uid() = user_id);
 
 -- Newsletter
+DROP POLICY IF EXISTS "newsletter_insert_public" ON public.newsletter_subscribers;
 CREATE POLICY "newsletter_insert_public" ON public.newsletter_subscribers FOR INSERT TO anon, authenticated WITH CHECK (true);
 
 -- Blog Posts
-CREATE POLICY "blog_select_public" ON public.blog_posts FOR SELECT TO anon, authenticated USING (is_published OR is_admin());
-CREATE POLICY "blog_admin_write" ON public.blog_posts FOR ALL TO authenticated USING (is_admin()) WITH CHECK (is_admin());
+DROP POLICY IF EXISTS "blog_select_public" ON public.blog_posts;
+CREATE POLICY "blog_select_public" ON public.blog_posts FOR SELECT TO anon, authenticated USING (is_published OR is_admin(auth.uid()));
+
+DROP POLICY IF EXISTS "blog_admin_write" ON public.blog_posts;
+CREATE POLICY "blog_admin_write" ON public.blog_posts FOR ALL TO authenticated USING (is_admin(auth.uid())) WITH CHECK (is_admin(auth.uid()));
 
 -- Testimonials
-CREATE POLICY "testimonials_select_public" ON public.testimonials FOR SELECT TO anon, authenticated USING (is_published OR is_admin());
-CREATE POLICY "testimonials_admin_write" ON public.testimonials FOR ALL TO authenticated USING (is_admin()) WITH CHECK (is_admin());
+DROP POLICY IF EXISTS "testimonials_select_public" ON public.testimonials;
+CREATE POLICY "testimonials_select_public" ON public.testimonials FOR SELECT TO anon, authenticated USING (is_published OR is_admin(auth.uid()));
+
+DROP POLICY IF EXISTS "testimonials_admin_write" ON public.testimonials;
+CREATE POLICY "testimonials_admin_write" ON public.testimonials FOR ALL TO authenticated USING (is_admin(auth.uid())) WITH CHECK (is_admin(auth.uid()));
 
 -- FAQs
-CREATE POLICY "faq_select_public" ON public.faqs FOR SELECT TO anon, authenticated USING (is_published OR is_admin());
-CREATE POLICY "faq_admin_write" ON public.faqs FOR ALL TO authenticated USING (is_admin()) WITH CHECK (is_admin());
+DROP POLICY IF EXISTS "faq_select_public" ON public.faqs;
+CREATE POLICY "faq_select_public" ON public.faqs FOR SELECT TO anon, authenticated USING (is_published OR is_admin(auth.uid()));
+
+DROP POLICY IF EXISTS "faq_admin_write" ON public.faqs;
+CREATE POLICY "faq_admin_write" ON public.faqs FOR ALL TO authenticated USING (is_admin(auth.uid())) WITH CHECK (is_admin(auth.uid()));
 
 -- Activity Log
-CREATE POLICY "activity_select_admin" ON public.activity_log FOR SELECT TO authenticated USING (is_admin());
+DROP POLICY IF EXISTS "activity_select_admin" ON public.activity_log;
+CREATE POLICY "activity_select_admin" ON public.activity_log FOR SELECT TO authenticated USING (is_admin(auth.uid()));
+
+DROP POLICY IF EXISTS "activity_insert_self" ON public.activity_log;
 CREATE POLICY "activity_insert_self" ON public.activity_log FOR INSERT TO authenticated WITH CHECK (true);
 
 -- Notifications
+DROP POLICY IF EXISTS "notifications_select_own" ON public.notifications;
 CREATE POLICY "notifications_select_own" ON public.notifications FOR SELECT TO public USING (auth.uid() = user_id);
 
 -- Site Settings
+DROP POLICY IF EXISTS "site_settings_select_public" ON public.site_settings;
 CREATE POLICY "site_settings_select_public" ON public.site_settings FOR SELECT TO public USING (true);
-CREATE POLICY "site_settings_insert_admin" ON public.site_settings FOR INSERT TO authenticated WITH CHECK (EXISTS (SELECT 1 FROM public.user_roles WHERE user_roles.user_id = auth.uid() AND user_roles.role = 'admin'::app_role));
-CREATE POLICY "site_settings_update_admin" ON public.site_settings FOR UPDATE TO authenticated USING (EXISTS (SELECT 1 FROM public.user_roles WHERE user_roles.user_id = auth.uid() AND user_roles.role = 'admin'::app_role));
+
+DROP POLICY IF EXISTS "site_settings_insert_admin" ON public.site_settings;
+CREATE POLICY "site_settings_insert_admin" ON public.site_settings FOR INSERT TO authenticated WITH CHECK (is_admin(auth.uid()));
+
+DROP POLICY IF EXISTS "site_settings_update_admin" ON public.site_settings;
+CREATE POLICY "site_settings_update_admin" ON public.site_settings FOR UPDATE TO authenticated USING (is_admin(auth.uid()));
+
 
 -- ============================================================================
 -- STORAGE BUCKETS AND POLICIES
