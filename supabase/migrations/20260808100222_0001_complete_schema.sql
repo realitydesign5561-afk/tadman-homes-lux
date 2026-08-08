@@ -465,45 +465,23 @@ BEGIN
         FROM pg_policies 
         WHERE schemaname = 'public'
     LOOP
-        EXECUTE format('DROP POLICY IF EXISTS %I ON public.%I', pol.policyname, pol.tablename);
-    END LOOP;
+        EXECUTE format('    END LOOP;
 END $$;
 
 -- Profiles: users can read/update own, admins can do all
-DROP POLICY IF EXISTS "profiles_select_own" ON public.profiles FOR SELECT TO authenticated USING (auth.uid() = id OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-DROP POLICY IF EXISTS "profiles_insert_own" ON public.profiles FOR INSERT TO authenticated WITH CHECK (auth.uid() = id);
-DROP POLICY IF EXISTS "profiles_update_own" ON public.profiles FOR UPDATE TO authenticated USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
 
 -- User roles: users read own, admins read all
-DROP POLICY IF EXISTS "roles_select_own" ON public.user_roles FOR SELECT TO authenticated USING (auth.uid() = user_id OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
 
 -- Merchants: public read approved, owner read/update own, admin all
-DROP POLICY IF EXISTS "merchants_select_public" ON public.merchants FOR SELECT TO anon, authenticated USING (status = 'approved' OR user_id = auth.uid() OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-DROP POLICY IF EXISTS "merchants_insert_own" ON public.merchants FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-DROP POLICY IF EXISTS "merchants_update_own" ON public.merchants FOR UPDATE TO authenticated USING (user_id = auth.uid() OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin')) WITH CHECK (user_id = auth.uid() OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-DROP POLICY IF EXISTS "merchants_delete_admin" ON public.merchants FOR DELETE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
 
 -- Subscription plans: public read
-DROP POLICY IF EXISTS "plans_select_public" ON public.subscription_plans FOR SELECT TO anon, authenticated USING (is_active = true);
-DROP POLICY IF EXISTS "plans_insert_admin" ON public.subscription_plans FOR INSERT TO authenticated WITH CHECK (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-DROP POLICY IF EXISTS "plans_update_admin" ON public.subscription_plans FOR UPDATE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-DROP POLICY IF EXISTS "plans_delete_admin" ON public.subscription_plans FOR DELETE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
 
 -- Subscriptions: owner read own, admin all, owner insert own
-DROP POLICY IF EXISTS "subs_select_own" ON public.subscriptions FOR SELECT TO authenticated USING (merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()) OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-DROP POLICY IF EXISTS "subs_insert_own" ON public.subscriptions FOR INSERT TO authenticated WITH CHECK (merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()) OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-DROP POLICY IF EXISTS "subs_update_own_admin" ON public.subscriptions FOR UPDATE TO authenticated USING (merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()) OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
 
 -- Properties: public read approved, owner manage own, admin all
-DROP POLICY IF EXISTS "properties_select_public" ON public.properties FOR SELECT TO anon, authenticated USING (status = 'approved' OR merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()) OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-DROP POLICY IF EXISTS "properties_insert_own" ON public.properties FOR INSERT TO authenticated WITH CHECK (merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()) OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
 DROP POLICY IF EXISTSY "properties_update_own" ON public.properties FOR UPDATE TO authenticated USING (merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()) OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin')) WITH CHECK (merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()) OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-DROP POLICY IF EXISTS "properties_delete_own" ON public.properties FOR DELETE TO authenticated USING (merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()) OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
 
 -- Agents: public read active, admin manage
-DROP POLICY IF EXISTS "agents_select_public" ON public.agents FOR SELECT TO anon, authenticated USING (is_active = true OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-DROP POLICY IF EXISTS "agents_insert_admin" ON public.agents FOR INSERT TO authenticated WITH CHECK (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-DROP POLICY IF EXISTS "agents_update_admin" ON public.agents FOR UPDATE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
 CREATE POLICY "agents_delete_admin" ON public.agents FOR DELETE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
 
 -- Contact requests: public insert, admin read/update/delete
