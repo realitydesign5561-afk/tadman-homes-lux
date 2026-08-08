@@ -135,7 +135,14 @@ export function mapProperty(row: PropertyRow, agentName = "Tadman Homes"): Prope
     description: row.description || "",
     features: row.amenities ?? [],
     agent: agentName,
-    merchants: row.merchants ?? null,
+   merchants: row.merchants
+  ? {
+      business_name: row.merchants.business_name,
+      whatsapp_number: row.merchants.whatsapp_number ?? (row.merchants.whatsapp || null),
+      whatsapp: row.merchants.whatsapp_number ?? row.merchants.whatsapp ?? null,
+      phone: row.merchants.phone ?? null,
+    }
+  : null,
   };
 }
 
