@@ -1,4 +1,4 @@
-           import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 import { propertyImages } from "@/data/properties";
 
 export type PropertyRow = {
@@ -7,7 +7,7 @@ export type PropertyRow = {
   title: string;
   description: string | null;
   price: number | null;
-  currency: string;
+  currency: string | null;
   country: string | null;
   state: string | null;
   city: string | null;
@@ -29,10 +29,10 @@ export type PropertyRow = {
   created_at: string;
 
   merchants?: {
-  business_name: string;
-  whatsapp_number: string | null;
-  phone: string | null;
-} | null;
+    business_name: string;
+    whatsapp_number: string | null;
+    phone: string | null;
+  } | null;
 };
 
 export type Property = {
@@ -56,47 +56,86 @@ export type Property = {
   agent: string;
 
   merchants?: {
-  business_name: string;
-  whatsapp_number: string | null;
-  phone: string | null;
-} | null;
+    business_name: string;
+    whatsapp_number: string | null;
+    phone: string | null;
+  } | null;
+};
+
+const CURRENCY_LOCALE_MAP: Record<string, string> = {
+  NGN: "en-NG",
+  USD: "en-US",
+  EUR: "en-IE",
+  GBP: "en-GB",
 };
 
 export function formatPrice(price: number | null, currency = "NGN") {
   if (price == null) return "Price on request";
   try {
-    return new Intl.NumberFormat("en-NG", {
+    const locale = CURRENCY_LOCALE_MAP[currency] ?? "en-US";
+    return new Intl.NumberFormat(locale, {
       style: "currency",
       currency,
       maximumFractionDigits: 0,
     }).format(price);
   } catch {
-    return `${currency} ${price.toLocaleString()}`;
+    return `${currency} ${price?.toLocaleString?.() ?? price}`;
   }
+}
+
+// Mapping between slugs and display labels for property types.
+const PROPERTY_TYPE_MAP: Record<string, string> = {
+  apartment: "Apartment",
+  house: "House",
+  villa: "Villa",
+  penthouse: "Penthouse",
+  duplex: "Duplex",
+  land: "Land",
+  commercial: "Commercial",
+};
+
+export function slugToLabel(slug?: string | null) {
+  if (!slug) return undefined;
+  const key = slug.toLowerCase();
+  return PROPERTY_TYPE_MAP[key] ??
+    // fallback: Title-case the slug
+    key.replace(/(^|\-|_)([a-z])/g, (_, __, c) => c.toUpperCase());
+}
+
+export function labelToSlug(label?: string | null) {
+  if (!label) return undefined;
+  const key = label.toLowerCase();
+  // try reverse lookup
+  for (const [s, l] of Object.entries(PROPERTY_TYPE_MAP)) {
+    if (l.toLowerCase() === key) return s;
+  }
+  // fallback: replace non-alnum with -
+  return label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
 export function mapProperty(row: PropertyRow, agentName = "Tadman Homes"): Property {
   const isRent = row.listing_type === "rent" || row.listing_type === "shortlet";
+  const currency = row.currency ?? "NGN";
   return {
     id: row.slug || row.id,
     rowId: row.id,
     title: row.title,
     type: row.property_type || "Property",
     status: isRent ? "For Rent" : "For Sale",
-    price: formatPrice(row.price, row.currency),
+    price: formatPrice(row.price ?? null, currency),
     period: isRent ? "/month" : undefined,
     city: row.city || "",
     country: row.country || "",
     beds: row.bedrooms ?? 0,
     baths: row.bathrooms ?? 0,
     area: row.area ? `${row.area} ${row.area_unit || "sqm"}` : "—",
-    image: row.featured_image || row.images?.[0] || propertyImages.prop1,
-    gallery: row.images?.length ? row.images : row.featured_image ? [row.featured_image] : [],
-    featured: row.is_featured,
+    image: row.featured_image || (row.images && row.images.length ? row.images[0] : propertyImages.hero),
+    gallery: row.images && row.images.length ? row.images : row.featured_image ? [row.featured_image] : [],
+    featured: Boolean(row.is_featured),
     description: row.description || "",
     features: row.amenities ?? [],
     agent: agentName,
-    merchant: row.merchants ?? null,
+    merchants: row.merchants ?? null,
   };
 }
 
@@ -119,15 +158,15 @@ export async function fetchProperties(options: {
   minBaths?: number;
 } = {}): Promise<Property[]> {
   let query = supabase
-  .from("properties")
-  .select(`
-    *,
-    merchants (
-  business_name,
-  whatsapp_number,
-  phone
-)
-  `)
+    .from("properties")
+    .select(`
+      *,
+      merchants (
+    business_name,
+    whatsapp_number,
+    phone
+  )
+    `)
     .eq("status", "approved")
     .order("created_at", { ascending: false });
 
@@ -138,13 +177,19 @@ export async function fetchProperties(options: {
   if (options.state) query = query.ilike("state", `%${options.state}%`);
   if (options.city) query = query.ilike("city", `%${options.city}%`);
   if (options.area) query = query.ilike("address", `%${options.area}%`);
-  if (options.propertyType) query = query.eq("property_type", options.propertyType);
+
+  if (options.propertyType) {
+    // allow either slug or label
+    const label = slugToLabel(options.propertyType) ?? options.propertyType;
+    query = query.eq("property_type", label);
+  }
+
   if (options.minPrice != null) query = query.gte("price", options.minPrice);
   if (options.maxPrice != null) query = query.lte("price", options.maxPrice);
   if (options.minBeds != null) query = query.gte("bedrooms", options.minBeds);
   if (options.minBaths != null) query = query.gte("bathrooms", options.minBaths);
   if (options.keyword) {
-    const k = options.keyword.replace(/[,%]/g, " ");
+    const k = options.keyword.replace(/[,\%]/g, " ");
     query = query.or(`title.ilike.%${k}%,description.ilike.%${k}%`);
   }
   if (options.limit) query = query.limit(options.limit);
@@ -191,4 +236,3 @@ export function slugify(value: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "")}-${Math.random().toString(36).slice(2, 7)}`;
 }
-

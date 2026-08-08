@@ -29,23 +29,10 @@ BEGIN
   )
   ON CONFLICT DO NOTHING;
 
-  IF COALESCE(NEW.raw_user_meta_data->>'role','customer') = 'merchant' THEN
-
-    INSERT INTO public.merchants (
-      user_id,
-      business_name
-    )
-    VALUES (
-      NEW.id,
-      COALESCE(
-        NEW.raw_user_meta_data->>'business_name',
-        NEW.raw_user_meta_data->>'full_name',
-        ''
-      )
-    )
-    ON CONFLICT (user_id) DO NOTHING;
-
-  END IF;
+  /*
+    Merchant creation moved to server-side webhook after successful payment.
+    This prevents unauthorized merchant records being created on simple signup.
+  */
 
   RETURN NEW;
 END;
