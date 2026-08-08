@@ -7,10 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { PropertyGrid } from "@/components/property-grid";
 import { fetchLocations, fetchPosts, fetchTestimonials, subscribeNewsletter } from "@/lib/content";
-const heroVilla = "https://images.pexels.com/photos/28054849/pexels-photo-28054849.jpeg?auto=compress&cs=tinysrgb&w=1400&h=1000";
-const prop1 = "https://images.pexels.com/photos/8089172/pexels-photo-8089172.jpeg?auto=compress&cs=tinysrgb&w=900&h=700";
-const prop2 = "https://images.pexels.com/photos/8146330/pexels-photo-8146330.jpeg?auto=compress&cs=tinysrgb&w=900&h=700";
-const prop3 = "https://images.pexels.com/photos/8146332/pexels-photo-8146332.jpeg?auto=compress&cs=tinysrgb&w=900&h=700";
+const heroVilla = "/src/assets/hero-villa.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -32,13 +29,13 @@ export const Route = createFileRoute("/")({
 });
 
 const categories = [
-  { label: "Apartment", icon: Building2 },
-  { label: "House", icon: Home },
-  { label: "Villa", icon: Sparkles },
-  { label: "Penthouse", icon: LayoutGrid },
-  { label: "Duplex", icon: Landmark },
-  { label: "Land", icon: Trees },
-  { label: "Commercial", icon: Warehouse },
+  { label: "Apartment", icon: Building2, slug: "apartment" },
+  { label: "House", icon: Home, slug: "house" },
+  { label: "Villa", icon: Sparkles, slug: "villa" },
+  { label: "Penthouse", icon: LayoutGrid, slug: "penthouse" },
+  { label: "Duplex", icon: Landmark, slug: "duplex" },
+  { label: "Land", icon: Trees, slug: "land" },
+  { label: "Commercial", icon: Warehouse, slug: "commercial" },
 ];
 const reasons = [
   {
@@ -94,7 +91,7 @@ function Index() {
                 Buy, Sell & Rent Properties Across the World With{" "}
                 <span className="text-gradient-brand">Confidence</span>
               </h1>
-              <p className="mt-5 max-w-md text-sm text-muted-foreground sm:text-base">Discover verified houses, apartments, land and commercial properties from trusted property owners, agencies and developers. Search confidently and invest with peace of mind.</p>
+              <p className="mt-5 max-w-md text-sm text-muted-foreground sm:text-base">Discover verified houses, apartments, land and commercial properties from trusted property owners, agencies and professional merchants.</p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <button
                   type="button"
@@ -115,14 +112,6 @@ function Index() {
             </div>
 
             <div className="surface-card flex items-center gap-4 rounded-[1.6rem] p-3">
-              <img
-                src={prop1}
-                alt="Featured listing preview"
-                loading="lazy"
-                width={900}
-                height={700}
-                className="hidden h-24 w-32 rounded-2xl object-cover sm:block"
-              />
               <div className="min-w-0">
                 <p className="truncate rounded-full bg-secondary px-3 py-1.5 text-xs text-muted-foreground">
                   tadmanhomes@gmail.com
@@ -156,17 +145,9 @@ function Index() {
               </div>
             </div>
             <div className="grid grid-cols-3 gap-3">
-              {[prop1, prop2, prop3].map((img, i) => (
-                <img
-                  key={i}
-                  src={img}
-                  alt="Property gallery preview"
-                  loading="lazy"
-                  width={900}
-                  height={700}
-                  className="h-24 w-full rounded-2xl object-cover sm:h-32"
-                />
-              ))}
+              <div className="h-24 w-full rounded-2xl bg-secondary/10 sm:h-32" />
+              <div className="h-24 w-full rounded-2xl bg-secondary/10 sm:h-32" />
+              <div className="h-24 w-full rounded-2xl bg-secondary/10 sm:h-32" />
             </div>
           </div>
         </div>
@@ -263,7 +244,7 @@ function Index() {
             <Link
               key={c.label}
               to="/properties"
-              search={{ type: c.label }}
+              search={{ type: c.slug }}
               className="surface-card flex flex-col items-center gap-2 rounded-2xl p-5 text-center transition-all hover:-translate-y-1 hover:shadow-lift"
             >
               <span className="flex size-11 items-center justify-center rounded-full bg-secondary text-primary">
@@ -337,8 +318,8 @@ function Index() {
 ))}
     </div>
           
-   </div>
-      </Section>
+     </div>
+       </Section>
     </>
   );
 }
