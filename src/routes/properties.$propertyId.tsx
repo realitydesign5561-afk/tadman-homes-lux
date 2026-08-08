@@ -323,6 +323,7 @@ function EnquiryForm({
         </p>
       )}
 
+      
       {status === "error" && (
         <p className="text-sm text-destructive">
           Could not send your enquiry.
