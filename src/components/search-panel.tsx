@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Search, X } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { propertyTypes } from "@/data/properties";
+import { countries, getStates, getCities } from "@/data/world-locations";
 
 export type PropertySearch = {
   country?: string;
@@ -71,13 +72,8 @@ export function SearchPanel({
     onClose?.();
   }
 
-  const textFields: { key: keyof PropertySearch; label: string; placeholder: string }[] = [
-    { key: "country", label: "Country", placeholder: "Any country" },
-    { key: "state", label: "State", placeholder: "Any state" },
-    { key: "city", label: "City", placeholder: "Any city" },
-    { key: "area", label: "Area", placeholder: "Neighbourhood" },
-    { key: "keyword", label: "Keyword", placeholder: "Pool, sea view…" },
-  ];
+  const availableStates = values.country ? getStates(values.country) : [];
+  const availableCities = values.country && values.state ? getCities(values.country, values.state) : [];
 
   const selectFields: { key: keyof PropertySearch; label: string; options: string[] }[] = [
     { key: "price", label: "Price", options: priceOptions },
@@ -102,21 +98,114 @@ export function SearchPanel({
           </button>
         </div>
       )}
+
+      {/* Location row: cascading country → state → city + area + keyword */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        {textFields.map((f) => (
-          <label key={f.key} className="block">
-            <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              {f.label}
-            </span>
+        {/* Country */}
+        <label className="block">
+          <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            Country
+          </span>
+          <select
+            value={values.country ?? ""}
+            onChange={(e) => {
+              set("country")(e.target.value);
+              set("state")("");
+              set("city")("");
+            }}
+            className={selectClass}
+          >
+            <option value="">Any country</option>
+            {countries.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+        </label>
+
+        {/* State */}
+        <label className="block">
+          <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            State / Province
+          </span>
+          {availableStates.length > 0 ? (
+            <select
+              value={values.state ?? ""}
+              onChange={(e) => {
+                set("state")(e.target.value);
+                set("city")("");
+              }}
+              className={selectClass}
+            >
+              <option value="">Any state</option>
+              {availableStates.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+          ) : (
             <input
               type="text"
-              placeholder={f.placeholder}
-              value={values[f.key] ?? ""}
-              onChange={(e) => set(f.key)(e.target.value)}
+              placeholder="Any state"
+              value={values.state ?? ""}
+              onChange={(e) => { set("state")(e.target.value); set("city")(""); }}
               className={inputClass}
             />
-          </label>
-        ))}
+          )}
+        </label>
+
+        {/* City */}
+        <label className="block">
+          <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            City
+          </span>
+          {availableCities.length > 0 ? (
+            <select
+              value={values.city ?? ""}
+              onChange={(e) => set("city")(e.target.value)}
+              className={selectClass}
+            >
+              <option value="">Any city</option>
+              {availableCities.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          ) : (
+            <input
+              type="text"
+              placeholder="Any city"
+              value={values.city ?? ""}
+              onChange={(e) => set("city")(e.target.value)}
+              className={inputClass}
+            />
+          )}
+        </label>
+
+        {/* Area */}
+        <label className="block">
+          <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            Area
+          </span>
+          <input
+            type="text"
+            placeholder="Neighbourhood"
+            value={values.area ?? ""}
+            onChange={(e) => set("area")(e.target.value)}
+            className={inputClass}
+          />
+        </label>
+
+        {/* Keyword */}
+        <label className="block">
+          <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            Keyword
+          </span>
+          <input
+            type="text"
+            placeholder="Pool, sea view…"
+            value={values.keyword ?? ""}
+            onChange={(e) => set("keyword")(e.target.value)}
+            className={inputClass}
+          />
+        </label>
       </div>
 
       <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">

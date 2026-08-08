@@ -37,7 +37,6 @@ import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as MerchantIndexRouteImport } from './routes/merchant.index'
 import { Route as MerchantLoginRouteImport } from './routes/merchant.login'
 import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
-import { Route as PropertiesIdRouteImport } from './routes/properties/$id'
 import { Route as PropertiesPropertyIdRouteImport } from './routes/properties.$propertyId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -180,11 +179,6 @@ const PropertiesIndexRoute = PropertiesIndexRouteImport.update({
   path: '/properties/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PropertiesIdRoute = PropertiesIdRouteImport.update({
-  id: '/properties/$id',
-  path: '/properties/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const PropertiesPropertyIdRoute = PropertiesPropertyIdRouteImport.update({
   id: '/properties/$propertyId',
   path: '/properties/$propertyId',
@@ -217,7 +211,6 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/merchant/login': typeof MerchantLoginRoute
-  '/properties/$id': typeof PropertiesIdRoute
   '/properties/$propertyId': typeof PropertiesPropertyIdRoute
   '/blog/': typeof BlogIndexRoute
   '/merchant/': typeof MerchantIndexRoute
@@ -249,7 +242,6 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/merchant/login': typeof MerchantLoginRoute
-  '/properties/$id': typeof PropertiesIdRoute
   '/properties/$propertyId': typeof PropertiesPropertyIdRoute
   '/blog': typeof BlogIndexRoute
   '/merchant': typeof MerchantIndexRoute
@@ -282,7 +274,6 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/merchant/login': typeof MerchantLoginRoute
-  '/properties/$id': typeof PropertiesIdRoute
   '/properties/$propertyId': typeof PropertiesPropertyIdRoute
   '/blog/': typeof BlogIndexRoute
   '/merchant/': typeof MerchantIndexRoute
@@ -316,7 +307,6 @@ export interface FileRouteTypes {
     | '/terms'
     | '/blog/$slug'
     | '/merchant/login'
-    | '/properties/$id'
     | '/properties/$propertyId'
     | '/blog/'
     | '/merchant/'
@@ -348,7 +338,6 @@ export interface FileRouteTypes {
     | '/terms'
     | '/blog/$slug'
     | '/merchant/login'
-    | '/properties/$id'
     | '/properties/$propertyId'
     | '/blog'
     | '/merchant'
@@ -380,7 +369,6 @@ export interface FileRouteTypes {
     | '/terms'
     | '/blog/$slug'
     | '/merchant/login'
-    | '/properties/$id'
     | '/properties/$propertyId'
     | '/blog/'
     | '/merchant/'
@@ -413,7 +401,6 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   BlogSlugRoute: typeof BlogSlugRoute
   MerchantLoginRoute: typeof MerchantLoginRoute
-  PropertiesIdRoute: typeof PropertiesIdRoute
   PropertiesPropertyIdRoute: typeof PropertiesPropertyIdRoute
   BlogIndexRoute: typeof BlogIndexRoute
   MerchantIndexRoute: typeof MerchantIndexRoute
@@ -618,13 +605,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PropertiesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/properties/$id': {
-      id: '/properties/$id'
-      path: '/properties/$id'
-      fullPath: '/properties/$id'
-      preLoaderRoute: typeof PropertiesIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/properties/$propertyId': {
       id: '/properties/$propertyId'
       path: '/properties/$propertyId'
@@ -661,7 +641,6 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   BlogSlugRoute: BlogSlugRoute,
   MerchantLoginRoute: MerchantLoginRoute,
-  PropertiesIdRoute: PropertiesIdRoute,
   PropertiesPropertyIdRoute: PropertiesPropertyIdRoute,
   BlogIndexRoute: BlogIndexRoute,
   MerchantIndexRoute: MerchantIndexRoute,
