@@ -162,18 +162,29 @@ export async function fetchProperties(options: FetchOptions = {}): Promise<Prope
 }
 
 export async function fetchPropertyById(id: string): Promise<Property | null> {
-  const { data, error } = await supabase
+  // Try by slug first, then by id
+  const { data: bySlug, error: slugError } = await supabase
     .from("properties")
     .select(
       "*, agents(full_name), merchants(business_name, whatsapp_number, whatsapp, phone)"
     )
-    .or(`id.eq.${id},slug.eq.${id}`)
+    .eq("slug", id)
     .eq("status", "approved")
     .maybeSingle();
+  if (slugError) throw slugError;
+  if (bySlug) return mapProperty(bySlug as PropertyRow);
 
-  if (error) throw error;
-  if (!data) return null;
-  return mapProperty(data as PropertyRow);
+  const { data: byId, error: idError } = await supabase
+    .from("properties")
+    .select(
+      "*, agents(full_name), merchants(business_name, whatsapp_number, whatsapp, phone)"
+    )
+    .eq("id", id)
+    .eq("status", "approved")
+    .maybeSingle();
+  if (idError) throw idError;
+  if (!byId) return null;
+  return mapProperty(byId as PropertyRow);
 }
 
 export async function fetchMyProperties(merchantId: string): Promise<PropertyRow[]> {
