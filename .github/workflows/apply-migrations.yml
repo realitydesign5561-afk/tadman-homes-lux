@@ -1,26 +1,25 @@
-  - name: Ensure DB URL is present
-    run: |
-      if [ -z "$SUPABASE_DB_URL" ]; then
-        echo "SUPABASE_DB_URL secret is not set. Please add it to your repo secrets and re-run this workflow."; exit 1;
-      fi
+name: Apply Supabase Migrations
 
-  - name: Install psql client
-    run: |
-      sudo apt-get update -y
-      sudo apt-get install -y postgresql-client
+on:
+  push:
+    branches:
+      - feature/merchant-subscriptions-and-fixes
+  workflow_dispatch: {}
 
-  - name: Apply migrations in order
-    run: |
-      set -euo pipefail
-      echo "Applying migrations from supabase/migrations..."
-      for f in $(ls supabase/migrations/*.sql | sort); do
-        echo "--- Running $f ---"
-        psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "$f"
-      done
+jobs:
+  apply-migrations:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  - name: Verify helpers
-    run: |
-      psql "$SUPABASE_DB_URL" -c "SELECT proname FROM pg_proc WHERE proname IN ('current_merchant_id','is_active_merchant','subscriptions_expiring_soon','mark_expired_subscriptions');"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-  - name: Success message
-    run: echo "Migrations applied successfully"
+      - name: Run Migrations
+        run: |
+          npx supabase db push --db-url "$SUPABASE_DB_URL"
