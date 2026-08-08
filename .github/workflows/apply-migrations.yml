@@ -1,0 +1,26 @@
+  - name: Ensure DB URL is present
+    run: |
+      if [ -z "$SUPABASE_DB_URL" ]; then
+        echo "SUPABASE_DB_URL secret is not set. Please add it to your repo secrets and re-run this workflow."; exit 1;
+      fi
+
+  - name: Install psql client
+    run: |
+      sudo apt-get update -y
+      sudo apt-get install -y postgresql-client
+
+  - name: Apply migrations in order
+    run: |
+      set -euo pipefail
+      echo "Applying migrations from supabase/migrations..."
+      for f in $(ls supabase/migrations/*.sql | sort); do
+        echo "--- Running $f ---"
+        psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "$f"
+      done
+
+  - name: Verify helpers
+    run: |
+      psql "$SUPABASE_DB_URL" -c "SELECT proname FROM pg_proc WHERE proname IN ('current_merchant_id','is_active_merchant','subscriptions_expiring_soon','mark_expired_subscriptions');"
+
+  - name: Success message
+    run: echo "Migrations applied successfully"
