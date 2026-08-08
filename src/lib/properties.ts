@@ -1,7 +1,4 @@
----
-*** Begin Patch
-*** Update File: src/lib/properties.ts
-@@
+
 -    agent: agentName,
 -  merchants: row.merchants
   ? {
