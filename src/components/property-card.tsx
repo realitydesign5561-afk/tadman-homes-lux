@@ -80,10 +80,7 @@ export function PropertyCard({ property }: { property: Property }) {
           </span>
         </div>
 
-        <Link
-  to="/properties/$id"
-  params={{ id: property.id }}
->
+       <Link to="/properties/$propertyId" params={{ propertyId: property.id }}>
   <div className="surface-card rounded-2xl">
     {/* existing property card content */}
   </div>
