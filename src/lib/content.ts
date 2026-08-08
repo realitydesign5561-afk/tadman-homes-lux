@@ -101,14 +101,63 @@ export type SubscriptionPlan = {
   features: string[];
 };
 
+const STATIC_PLANS: SubscriptionPlan[] = [
+  {
+    id: "static-starter",
+    name: "Starter",
+    slug: "starter",
+    price: 9900,
+    currency: "NGN",
+    interval: "month",
+    listing_limit: 5,
+    features: ["Up to 5 property listings", "Basic analytics", "Email support"],
+  },
+  {
+    id: "static-professional",
+    name: "Professional",
+    slug: "professional",
+    price: 24900,
+    currency: "NGN",
+    interval: "month",
+    listing_limit: 20,
+    features: [
+      "Up to 20 property listings",
+      "Featured placements",
+      "Priority support",
+      "Enquiry management",
+    ],
+  },
+  {
+    id: "static-enterprise",
+    name: "Enterprise",
+    slug: "enterprise",
+    price: 59900,
+    currency: "NGN",
+    interval: "month",
+    listing_limit: null,
+    features: [
+      "Unlimited listings",
+      "Top featured placement",
+      "Dedicated account manager",
+      "Advanced analytics",
+      "API access",
+    ],
+  },
+];
+
 export async function fetchPlans(): Promise<SubscriptionPlan[]> {
-  const { data, error } = await supabase
-    .from("subscription_plans")
-    .select("id, name, slug, price, currency, interval, listing_limit, features")
-    .eq("is_active", true)
-    .order("sort_order", { ascending: true });
-  if (error) throw error;
-  return (data ?? []) as SubscriptionPlan[];
+  try {
+    const { data, error } = await supabase
+      .from("subscription_plans")
+      .select("id, name, slug, price, currency, interval, listing_limit, features")
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true });
+    if (error) throw error;
+    const rows = (data ?? []) as SubscriptionPlan[];
+    return rows.length > 0 ? rows : STATIC_PLANS;
+  } catch {
+    return STATIC_PLANS;
+  }
 }
 
 export type FaqRow = { id: string; question: string; answer: string; category: string | null };
