@@ -480,7 +480,7 @@ END $$;
 -- Subscriptions: owner read own, admin all, owner insert own
 
 -- Properties: public read approved, owner manage own, admin all
-DROP POLICY IF EXISTSY "properties_update_own" ON public.properties FOR UPDATE TO authenticated USING (merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()) OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin')) WITH CHECK (merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()) OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
+DROP POLICY IF EXISTS "properties_update_own" ON public.properties FOR UPDATE TO authenticated USING (merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()) OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin')) WITH CHECK (merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()) OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
 
 -- Agents: public read active, admin manage
 CREATE POLICY "agents_delete_admin" ON public.agents FOR DELETE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
