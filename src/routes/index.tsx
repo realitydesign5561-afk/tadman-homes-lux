@@ -7,7 +7,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { PropertyGrid } from "@/components/property-grid";
 import { fetchLocations, fetchPosts, fetchTestimonials, subscribeNewsletter } from "@/lib/content";
-const heroVilla = "/src/assets/hero-villa.jpg";
+// Stock hero image (Pexels) — real photo
+const heroVilla = "https://images.pexels.com/photos/28054849/pexels-photo-28054849.jpeg?auto=compress&cs=tinysrgb&w=1400&h=1000";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -91,7 +92,7 @@ function Index() {
                 Buy, Sell & Rent Properties Across the World With{" "}
                 <span className="text-gradient-brand">Confidence</span>
               </h1>
-              <p className="mt-5 max-w-md text-sm text-muted-foreground sm:text-base">Discover verified houses, apartments, land and commercial properties from trusted property owners, agencies and professional merchants.</p>
+              <p className="mt-5 max-w-md text-sm text-muted-foreground sm:text-base">Discover verified houses, apartments, land and commercial properties from trusted property owners, agencies and verified merchants.</p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <button
                   type="button"
@@ -318,7 +319,7 @@ function Index() {
 ))}
     </div>
           
-     </div>
+         </div>
        </Section>
     </>
   );
