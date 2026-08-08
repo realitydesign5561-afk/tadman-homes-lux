@@ -67,9 +67,7 @@ export const Route = createFileRoute("/properties/$propertyId")({
 
   errorComponent: ({ error }) => (
     <Section title="Something went wrong">
-      <p className="text-sm text-muted-foreground">
-        {error.message}
-      </p>
+      <p className="text-sm text-muted-foreground">{error.message}</p>
     </Section>
   ),
 
@@ -89,6 +87,7 @@ export const Route = createFileRoute("/properties/$propertyId")({
       </div>
     </Section>
   ),
+
 });
 
 function PropertyDetails() {
@@ -216,8 +215,7 @@ function PropertyDetails() {
 
             {property.merchants?.whatsapp_number && (
               <a
-                href={`https://wa.me/${property.merchants.whatsapp_number}?text=${encodeURIComponent(waMessage)
-                )}`}
+                href={`https://wa.me/${property.merchants.whatsapp_number}?text=${encodeURIComponent(waMessage)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-3 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-border text-sm font-semibold text-foreground"
@@ -322,7 +320,6 @@ function EnquiryForm({
         </p>
       )}
 
-      
       {status === "error" && (
         <p className="text-sm text-destructive">
           Could not send your enquiry.
@@ -339,3 +336,4 @@ function EnquiryForm({
     </form>
   );
 }
+
