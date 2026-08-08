@@ -9,13 +9,30 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- ============================================================================
 -- ENUMS
 -- ============================================================================
-CREATE TYPE app_role AS ENUM ('admin', 'merchant', 'agent', 'customer');
-CREATE TYPE property_status AS ENUM ('draft', 'pending', 'approved', 'rejected', 'sold', 'rented', 'archived');
-CREATE TYPE listing_type AS ENUM ('buy', 'sell', 'rent', 'shortlet');
-CREATE TYPE subscription_status AS ENUM ('active', 'expired', 'cancelled', 'pending', 'suspended');
-CREATE TYPE merchant_status AS ENUM ('pending', 'approved', 'suspended', 'rejected');
-CREATE TYPE enquiry_status AS ENUM ('new', 'read', 'resolved', 'archived');
-CREATE TYPE management_status AS ENUM ('new', 'in_progress', 'completed', 'cancelled');
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'app_role') THEN
+        CREATE TYPE app_role AS ENUM ('admin', 'merchant', 'agent', 'customer');
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'property_status') THEN
+        CREATE TYPE property_status AS ENUM ('draft', 'pending', 'approved', 'rejected', 'sold', 'rented', 'archived');
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'listing_type') THEN
+        CREATE TYPE listing_type AS ENUM ('buy', 'sell', 'rent', 'shortlet');
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'subscription_status') THEN
+        CREATE TYPE subscription_status AS ENUM ('active', 'expired', 'cancelled', 'pending', 'suspended');
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'merchant_status') THEN
+        CREATE TYPE merchant_status AS ENUM ('pending', 'approved', 'suspended', 'rejected');
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'enquiry_status') THEN
+        CREATE TYPE enquiry_status AS ENUM ('new', 'read', 'resolved', 'archived');
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'management_status') THEN
+        CREATE TYPE management_status AS ENUM ('new', 'in_progress', 'completed', 'cancelled');
+    END IF;
+END $$;
 
 -- ============================================================================
 -- PROFILES (extends auth.users)
