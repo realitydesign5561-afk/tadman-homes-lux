@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 -- ============================================================================
 -- USER ROLES
 -- ============================================================================
-CREATE TABLE public.user_roles (
+CREATE TABLE IF NOT EXISTS public.user_roles (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   role app_role NOT NULL DEFAULT 'customer',
@@ -62,7 +62,7 @@ CREATE TABLE public.user_roles (
 -- ============================================================================
 -- MERCHANTS
 -- ============================================================================
-CREATE TABLE public.merchants (
+CREATE TABLE IF NOT EXISTS public.merchants (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id uuid REFERENCES auth.users(id) ON DELETE SET NULL,
   business_name text NOT NULL,
@@ -85,7 +85,7 @@ CREATE TABLE public.merchants (
 -- ============================================================================
 -- SUBSCRIPTION PLANS
 -- ============================================================================
-CREATE TABLE public.subscription_plans (
+CREATE TABLE IF NOT EXISTS public.subscription_plans (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   name text NOT NULL,
   slug text UNIQUE NOT NULL,
@@ -104,7 +104,7 @@ CREATE TABLE public.subscription_plans (
 -- ============================================================================
 -- SUBSCRIPTIONS
 -- ============================================================================
-CREATE TABLE public.subscriptions (
+CREATE TABLE IF NOT EXISTS public.subscriptions (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   merchant_id uuid NOT NULL REFERENCES public.merchants(id) ON DELETE CASCADE,
   plan_id uuid REFERENCES public.subscription_plans(id) ON DELETE SET NULL,
@@ -122,7 +122,7 @@ CREATE TABLE public.subscriptions (
 -- ============================================================================
 -- PROPERTIES
 -- ============================================================================
-CREATE TABLE public.properties (
+CREATE TABLE IF NOT EXISTS public.properties (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   slug text UNIQUE,
   title text NOT NULL,
@@ -158,7 +158,7 @@ CREATE TABLE public.properties (
 -- ============================================================================
 -- AGENTS
 -- ============================================================================
-CREATE TABLE public.agents (
+CREATE TABLE IF NOT EXISTS public.agents (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   full_name text NOT NULL,
   title text,
@@ -176,7 +176,7 @@ CREATE TABLE public.agents (
 -- ============================================================================
 -- CONTACT REQUESTS / ENQUIRIES
 -- ============================================================================
-CREATE TABLE public.contact_requests (
+CREATE TABLE IF NOT EXISTS public.contact_requests (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   name text NOT NULL,
   email text,
@@ -196,7 +196,7 @@ CREATE TABLE public.contact_requests (
 -- ============================================================================
 -- PROPERTY MANAGEMENT REQUESTS
 -- ============================================================================
-CREATE TABLE public.property_management_requests (
+CREATE TABLE IF NOT EXISTS public.property_management_requests (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   full_name text NOT NULL,
   email text,
@@ -214,7 +214,7 @@ CREATE TABLE public.property_management_requests (
 -- ============================================================================
 -- FAVORITES
 -- ============================================================================
-CREATE TABLE public.favorites (
+CREATE TABLE IF NOT EXISTS public.favorites (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   property_id uuid NOT NULL REFERENCES public.properties(id) ON DELETE CASCADE,
@@ -225,7 +225,7 @@ CREATE TABLE public.favorites (
 -- ============================================================================
 -- NEWSLETTER SUBSCRIBERS
 -- ============================================================================
-CREATE TABLE public.newsletter_subscribers (
+CREATE TABLE IF NOT EXISTS public.newsletter_subscribers (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   email text UNIQUE NOT NULL,
   source text DEFAULT 'homepage',
@@ -236,7 +236,7 @@ CREATE TABLE public.newsletter_subscribers (
 -- ============================================================================
 -- BLOG POSTS
 -- ============================================================================
-CREATE TABLE public.blog_posts (
+CREATE TABLE IF NOT EXISTS public.blog_posts (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   title text NOT NULL,
   slug text UNIQUE NOT NULL,
@@ -253,7 +253,7 @@ CREATE TABLE public.blog_posts (
 -- ============================================================================
 -- TESTIMONIALS
 -- ============================================================================
-CREATE TABLE public.testimonials (
+CREATE TABLE IF NOT EXISTS public.testimonials (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   author_name text NOT NULL,
   author_role text,
@@ -268,7 +268,7 @@ CREATE TABLE public.testimonials (
 -- ============================================================================
 -- FAQS
 -- ============================================================================
-CREATE TABLE public.faqs (
+CREATE TABLE IF NOT EXISTS public.faqs (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   question text NOT NULL,
   answer text NOT NULL,
@@ -282,7 +282,7 @@ CREATE TABLE public.faqs (
 -- ============================================================================
 -- ACTIVITY LOG
 -- ============================================================================
-CREATE TABLE public.activity_log (
+CREATE TABLE IF NOT EXISTS public.activity_log (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   actor_id uuid,
   actor_name text,
@@ -295,7 +295,7 @@ CREATE TABLE public.activity_log (
 -- ============================================================================
 -- NOTIFICATIONS
 -- ============================================================================
-CREATE TABLE public.notifications (
+CREATE TABLE IF NOT EXISTS public.notifications (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   title text NOT NULL,
   body text,
@@ -307,7 +307,7 @@ CREATE TABLE public.notifications (
 -- ============================================================================
 -- NAVIGATION ITEMS
 -- ============================================================================
-CREATE TABLE public.navigation_items (
+CREATE TABLE IF NOT EXISTS public.navigation_items (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   label text NOT NULL,
   href text NOT NULL,
@@ -320,7 +320,7 @@ CREATE TABLE public.navigation_items (
 -- ============================================================================
 -- SITE SETTINGS (key-value JSON)
 -- ============================================================================
-CREATE TABLE public.site_settings (
+CREATE TABLE IF NOT EXISTS public.site_settings (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   setting_key text UNIQUE NOT NULL,
   setting_value jsonb,
