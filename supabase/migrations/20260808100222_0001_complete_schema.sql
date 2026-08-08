@@ -37,7 +37,7 @@ END $$;
 -- ============================================================================
 -- PROFILES (extends auth.users)
 -- ============================================================================
-CREATE TABLE public.profiles (
+CREATE TABLE IF NOT EXISTS public.profiles (
   id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email text,
   full_name text DEFAULT '',
