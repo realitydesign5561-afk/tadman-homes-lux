@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader, Section } from "@/components/page-shell";
-import heroVilla from "@/assets/hero-villa.jpg";
+
+const aboutImage = "https://images.pexels.com/photos/279746/pexels-photo-279746.jpeg?auto=compress&cs=tinysrgb&w=1400&h=1000";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -9,7 +10,7 @@ export const Route = createFileRoute("/about")({
       {
         name: "description",
         content:
-        "Tadman Homes & Properties is a trusted global real estate marketplace helping buyers, sellers, landlords and investors discover verified properties worldwide.",
+          "Tadman Homes & Properties is a trusted global real estate marketplace helping buyers, sellers, landlords and investors discover verified properties worldwide.",
       },
       { property: "og:title", content: "About Tadman Homes & Properties" },
       { property: "og:description", content: "Trusted global marketplace for buying, selling and renting verified properties." },
@@ -29,7 +30,7 @@ function AboutPage() {
       <Section>
         <div className="grid items-center gap-8 lg:grid-cols-2">
           <img
-            src={heroVilla}
+            src={aboutImage}
             alt="A Tadman listed villa"
             loading="lazy"
             width={1400}
@@ -38,8 +39,8 @@ function AboutPage() {
           />
           <div>
             <h2 className="text-2xl font-bold text-foreground sm:text-3xl">Our story</h2>
-             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">Tadman Homes & Properties was created to simplify the way people buy, sell and rent properties. Our mission is to build a trusted marketplace where property owners, developers, agencies and independent merchants can connect with genuine buyers and tenants through a secure digital platform.</p>
-             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">Beyond property listings, we are committed to transparency, innovation and exceptional customer service. Our platform is designed to provide verified listings, powerful search tools, secure communication and professional support that help clients make informed real estate decisions with confidence.</p>
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">Tadman Homes & Properties was created to simplify the way people buy, sell and rent properties. Our mission is to build a trusted marketplace where property owners, developers, agencies and independent merchants can connect with genuine buyers and tenants through a secure digital platform.</p>
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">Beyond property listings, we are committed to transparency, innovation and exceptional customer service. Our platform is designed to provide verified listings, powerful search tools, secure communication and professional support that help clients make informed real estate decisions with confidence.</p>
             <div className="mt-8 grid grid-cols-3 gap-4">
               {[
                 ["Verified", "Listings"],
@@ -81,14 +82,14 @@ function AboutPage() {
       <Section title="Our Mission">
         <div className="surface-card rounded-3xl p-8">
           <p className="text-sm leading-8 text-muted-foreground">
-          Our mission is to provide a secure, transparent and technology-driven real estate marketplace where buyers, sellers, landlords, developers and agencies can connect with confidence. We are committed to simplifying property transactions while delivering exceptional customer service and trusted property solutions across Nigeria and beyond.</p>
+          Our mission is to provide a secure, transparent and technology-driven real estate marketplace where buyers, sellers, landlords, developers and agencies can connect with confidence. We are committed to continuous improvement, quality listings and professional support.
+         </p>
      </div>
     </Section>
       <Section title="Our Vision">
         <div className="surface-card rounded-3xl p-8">
          <p className="text-sm leading-8 text-muted-foreground">
-         To become one of the world's leading digital real estate platforms by making property buying,
-         selling and renting easier, safer and more accessible for everyone.</p>
+         To become one of the world's leading digital real estate platforms by making property buying, selling and renting easier, safer and more accessible for everyone.</p>
      </div>
     </Section>
     </>
