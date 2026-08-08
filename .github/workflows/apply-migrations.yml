@@ -1,0 +1,25 @@
+name: Apply Supabase Migrations
+
+on:
+  push:
+    branches:
+      - feature/merchant-subscriptions-and-fixes
+  workflow_dispatch: {}
+
+jobs:
+  apply-migrations:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Migrations
+        run: |
+          npx supabase db push --db-url "$SUPABASE_DB_URL"
