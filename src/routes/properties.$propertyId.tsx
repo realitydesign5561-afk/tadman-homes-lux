@@ -216,8 +216,8 @@ function PropertyDetails() {
 
             {property.merchants?.whatsapp_number && (
               <a
-                href={`https://wa.me/${property.merchants.whatsapp_number}?text=${encodeURIComponent(
-                  waMessage,
+                href={`https://wa.me/${property.merchants.whatsapp_number}?text=${encodeURIComponent(waMessage)
+,
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
