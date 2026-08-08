@@ -7,8 +7,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { PropertyGrid } from "@/components/property-grid";
 import { fetchLocations, fetchPosts, fetchTestimonials, subscribeNewsletter } from "@/lib/content";
-// Stock hero image (Pexels) — real photo
-const heroVilla = "https://images.pexels.com/photos/28054849/pexels-photo-28054849.jpeg?auto=compress&cs=tinysrgb&w=1400&h=1000";
+// Hero image — luxury villa exterior
+const heroVilla = "https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=1400&h=1000";
 
 export const Route = createFileRoute("/")({
   head: () => ({
