@@ -7,32 +7,54 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- ============================================================================
--- ENUMS
+-- ENUMS (Aligned with Live Database)
 -- ============================================================================
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'app_role') THEN
-        CREATE TYPE app_role AS ENUM ('admin', 'merchant', 'agent', 'customer');
+        CREATE TYPE app_role AS ENUM ('admin', 'merchant', 'customer', 'guest');
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'property_status') THEN
-        CREATE TYPE property_status AS ENUM ('draft', 'pending', 'approved', 'rejected', 'sold', 'rented', 'archived');
+        CREATE TYPE property_status AS ENUM ('pending', 'approved', 'rejected', 'draft', 'sold', 'rented', 'archived');
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'listing_type') THEN
         CREATE TYPE listing_type AS ENUM ('buy', 'sell', 'rent', 'shortlet');
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'subscription_status') THEN
-        CREATE TYPE subscription_status AS ENUM ('active', 'expired', 'cancelled', 'pending', 'suspended');
+        CREATE TYPE subscription_status AS ENUM ('pending_approval', 'active', 'expired', 'suspended');
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'merchant_status') THEN
-        CREATE TYPE merchant_status AS ENUM ('pending', 'approved', 'suspended', 'rejected');
+        CREATE TYPE merchant_status AS ENUM ('pending_approval', 'active', 'suspended', 'rejected');
     END IF;
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'enquiry_status') THEN
-        CREATE TYPE enquiry_status AS ENUM ('new', 'read', 'resolved', 'archived');
-    END IF;
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'management_status') THEN
-        CREATE TYPE management_status AS ENUM ('new', 'in_progress', 'completed', 'cancelled');
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_status') THEN
+        CREATE TYPE payment_status AS ENUM ('pending', 'success', 'failed', 'refunded');
     END IF;
 END $$;
+
+-- Add any missing ENUM values to existing types safely
+ALTER TYPE public.app_role ADD VALUE IF NOT EXISTS 'guest';
+ALTER TYPE public.merchant_status ADD VALUE IF NOT EXISTS 'pending_approval';
+ALTER TYPE public.merchant_status ADD VALUE IF NOT EXISTS 'active';
+ALTER TYPE public.subscription_status ADD VALUE IF NOT EXISTS 'pending_approval';
+
+-- ============================================================================
+-- HELPER FUNCTIONS
+-- ============================================================================
+CREATE OR REPLACE FUNCTION public.is_admin(user_id_param uuid DEFAULT auth.uid())
+RETURNS boolean
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO public
+AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 
+    FROM public.user_roles 
+    WHERE user_id = user_id_param 
+      AND role = 'admin'::app_role
+  );
+END;
+$$;
 
 -- ============================================================================
 -- TABLES
@@ -43,7 +65,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   full_name text DEFAULT '',
   phone text,
   avatar_url text,
-  role app_role DEFAULT 'customer',
+  role app_role DEFAULT 'customer'::app_role,
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );
@@ -51,7 +73,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 CREATE TABLE IF NOT EXISTS public.user_roles (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  role app_role NOT NULL DEFAULT 'customer',
+  role app_role NOT NULL DEFAULT 'customer'::app_role,
   created_at timestamptz DEFAULT now(),
   UNIQUE(user_id, role)
 );
@@ -70,7 +92,7 @@ CREATE TABLE IF NOT EXISTS public.merchants (
   website text,
   logo_url text,
   description text,
-  status merchant_status DEFAULT 'pending',
+  status merchant_status DEFAULT 'pending_approval'::merchant_status,
   verified boolean DEFAULT false,
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
@@ -96,7 +118,7 @@ CREATE TABLE IF NOT EXISTS public.subscriptions (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   merchant_id uuid NOT NULL REFERENCES public.merchants(id) ON DELETE CASCADE,
   plan_id uuid REFERENCES public.subscription_plans(id) ON DELETE SET NULL,
-  status subscription_status DEFAULT 'pending',
+  status subscription_status DEFAULT 'pending_approval'::subscription_status,
   start_date date,
   expiry_date date NOT NULL,
   payment_reference text,
@@ -120,7 +142,7 @@ CREATE TABLE IF NOT EXISTS public.properties (
   address text,
   area text,
   property_type text DEFAULT 'Apartment',
-  listing_type listing_type DEFAULT 'buy',
+  listing_type listing_type DEFAULT 'buy'::listing_type,
   bedrooms integer,
   bathrooms integer,
   toilets integer,
@@ -129,12 +151,13 @@ CREATE TABLE IF NOT EXISTS public.properties (
   amenities text[] DEFAULT '{}',
   featured_image text,
   images text[] DEFAULT '{}',
-  status property_status DEFAULT 'draft',
+  status property_status DEFAULT 'draft'::property_status,
   is_featured boolean DEFAULT false,
   views integer DEFAULT 0,
   views_count integer DEFAULT 0,
   merchant_id uuid REFERENCES public.merchants(id) ON DELETE SET NULL,
   agent_id uuid,
+  owner_id uuid REFERENCES auth.users(id) ON DELETE SET NULL,
   published_at timestamptz,
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
@@ -165,7 +188,6 @@ CREATE TABLE IF NOT EXISTS public.contact_requests (
   property_id uuid REFERENCES public.properties(id) ON DELETE SET NULL,
   merchant_id uuid REFERENCES public.merchants(id) ON DELETE SET NULL,
   source text,
-  status enquiry_status DEFAULT 'new',
   is_read boolean DEFAULT false,
   reply text,
   created_at timestamptz DEFAULT now(),
@@ -181,7 +203,6 @@ CREATE TABLE IF NOT EXISTS public.property_management_requests (
   property_type text,
   service text,
   message text,
-  status management_status DEFAULT 'new',
   is_read boolean DEFAULT false,
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
@@ -252,20 +273,11 @@ CREATE TABLE IF NOT EXISTS public.activity_log (
 
 CREATE TABLE IF NOT EXISTS public.notifications (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
   title text NOT NULL,
   body text,
   audience text,
   is_read boolean DEFAULT false,
-  created_at timestamptz DEFAULT now()
-);
-
-CREATE TABLE IF NOT EXISTS public.navigation_items (
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-  label text NOT NULL,
-  href text NOT NULL,
-  parent_id uuid REFERENCES public.navigation_items(id) ON DELETE CASCADE,
-  sort_order integer DEFAULT 0,
-  is_active boolean DEFAULT true,
   created_at timestamptz DEFAULT now()
 );
 
@@ -284,16 +296,12 @@ CREATE INDEX IF NOT EXISTS idx_properties_featured ON public.properties(is_featu
 CREATE INDEX IF NOT EXISTS idx_properties_type ON public.properties(property_type);
 CREATE INDEX IF NOT EXISTS idx_properties_listing_type ON public.properties(listing_type);
 CREATE INDEX IF NOT EXISTS idx_properties_merchant ON public.properties(merchant_id);
-CREATE INDEX IF NOT EXISTS idx_properties_country ON public.properties(country);
-CREATE INDEX IF NOT EXISTS idx_properties_city ON public.properties(city);
+CREATE INDEX IF NOT EXISTS idx_properties_owner ON public.properties(owner_id);
 CREATE INDEX IF NOT EXISTS idx_merchants_user_id ON public.merchants(user_id);
 CREATE INDEX IF NOT EXISTS idx_merchants_status ON public.merchants(status);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_merchant ON public.subscriptions(merchant_id);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON public.subscriptions(status);
-CREATE INDEX IF NOT EXISTS idx_subscriptions_expiry ON public.subscriptions(expiry_date);
 CREATE INDEX IF NOT EXISTS idx_favorites_user ON public.favorites(user_id);
-CREATE INDEX IF NOT EXISTS idx_contact_requests_status ON public.contact_requests(status);
-CREATE INDEX IF NOT EXISTS idx_management_requests_status ON public.property_management_requests(status);
 CREATE INDEX IF NOT EXISTS idx_user_roles_user ON public.user_roles(user_id);
 
 -- ============================================================================
@@ -311,14 +319,14 @@ BEGIN
     NEW.id,
     NEW.email,
     COALESCE(NEW.raw_user_meta_data->>'full_name',''),
-    COALESCE((NEW.raw_user_meta_data->>'role')::app_role,'customer'::app_role)
+    COALESCE((NEW.raw_user_meta_data->>'role')::app_role, 'customer'::app_role)
   )
   ON CONFLICT (id) DO NOTHING;
 
   INSERT INTO public.user_roles (user_id, role)
   VALUES (
     NEW.id,
-    COALESCE((NEW.raw_user_meta_data->>'role')::app_role,'customer'::app_role)
+    COALESCE((NEW.raw_user_meta_data->>'role')::app_role, 'customer'::app_role)
   )
   ON CONFLICT DO NOTHING;
 
@@ -327,7 +335,7 @@ BEGIN
     VALUES (
       NEW.id,
       COALESCE(NEW.raw_user_meta_data->>'business_name', NEW.raw_user_meta_data->>'full_name', ''),
-      'pending'
+      'pending_approval'::merchant_status
     )
     ON CONFLICT DO NOTHING;
   END IF;
@@ -340,41 +348,6 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
-
-CREATE OR REPLACE FUNCTION public.expire_subscriptions()
-RETURNS void
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path TO public
-AS $$
-BEGIN
-  UPDATE public.subscriptions
-  SET status = 'expired', updated_at = now()
-  WHERE status = 'active' AND expiry_date < CURRENT_DATE;
-END;
-$$;
-
-CREATE OR REPLACE FUNCTION public.get_merchant_subscription_status(p_merchant_id uuid)
-RETURNS TABLE(has_active boolean, expiry_date date, plan_name text, days_remaining integer)
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path TO public
-AS $$
-BEGIN
-  RETURN QUERY
-  SELECT
-    CASE WHEN s.expiry_date >= CURRENT_DATE AND s.status = 'active' THEN true ELSE false END,
-    s.expiry_date,
-    sp.name,
-    (s.expiry_date - CURRENT_DATE)::integer
-  FROM public.subscriptions s
-  LEFT JOIN public.subscription_plans sp ON sp.id = s.plan_id
-  WHERE s.merchant_id = p_merchant_id
-    AND s.status = 'active'
-  ORDER BY s.expiry_date DESC
-  LIMIT 1;
-END;
-$$;
 
 -- ============================================================================
 -- ROW LEVEL SECURITY (ENABLE)
@@ -395,7 +368,6 @@ ALTER TABLE public.testimonials ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.faqs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.activity_log ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.navigation_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
 
 -- Dynamic Cleanup of Existing Public Policies
@@ -427,103 +399,79 @@ BEGIN
 END $$;
 
 -- ============================================================================
--- ROW LEVEL SECURITY (POLICIES)
+-- ROW LEVEL SECURITY POLICIES (MATCHING LIVE SCHEMA)
 -- ============================================================================
 
 -- Profiles
-CREATE POLICY "profiles_select_own" ON public.profiles FOR SELECT TO authenticated USING (auth.uid() = id OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "profiles_select_own_or_admin" ON public.profiles FOR SELECT TO authenticated USING ((auth.uid() = id) OR is_admin(auth.uid()));
 CREATE POLICY "profiles_insert_own" ON public.profiles FOR INSERT TO authenticated WITH CHECK (auth.uid() = id);
-CREATE POLICY "profiles_update_own" ON public.profiles FOR UPDATE TO authenticated USING (auth.uid() = id);
+CREATE POLICY "profiles_update_own" ON public.profiles FOR UPDATE TO public USING (auth.uid() = id);
 
 -- User Roles
-CREATE POLICY "roles_select_own" ON public.user_roles FOR SELECT TO authenticated USING (user_id = auth.uid() OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "user_roles_select_own" ON public.user_roles FOR SELECT TO authenticated USING ((user_id = auth.uid()) OR is_admin());
 
 -- Merchants
-CREATE POLICY "merchants_select_public" ON public.merchants FOR SELECT TO anon, authenticated USING (status = 'approved' OR user_id = auth.uid() OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "merchants_insert_own" ON public.merchants FOR INSERT TO authenticated WITH CHECK (user_id = auth.uid());
-CREATE POLICY "merchants_update_own" ON public.merchants FOR UPDATE TO authenticated USING (user_id = auth.uid() OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "merchants_delete_admin" ON public.merchants FOR DELETE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "merchants_select_public" ON public.merchants FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "merchants_manage_own" ON public.merchants FOR ALL TO authenticated USING ((user_id = auth.uid()) OR is_admin()) WITH CHECK ((user_id = auth.uid()) OR is_admin());
 
 -- Subscription Plans
-CREATE POLICY "plans_select_public" ON public.subscription_plans FOR SELECT TO anon, authenticated USING (true);
-CREATE POLICY "plans_insert_admin" ON public.subscription_plans FOR INSERT TO authenticated WITH CHECK (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "plans_update_admin" ON public.subscription_plans FOR UPDATE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "plans_select_public" ON public.subscription_plans FOR SELECT TO anon, authenticated USING (is_active OR is_admin());
+CREATE POLICY "plans_admin_write" ON public.subscription_plans FOR ALL TO authenticated USING (is_admin()) WITH CHECK (is_admin());
 
 -- Subscriptions
-CREATE POLICY "subscriptions_select_own" ON public.subscriptions FOR SELECT TO authenticated USING (merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()) OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "subscriptions_insert_own" ON public.subscriptions FOR INSERT TO authenticated WITH CHECK (merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()) OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "subscriptions_read_own" ON public.subscriptions FOR SELECT TO public USING ((merchant_id IN (SELECT merchants.id FROM public.merchants WHERE merchants.user_id = auth.uid())) OR is_admin(auth.uid()));
+CREATE POLICY "subscriptions_admin_manage" ON public.subscriptions FOR ALL TO authenticated USING (is_admin(auth.uid())) WITH CHECK (is_admin(auth.uid()));
 
 -- Properties
-CREATE POLICY "properties_select_public" ON public.properties FOR SELECT TO anon, authenticated USING (status = 'approved' OR merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()) OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'app_role));
-CREATE POLICY "properties_insert_own" ON public.properties FOR INSERT TO authenticated WITH CHECK (merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()) OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "properties_update_own" ON public.properties FOR UPDATE TO authenticated USING (merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()) OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin')) WITH CHECK (merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()) OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "properties_delete_own" ON public.properties FOR DELETE TO authenticated USING (merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()) OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "properties_select_public" ON public.properties FOR SELECT TO anon, authenticated USING (status = ANY (ARRAY['approved'::property_status, 'sold'::property_status, 'rented'::property_status]));
+CREATE POLICY "properties_select_own" ON public.properties FOR SELECT TO authenticated USING ((owner_id = auth.uid()) OR is_admin());
+CREATE POLICY "properties_insert_own" ON public.properties FOR INSERT TO authenticated WITH CHECK ((owner_id = auth.uid()) OR is_admin());
+CREATE POLICY "properties_update_own" ON public.properties FOR UPDATE TO authenticated USING ((owner_id = auth.uid()) OR is_admin());
+CREATE POLICY "properties_delete_own" ON public.properties FOR DELETE TO authenticated USING ((owner_id = auth.uid()) OR is_admin());
 
 -- Agents
-CREATE POLICY "agents_select_public" ON public.agents FOR SELECT TO anon, authenticated USING (is_active = true OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "agents_insert_admin" ON public.agents FOR INSERT TO authenticated WITH CHECK (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "agents_update_admin" ON public.agents FOR UPDATE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "agents_delete_admin" ON public.agents FOR DELETE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "agents_select_public" ON public.agents FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "agents_admin_manage" ON public.agents FOR ALL TO authenticated USING (is_admin()) WITH CHECK (is_admin());
 
 -- Contact Requests
 CREATE POLICY "contact_insert_public" ON public.contact_requests FOR INSERT TO anon, authenticated WITH CHECK (true);
-CREATE POLICY "contact_select_admin" ON public.contact_requests FOR SELECT TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin') OR merchant_id IN (SELECT id FROM public.merchants WHERE user_id = auth.uid()));
-CREATE POLICY "contact_update_admin" ON public.contact_requests FOR UPDATE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "contact_delete_admin" ON public.contact_requests FOR DELETE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "contact_admin_manage" ON public.contact_requests FOR ALL TO authenticated USING (is_admin()) WITH CHECK (is_admin());
 
 -- Property Management Requests
 CREATE POLICY "mgmt_insert_public" ON public.property_management_requests FOR INSERT TO anon, authenticated WITH CHECK (true);
-CREATE POLICY "mgmt_select_admin" ON public.property_management_requests FOR SELECT TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "mgmt_update_admin" ON public.property_management_requests FOR UPDATE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "mgmt_delete_admin" ON public.property_management_requests FOR DELETE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "mgmt_admin_manage" ON public.property_management_requests FOR ALL TO authenticated USING (is_admin()) WITH CHECK (is_admin());
 
 -- Favorites
-CREATE POLICY "fav_select_own" ON public.favorites FOR SELECT TO authenticated USING (auth.uid() = user_id);
-CREATE POLICY "fav_insert_own" ON public.favorites FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "fav_delete_own" ON public.favorites FOR DELETE TO authenticated USING (auth.uid() = user_id);
+CREATE POLICY "favorites_select_own" ON public.favorites FOR SELECT TO authenticated USING (auth.uid() = user_id);
+CREATE POLICY "favorites_insert_own" ON public.favorites FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "favorites_delete_own" ON public.favorites FOR DELETE TO authenticated USING (auth.uid() = user_id);
 
 -- Newsletter
 CREATE POLICY "newsletter_insert_public" ON public.newsletter_subscribers FOR INSERT TO anon, authenticated WITH CHECK (true);
-CREATE POLICY "newsletter_select_admin" ON public.newsletter_subscribers FOR SELECT TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
 
 -- Blog Posts
-CREATE POLICY "blog_select_public" ON public.blog_posts FOR SELECT TO anon, authenticated USING (is_published = true OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "blog_insert_admin" ON public.blog_posts FOR INSERT TO authenticated WITH CHECK (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "blog_update_admin" ON public.blog_posts FOR UPDATE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "blog_delete_admin" ON public.blog_posts FOR DELETE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "blog_select_public" ON public.blog_posts FOR SELECT TO anon, authenticated USING (is_published OR is_admin());
+CREATE POLICY "blog_admin_write" ON public.blog_posts FOR ALL TO authenticated USING (is_admin()) WITH CHECK (is_admin());
 
 -- Testimonials
-CREATE POLICY "test_select_public" ON public.testimonials FOR SELECT TO anon, authenticated USING (is_published = true OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "test_insert_admin" ON public.testimonials FOR INSERT TO authenticated WITH CHECK (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "test_update_admin" ON public.testimonials FOR UPDATE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "test_delete_admin" ON public.testimonials FOR DELETE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "testimonials_select_public" ON public.testimonials FOR SELECT TO anon, authenticated USING (is_published OR is_admin());
+CREATE POLICY "testimonials_admin_write" ON public.testimonials FOR ALL TO authenticated USING (is_admin()) WITH CHECK (is_admin());
 
 -- FAQs
-CREATE POLICY "faq_select_public" ON public.faqs FOR SELECT TO anon, authenticated USING (is_published = true OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "faq_insert_admin" ON public.faqs FOR INSERT TO authenticated WITH CHECK (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "faq_update_admin" ON public.faqs FOR UPDATE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "faq_delete_admin" ON public.faqs FOR DELETE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "faq_select_public" ON public.faqs FOR SELECT TO anon, authenticated USING (is_published OR is_admin());
+CREATE POLICY "faq_admin_write" ON public.faqs FOR ALL TO authenticated USING (is_admin()) WITH CHECK (is_admin());
 
 -- Activity Log
-CREATE POLICY "activity_select_admin" ON public.activity_log FOR SELECT TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "activity_insert_auth" ON public.activity_log FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "activity_select_admin" ON public.activity_log FOR SELECT TO authenticated USING (is_admin());
+CREATE POLICY "activity_insert_self" ON public.activity_log FOR INSERT TO authenticated WITH CHECK (true);
 
 -- Notifications
-CREATE POLICY "notif_select_auth" ON public.notifications FOR SELECT TO authenticated USING (true);
-CREATE POLICY "notif_insert_admin" ON public.notifications FOR INSERT TO authenticated WITH CHECK (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "notif_update_admin" ON public.notifications FOR UPDATE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "notif_delete_admin" ON public.notifications FOR DELETE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-
--- Navigation
-CREATE POLICY "nav_select_public" ON public.navigation_items FOR SELECT TO anon, authenticated USING (is_active = true OR EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "nav_insert_admin" ON public.navigation_items FOR INSERT TO authenticated WITH CHECK (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "nav_update_admin" ON public.navigation_items FOR UPDATE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "nav_delete_admin" ON public.navigation_items FOR DELETE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "notifications_select_own" ON public.notifications FOR SELECT TO public USING (auth.uid() = user_id);
 
 -- Site Settings
-CREATE POLICY "settings_select_public" ON public.site_settings FOR SELECT TO anon, authenticated USING (true);
-CREATE POLICY "settings_insert_admin" ON public.site_settings FOR INSERT TO authenticated WITH CHECK (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
-CREATE POLICY "settings_update_admin" ON public.site_settings FOR UPDATE TO authenticated USING (EXISTS(SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "site_settings_select_public" ON public.site_settings FOR SELECT TO public USING (true);
+CREATE POLICY "site_settings_insert_admin" ON public.site_settings FOR INSERT TO authenticated WITH CHECK (EXISTS (SELECT 1 FROM public.user_roles WHERE user_roles.user_id = auth.uid() AND user_roles.role = 'admin'::app_role));
+CREATE POLICY "site_settings_update_admin" ON public.site_settings FOR UPDATE TO authenticated USING (EXISTS (SELECT 1 FROM public.user_roles WHERE user_roles.user_id = auth.uid() AND user_roles.role = 'admin'::app_role));
 
 -- ============================================================================
 -- STORAGE BUCKETS AND POLICIES
