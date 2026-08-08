@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader, Section } from "@/components/page-shell";
 import { SearchPanel, minFrom, priceRange, type PropertySearch } from "@/components/search-panel";
 import { PropertyGrid } from "@/components/property-grid";
+import { slugToLabel } from "@/lib/properties";
 
 export const Route = createFileRoute("/properties/")({
   validateSearch: (search: Record<string, unknown>): PropertySearch => ({
@@ -37,13 +38,15 @@ export const Route = createFileRoute("/properties/")({
 function PropertiesPage() {
   const search = Route.useSearch();
 
+  const normalizedType = search.type ? slugToLabel(search.type as string) ?? (search.type as string) : undefined;
+
   const options = {
     country: search.country,
     state: search.state,
     city: search.city,
     area: search.area,
     keyword: search.keyword,
-    propertyType: search.type,
+    propertyType: normalizedType,
     minBeds: minFrom(search.beds),
     minBaths: minFrom(search.baths),
     ...priceRange(search.price),
