@@ -465,7 +465,8 @@ BEGIN
         FROM pg_policies 
         WHERE schemaname = 'public'
     LOOP
-        EXECUTE format('    END LOOP;
+        EXECUTE format('DROP POLICY IF EXISTS %I ON public.%I',pol.policyname, pol.tablename);
+   END LOOP;
 END $$;
 
 -- Profiles: users can read/update own, admins can do all
