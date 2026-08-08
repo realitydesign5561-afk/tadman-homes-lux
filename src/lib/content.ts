@@ -115,7 +115,7 @@ export type FaqRow = { id: string; question: string; answer: string; category: s
 
 export async function fetchFaqs(category?: string): Promise<FaqRow[]> {
   let query = supabase
-    .from("faq")
+    .from("faqs")
     .select("id, question, answer, category")
     .eq("is_published", true)
     .order("sort_order", { ascending: true });

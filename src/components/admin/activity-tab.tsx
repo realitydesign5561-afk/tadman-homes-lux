@@ -21,7 +21,7 @@ export default function ActivityTab() {
     setError("");
 
     const { data, error } = await supabase
-      .from("activity_logs")
+      .from("activity_log")
       .select(
         "id,user_id,action,entity_type,entity_id,metadata,created_at",
       )

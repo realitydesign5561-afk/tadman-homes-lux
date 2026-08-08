@@ -1,21 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  ArrowUpRight,
-  BadgeCheck,
-  Search,
-  Building2,
-  Home,
-  Landmark,
-  LayoutGrid,
-  Mail,
-  MapPin,
-  Quote,
-  ShieldCheck,
-  Sparkles,
-  Star,
-  Trees,
-  Warehouse,
-} from "lucide-react";
+import { ArrowUpRight, BadgeCheck, Search, Building2, Hop as Home, Landmark, LayoutGrid, Mail, MapPin, Quote, ShieldCheck, Sparkles, Star, Trees, Warehouse } from "lucide-react";
 import { Section } from "@/components/page-shell";
 import { SearchReveal } from "@/components/search-reveal";
 import { useSettings } from "@/hooks/use-settings";
@@ -23,12 +7,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { PropertyGrid } from "@/components/property-grid";
 import { fetchLocations, fetchPosts, fetchTestimonials, subscribeNewsletter } from "@/lib/content";
-import { propertyImages } from "@/data/properties";
-import heroVilla from "@/assets/hero-villa.jpg";
-import prop1 from "@/assets/prop-1.jpg";
-import prop2 from "@/assets/prop-2.jpg";
-import prop3 from "@/assets/prop-3.jpg";
-import ctaBeach from "@/assets/cta-beach.jpg";
+const heroVilla = "https://images.pexels.com/photos/28054849/pexels-photo-28054849.jpeg?auto=compress&cs=tinysrgb&w=1400&h=1000";
+const prop1 = "https://images.pexels.com/photos/8089172/pexels-photo-8089172.jpeg?auto=compress&cs=tinysrgb&w=900&h=700";
+const prop2 = "https://images.pexels.com/photos/8146330/pexels-photo-8146330.jpeg?auto=compress&cs=tinysrgb&w=900&h=700";
+const prop3 = "https://images.pexels.com/photos/8146332/pexels-photo-8146332.jpeg?auto=compress&cs=tinysrgb&w=900&h=700";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -281,6 +263,7 @@ function Index() {
             <Link
               key={c.label}
               to="/properties"
+              search={{ type: c.label }}
               className="surface-card flex flex-col items-center gap-2 rounded-2xl p-5 text-center transition-all hover:-translate-y-1 hover:shadow-lift"
             >
               <span className="flex size-11 items-center justify-center rounded-full bg-secondary text-primary">

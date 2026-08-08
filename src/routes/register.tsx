@@ -34,6 +34,7 @@ function RegisterPage() {
   const [email,setEmail] = useState("");
   const [password,setPassword] = useState("");
   const [businessName,setBusinessName] = useState("");
+  const [selectedPlan, setSelectedPlan] = useState(plan);
 
   const [error,setError] =
     useState<string | null>(null);
@@ -83,7 +84,7 @@ business_name:businessName,
 
 role:"merchant",
 
-selected_plan:plan,
+selected_plan:selectedPlan,
 
 },
 
@@ -102,27 +103,6 @@ if(!data.user)
 throw new Error(
 "Unable to create account."
 );
-
-
-
-const {
-error:merchantError
-}=await supabase
-.from("merchants")
-.insert({
-
-user_id:data.user.id,
-
-business_name:businessName,
-
-status:"pending",
-
-});
-
-
-
-if(merchantError)
-throw merchantError;
 
 
 
@@ -266,6 +246,20 @@ setBusinessName(e.target.value)
 <p className="text-sm text-destructive">
 {error}
 </p>
+<label className="block">
+  <span className="mb-1.5 block text-xs font-semibold uppercase text-muted-foreground">Subscription plan</span>
+  <select
+    required
+    value={selectedPlan}
+    onChange={(e) => setSelectedPlan(e.target.value)}
+    className="h-11 w-full rounded-2xl border border-border bg-secondary/60 px-4 text-sm"
+  >
+    <option value="basic">Basic — ₦10,000/month</option>
+    <option value="premium">Premium — ₦25,000/month</option>
+    <option value="enterprise">Enterprise — ₦50,000/month</option>
+  </select>
+</label>
+
 
 )}
 

@@ -15,20 +15,21 @@ const nav: NavItem[] = [
     label: "Properties",
     children: [
       { to: "/properties", label: "All Properties" },
-      { to: "/buy", label: "Buy" },
-      { to: "/rent", label: "Rent" },
-      { to: "/sell", label: "Sell" },
+      { to: "/properties?type=Apartment", label: "Apartments" },
+      { to: "/properties?type=House", label: "Houses" },
+      { to: "/properties?type=Land", label: "Land" },
+      { to: "/properties?type=Commercial", label: "Commercial" },
     ],
   },
 
-  {
+{
   to: "/property-management",
   label: "Property Management",
 },
 
 {
-  to: "/legal-services",
-  label: "Legal Services",
+  to: "/legal-team",
+  label: "Legal Team",
 },
   {
     to: "/merchant",

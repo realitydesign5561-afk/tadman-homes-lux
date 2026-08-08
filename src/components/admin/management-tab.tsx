@@ -17,7 +17,7 @@ export default function ManagementTab() {
     queryKey: ["admin-management"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("management_requests")
+        .from("property_management_requests")
         .select("*")
         .order("created_at", { ascending: false });
 
@@ -36,7 +36,7 @@ export default function ManagementTab() {
       status: string;
     }) => {
       const { error } = await supabase
-        .from("management_requests")
+        .from("property_management_requests")
         .update({
           status,
           updated_at: new Date().toISOString(),
@@ -56,7 +56,7 @@ export default function ManagementTab() {
   const remove = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
-        .from("management_requests")
+        .from("property_management_requests")
         .delete()
         .eq("id", id);
 

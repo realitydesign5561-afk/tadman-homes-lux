@@ -20,7 +20,7 @@ queryKey:["admin-enquiries"],
 queryFn:async()=>{
 
 const {data,error}=await supabase
-.from("enquiries")
+.from("contact_requests")
 .select("*")
 .order("created_at",{ascending:false});
 
@@ -47,7 +47,7 @@ patch:any;
 
 
 const {error}=await supabase
-.from("enquiries")
+.from("contact_requests")
 .update(patch)
 .eq("id",id);
 
@@ -75,7 +75,7 @@ const remove = useMutation({
 mutationFn:async(id:string)=>{
 
 const {error}=await supabase
-.from("enquiries")
+.from("contact_requests")
 .delete()
 .eq("id",id);
 

@@ -13,8 +13,8 @@ function PropertyDetailsPage() {
   const { id } = useParams({ from: "/properties/$id" });
 
   const { data: property, isLoading } = useQuery({
-  queryKey: ["property", propertyId],
-  queryFn: () => fetchPropertyById(propertyId),
+  queryKey: ["property", id],
+  queryFn: () => fetchPropertyById(id),
 });
 
   if (isLoading) {

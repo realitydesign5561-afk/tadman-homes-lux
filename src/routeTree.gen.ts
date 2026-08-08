@@ -18,10 +18,15 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as FavouritesRouteImport } from './routes/favourites'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as LegalServicesRouteImport } from './routes/legal-services'
+import { Route as LegalTeamRouteImport } from './routes/legal-team'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as MerchantRouteImport } from './routes/merchant'
+import { Route as PlansRouteImport } from './routes/plans'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
+import { Route as PropertyDisclaimerRouteImport } from './routes/property-disclaimer'
+import { Route as PropertyManagementRouteImport } from './routes/property-management'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as RentRouteImport } from './routes/rent'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -29,7 +34,10 @@ import { Route as SellRouteImport } from './routes/sell'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as MerchantIndexRouteImport } from './routes/merchant.index'
+import { Route as MerchantLoginRouteImport } from './routes/merchant.login'
 import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
+import { Route as PropertiesIdRouteImport } from './routes/properties/$id'
 import { Route as PropertiesPropertyIdRouteImport } from './routes/properties.$propertyId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -77,14 +85,24 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LegalServicesRoute = LegalServicesRouteImport.update({
+  id: '/legal-services',
+  path: '/legal-services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalTeamRoute = LegalTeamRouteImport.update({
+  id: '/legal-team',
+  path: '/legal-team',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MerchantRoute = MerchantRouteImport.update({
-  id: '/merchant',
-  path: '/merchant',
+const PlansRoute = PlansRouteImport.update({
+  id: '/plans',
+  path: '/plans',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -95,6 +113,21 @@ const PricingRoute = PricingRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropertyDisclaimerRoute = PropertyDisclaimerRouteImport.update({
+  id: '/property-disclaimer',
+  path: '/property-disclaimer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropertyManagementRoute = PropertyManagementRouteImport.update({
+  id: '/property-management',
+  path: '/property-management',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegisterRoute = RegisterRouteImport.update({
@@ -132,9 +165,24 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MerchantIndexRoute = MerchantIndexRouteImport.update({
+  id: '/merchant/',
+  path: '/merchant/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MerchantLoginRoute = MerchantLoginRouteImport.update({
+  id: '/merchant/login',
+  path: '/merchant/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PropertiesIndexRoute = PropertiesIndexRouteImport.update({
   id: '/properties/',
   path: '/properties/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropertiesIdRoute = PropertiesIdRouteImport.update({
+  id: '/properties/$id',
+  path: '/properties/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PropertiesPropertyIdRoute = PropertiesPropertyIdRouteImport.update({
@@ -153,18 +201,26 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/favourites': typeof FavouritesRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/legal-services': typeof LegalServicesRoute
+  '/legal-team': typeof LegalTeamRoute
   '/login': typeof LoginRoute
-  '/merchant': typeof MerchantRoute
+  '/plans': typeof PlansRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/property-disclaimer': typeof PropertyDisclaimerRoute
+  '/property-management': typeof PropertyManagementRoute
   '/register': typeof RegisterRoute
   '/rent': typeof RentRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sell': typeof SellRoute
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/merchant/login': typeof MerchantLoginRoute
+  '/properties/$id': typeof PropertiesIdRoute
   '/properties/$propertyId': typeof PropertiesPropertyIdRoute
   '/blog/': typeof BlogIndexRoute
+  '/merchant/': typeof MerchantIndexRoute
   '/properties/': typeof PropertiesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -177,18 +233,26 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/favourites': typeof FavouritesRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/legal-services': typeof LegalServicesRoute
+  '/legal-team': typeof LegalTeamRoute
   '/login': typeof LoginRoute
-  '/merchant': typeof MerchantRoute
+  '/plans': typeof PlansRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/property-disclaimer': typeof PropertyDisclaimerRoute
+  '/property-management': typeof PropertyManagementRoute
   '/register': typeof RegisterRoute
   '/rent': typeof RentRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sell': typeof SellRoute
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/merchant/login': typeof MerchantLoginRoute
+  '/properties/$id': typeof PropertiesIdRoute
   '/properties/$propertyId': typeof PropertiesPropertyIdRoute
   '/blog': typeof BlogIndexRoute
+  '/merchant': typeof MerchantIndexRoute
   '/properties': typeof PropertiesIndexRoute
 }
 export interface FileRoutesById {
@@ -202,18 +266,26 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/favourites': typeof FavouritesRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/legal-services': typeof LegalServicesRoute
+  '/legal-team': typeof LegalTeamRoute
   '/login': typeof LoginRoute
-  '/merchant': typeof MerchantRoute
+  '/plans': typeof PlansRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/property-disclaimer': typeof PropertyDisclaimerRoute
+  '/property-management': typeof PropertyManagementRoute
   '/register': typeof RegisterRoute
   '/rent': typeof RentRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sell': typeof SellRoute
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/merchant/login': typeof MerchantLoginRoute
+  '/properties/$id': typeof PropertiesIdRoute
   '/properties/$propertyId': typeof PropertiesPropertyIdRoute
   '/blog/': typeof BlogIndexRoute
+  '/merchant/': typeof MerchantIndexRoute
   '/properties/': typeof PropertiesIndexRoute
 }
 export interface FileRouteTypes {
@@ -228,18 +300,26 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/favourites'
     | '/forgot-password'
+    | '/legal-services'
+    | '/legal-team'
     | '/login'
-    | '/merchant'
+    | '/plans'
     | '/pricing'
     | '/privacy'
+    | '/privacy-policy'
+    | '/property-disclaimer'
+    | '/property-management'
     | '/register'
     | '/rent'
     | '/reset-password'
     | '/sell'
     | '/terms'
     | '/blog/$slug'
+    | '/merchant/login'
+    | '/properties/$id'
     | '/properties/$propertyId'
     | '/blog/'
+    | '/merchant/'
     | '/properties/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -252,18 +332,26 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/favourites'
     | '/forgot-password'
+    | '/legal-services'
+    | '/legal-team'
     | '/login'
-    | '/merchant'
+    | '/plans'
     | '/pricing'
     | '/privacy'
+    | '/privacy-policy'
+    | '/property-disclaimer'
+    | '/property-management'
     | '/register'
     | '/rent'
     | '/reset-password'
     | '/sell'
     | '/terms'
     | '/blog/$slug'
+    | '/merchant/login'
+    | '/properties/$id'
     | '/properties/$propertyId'
     | '/blog'
+    | '/merchant'
     | '/properties'
   id:
     | '__root__'
@@ -276,18 +364,26 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/favourites'
     | '/forgot-password'
+    | '/legal-services'
+    | '/legal-team'
     | '/login'
-    | '/merchant'
+    | '/plans'
     | '/pricing'
     | '/privacy'
+    | '/privacy-policy'
+    | '/property-disclaimer'
+    | '/property-management'
     | '/register'
     | '/rent'
     | '/reset-password'
     | '/sell'
     | '/terms'
     | '/blog/$slug'
+    | '/merchant/login'
+    | '/properties/$id'
     | '/properties/$propertyId'
     | '/blog/'
+    | '/merchant/'
     | '/properties/'
   fileRoutesById: FileRoutesById
 }
@@ -301,18 +397,26 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   FavouritesRoute: typeof FavouritesRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  LegalServicesRoute: typeof LegalServicesRoute
+  LegalTeamRoute: typeof LegalTeamRoute
   LoginRoute: typeof LoginRoute
-  MerchantRoute: typeof MerchantRoute
+  PlansRoute: typeof PlansRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
+  PropertyDisclaimerRoute: typeof PropertyDisclaimerRoute
+  PropertyManagementRoute: typeof PropertyManagementRoute
   RegisterRoute: typeof RegisterRoute
   RentRoute: typeof RentRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SellRoute: typeof SellRoute
   TermsRoute: typeof TermsRoute
   BlogSlugRoute: typeof BlogSlugRoute
+  MerchantLoginRoute: typeof MerchantLoginRoute
+  PropertiesIdRoute: typeof PropertiesIdRoute
   PropertiesPropertyIdRoute: typeof PropertiesPropertyIdRoute
   BlogIndexRoute: typeof BlogIndexRoute
+  MerchantIndexRoute: typeof MerchantIndexRoute
   PropertiesIndexRoute: typeof PropertiesIndexRoute
 }
 
@@ -381,6 +485,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/legal-services': {
+      id: '/legal-services'
+      path: '/legal-services'
+      fullPath: '/legal-services'
+      preLoaderRoute: typeof LegalServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal-team': {
+      id: '/legal-team'
+      path: '/legal-team'
+      fullPath: '/legal-team'
+      preLoaderRoute: typeof LegalTeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -388,11 +506,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/merchant': {
-      id: '/merchant'
-      path: '/merchant'
-      fullPath: '/merchant'
-      preLoaderRoute: typeof MerchantRouteImport
+    '/plans': {
+      id: '/plans'
+      path: '/plans'
+      fullPath: '/plans'
+      preLoaderRoute: typeof PlansRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -407,6 +525,27 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/property-disclaimer': {
+      id: '/property-disclaimer'
+      path: '/property-disclaimer'
+      fullPath: '/property-disclaimer'
+      preLoaderRoute: typeof PropertyDisclaimerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/property-management': {
+      id: '/property-management'
+      path: '/property-management'
+      fullPath: '/property-management'
+      preLoaderRoute: typeof PropertyManagementRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/register': {
@@ -458,11 +597,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/merchant/': {
+      id: '/merchant/'
+      path: '/merchant'
+      fullPath: '/merchant/'
+      preLoaderRoute: typeof MerchantIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/merchant/login': {
+      id: '/merchant/login'
+      path: '/merchant/login'
+      fullPath: '/merchant/login'
+      preLoaderRoute: typeof MerchantLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/properties/': {
       id: '/properties/'
       path: '/properties'
       fullPath: '/properties/'
       preLoaderRoute: typeof PropertiesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/properties/$id': {
+      id: '/properties/$id'
+      path: '/properties/$id'
+      fullPath: '/properties/$id'
+      preLoaderRoute: typeof PropertiesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/properties/$propertyId': {
@@ -485,20 +645,38 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   FavouritesRoute: FavouritesRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  LegalServicesRoute: LegalServicesRoute,
+  LegalTeamRoute: LegalTeamRoute,
   LoginRoute: LoginRoute,
-  MerchantRoute: MerchantRoute,
+  PlansRoute: PlansRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
+  PropertyDisclaimerRoute: PropertyDisclaimerRoute,
+  PropertyManagementRoute: PropertyManagementRoute,
   RegisterRoute: RegisterRoute,
   RentRoute: RentRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SellRoute: SellRoute,
   TermsRoute: TermsRoute,
   BlogSlugRoute: BlogSlugRoute,
+  MerchantLoginRoute: MerchantLoginRoute,
+  PropertiesIdRoute: PropertiesIdRoute,
   PropertiesPropertyIdRoute: PropertiesPropertyIdRoute,
   BlogIndexRoute: BlogIndexRoute,
+  MerchantIndexRoute: MerchantIndexRoute,
   PropertiesIndexRoute: PropertiesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

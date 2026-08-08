@@ -161,5 +161,15 @@ export async function saveSetting<K extends keyof SiteSettings>(
   }
 }
 
-export const whatsappLink =
-  "https://wa.me/2349117511768";
+export function whatsappLink(
+  number: string,
+  message?: string,
+): string {
+  const digits = (number || "09117511768").replace(/\D/g, "");
+  const normalized = digits.startsWith("0")
+    ? `234${digits.slice(1)}`
+    : digits;
+  return message
+    ? `https://wa.me/${normalized}?text=${encodeURIComponent(message)}`
+    : `https://wa.me/${normalized}`;
+}

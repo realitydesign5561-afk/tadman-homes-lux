@@ -60,6 +60,14 @@ type FormData = {
 const selectClass =
   "h-11 w-full rounded-2xl border border-border bg-secondary/60 px-4 text-sm";
 
+const COUNTRIES = [
+  "Nigeria", "Ghana", "Kenya", "South Africa", "United Kingdom",
+  "United States", "Canada", "United Arab Emirates", "Rwanda",
+  "Côte d'Ivoire", "Senegal", "Tanzania", "Uganda", "Gambia",
+  "Sierra Leone", "Liberia", "Benin", "Togo", "Cameroon",
+  "Other",
+];
+
 function initialData(property?: PropertyRow | null): FormData {
   return {
     title: property?.title ?? "",
@@ -177,9 +185,9 @@ async function uploadImages(actualMerchantId: string) {
       throw new Error("Merchant account not found.");
     }
 
-    if (merchant.status !== "active") {
+    if (merchant.status !== "approved") {
       throw new Error(
-        `Your merchant account is not active. Current status: ${merchant.status}`,
+        `Your merchant account is pending approval. Current status: ${merchant.status}. Please wait for admin approval.`,
       );
     }
 
@@ -189,8 +197,6 @@ async function uploadImages(actualMerchantId: string) {
     const actualMerchantId = merchant.id;
 
     const images = await uploadImages(actualMerchantId);
-      console.log("Amenities value:", form.amenities);
-
       const amenities = String(form.amenities ?? "")
        .split(",")
        .map((a) => a.trim())
@@ -332,11 +338,21 @@ const payload = {
         </select>
       </label>
 
-      <Field
-        label="Country"
-        value={form.country}
-        onChange={update("country")}
-      />
+      <label>
+        <span className="mb-1 block text-xs font-semibold">
+          Country
+        </span>
+
+        <select
+          className={selectClass}
+          value={form.country}
+          onChange={update("country")}
+        >
+          {COUNTRIES.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+      </label>
 
       <Field
         label="State"

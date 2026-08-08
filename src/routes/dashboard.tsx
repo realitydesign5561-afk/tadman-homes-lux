@@ -1,7 +1,7 @@
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { Loader as Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { PageHeader, Section } from "@/components/page-shell";
 import { PropertyForm } from "@/components/property-form";
@@ -80,6 +80,24 @@ function DashboardPage() {
     },
   });
 
+  const subscription = useQuery({
+    queryKey: ["subscription", merchant.data?.id],
+    enabled: !!merchant.data?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("subscriptions")
+        .select("*, subscription_plans(name)")
+        .eq("merchant_id", merchant.data!.id)
+        .eq("status", "active")
+        .order("expiry_date", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const properties = useQuery({
     queryKey: ["merchant-properties", merchant.data?.id],
     enabled: !!merchant.data?.id,
@@ -148,6 +166,7 @@ function DashboardPage() {
   total: rows.length,
   approved: rows.filter((p) => p.status === "approved").length,
   pending: rows.filter((p) => p.status === "pending").length,
+  sold: rows.filter((p) => p.status === "sold").length,
   views: rows.reduce((sum, p) => sum + (p.views_count ?? 0), 0),
 };
 
@@ -186,6 +205,36 @@ function DashboardPage() {
           </button>
         </div>
       </PageHeader>
+
+      {merchant.data?.status === "pending" && (
+        <Section>
+          <div className="rounded-2xl border border-amber-300 bg-amber-50 p-5 text-sm text-amber-800">
+            <p className="font-semibold">Account Pending Approval</p>
+            <p className="mt-1">Your merchant account is awaiting admin approval. You can create listings but they won't go live until an admin approves your account.</p>
+          </div>
+        </Section>
+      )}
+
+      {merchant.data?.status === "approved" && !subscription.data && (
+        <Section>
+          <div className="rounded-2xl border border-blue-300 bg-blue-50 p-5 text-sm text-blue-800">
+            <p className="font-semibold">No Active Subscription</p>
+            <p className="mt-1">You don't have an active subscription. <Link to="/plans" className="font-semibold underline">Choose a plan</Link> to start listing properties.</p>
+          </div>
+        </Section>
+      )}
+
+      {merchant.data?.status === "approved" && subscription.data && (
+        <Section>
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-green-300 bg-green-50 p-5 text-sm text-green-800">
+            <div>
+              <p className="font-semibold">Subscription Active — {subscription.data.subscription_plans?.name ?? "Plan"}</p>
+              <p className="mt-1">Expires on {new Date(subscription.data.expiry_date).toLocaleDateString()}</p>
+            </div>
+            <Link to="/plans" className="font-semibold underline">Manage Subscription</Link>
+          </div>
+        </Section>
+      )}
 
       <Section>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
