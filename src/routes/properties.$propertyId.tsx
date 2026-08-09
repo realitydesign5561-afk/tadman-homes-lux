@@ -213,12 +213,20 @@ function PropertyDetails() {
               title={property.title}
             />
 
-            {property.merchants?.whatsapp_number && (
+            {property.merchants?.whatsapp_number ? (
               <a
                 href={`https://wa.me/${property.merchants.whatsapp_number}?text=${encodeURIComponent(waMessage)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-3 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-border text-sm font-semibold text-foreground"
+              >
+                <MessageCircle className="size-4" />
+                Chat on WhatsApp
+              </a>
+            ) : (
+              <a
+                aria-disabled
+                className="mt-3 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-border text-sm font-semibold text-muted-foreground opacity-60"
               >
                 <MessageCircle className="size-4" />
                 Chat on WhatsApp
