@@ -61,12 +61,32 @@ const selectClass =
   "h-11 w-full rounded-2xl border border-border bg-secondary/60 px-4 text-sm";
 
 const COUNTRIES = [
-  "Nigeria", "Ghana", "Kenya", "South Africa", "United Kingdom",
-  "United States", "Canada", "United Arab Emirates", "Rwanda",
-  "Côte d'Ivoire", "Senegal", "Tanzania", "Uganda", "Gambia",
-  "Sierra Leone", "Liberia", "Benin", "Togo", "Cameroon",
+  "Nigeria",
+  "Ghana",
+  "Kenya",
+  "South Africa",
+  "United Kingdom",
+  "United States",
+  "Canada",
+  "United Arab Emirates",
+  "Rwanda",
+  "Côte d'Ivoire",
+  "Senegal",
+  "Tanzania",
+  "Uganda",
+  "Gambia",
+  "Sierra Leone",
+  "Liberia",
+  "Benin",
+  "Togo",
+  "Cameroon",
   "Other",
 ];
+
+const CURRENCIES = ["NGN", "USD", "GBP", "EUR", "CAD", "KES", "ZAR", "GHS", "AED"];
+
+const BEDROOM_OPTIONS = ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"];
+const BATHROOM_OPTIONS = ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"];
 
 function initialData(property?: PropertyRow | null): FormData {
   return {
@@ -89,9 +109,7 @@ function initialData(property?: PropertyRow | null): FormData {
     bathrooms: property?.bathrooms ? String(property.bathrooms) : "",
     area: property?.area ? String(property.area) : "",
 
-    amenities: Array.isArray(property?.amenities)
-      ? property!.amenities.join(", ")
-      : "",
+    amenities: Array.isArray(property?.amenities) ? property!.amenities.join(", ") : "",
 
     status: property?.status ?? "draft",
 
@@ -112,16 +130,12 @@ export function PropertyForm({
   onCancel,
 }: Props) {
   const [form, setForm] = useState<FormData>(initialData(property));
-
   const [busy, setBusy] = useState(false);
-
   const [error, setError] = useState("");
-
   const [files, setFiles] = useState<File[]>([]);
-
   const [gallery, setGallery] = useState<string[]>(
-  Array.isArray(property?.images) ? property.images : []
-);
+    Array.isArray(property?.images) ? property.images : []
+  );
 
   function update<K extends keyof FormData>(key: K) {
     return (
@@ -136,122 +150,94 @@ export function PropertyForm({
       }));
     };
   }
-async function uploadImages(actualMerchantId: string) {
-  const uploaded: string[] = [];
 
-  for (const file of files) {
-    const url = await uploadPropertyImage(
-      actualMerchantId,
-      file,
-    );
+  async function uploadImages(actualMerchantId: string) {
+    const uploaded: string[] = [];
 
-    uploaded.push(url);
+    for (const file of files) {
+      const url = await uploadPropertyImage(actualMerchantId, file);
+      uploaded.push(url);
+    }
+
+    return [...gallery, ...uploaded];
   }
 
-  return [...gallery, ...uploaded];
-}
-
   async function submit(status: string) {
-  try {
-    setBusy(true);
-    setError("");
+    try {
+      setBusy(true);
+      setError("");
 
-    // Get the actual logged-in Supabase user.
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
 
-    if (userError) {
-      throw userError;
-    }
+      if (userError) throw userError;
+      if (!user) throw new Error("You are not logged in. Please sign in again.");
 
-    if (!user) {
-      throw new Error("You are not logged in. Please sign in again.");
-    }
+      const { data: merchant, error: merchantError } = await supabase
+        .from("merchants")
+        .select("id, user_id, status")
+        .eq("user_id", user.id)
+        .maybeSingle();
 
-    // Get the merchant belonging to the authenticated user.
-    const { data: merchant, error: merchantError } = await supabase
-      .from("merchants")
-      .select("id, user_id, status")
-      .eq("user_id", user.id)
-      .maybeSingle();
+      if (merchantError) throw merchantError;
+      if (!merchant) throw new Error("Merchant account not found.");
 
-    if (merchantError) {
-      throw merchantError;
-    }
+      if (merchant.status !== "approved") {
+        throw new Error(
+          `Your merchant account is pending approval. Current status: ${merchant.status}. Please wait for admin approval.`
+        );
+      }
 
-    if (!merchant) {
-      throw new Error("Merchant account not found.");
-    }
+      const actualMerchantId = merchant.id;
+      const images = await uploadImages(actualMerchantId);
 
-    if (merchant.status !== "approved") {
-      throw new Error(
-        `Your merchant account is pending approval. Current status: ${merchant.status}. Please wait for admin approval.`,
-      );
-    }
-
-    // IMPORTANT:
-    // Always use the merchant ID returned by Supabase,
-    // not a possibly stale merchantId prop.
-    const actualMerchantId = merchant.id;
-
-    const images = await uploadImages(actualMerchantId);
       const amenities = String(form.amenities ?? "")
-       .split(",")
-       .map((a) => a.trim())
-       .filter(Boolean);
+        .split(",")
+        .map((a) => a.trim())
+        .filter(Boolean);
 
-const payload = {
-  title: form.title,
-  slug: form.slug.trim() || slugify(form.title),
-  description: form.description,
+      const payload = {
+        title: form.title,
+        slug: form.slug.trim() || slugify(form.title),
+        description: form.description,
 
-  price: form.price ? Number(form.price) : null,
-  currency: form.currency,
+        price: form.price ? Number(form.price) : null,
+        currency: form.currency,
 
-  listing_type: form.listing_type,
-  property_type: form.property_type,
+        listing_type: form.listing_type,
+        property_type: form.property_type,
 
-  country: form.country,
-  state: form.state,
-  city: form.city,
-  address: form.address,
+        country: form.country,
+        state: form.state,
+        city: form.city,
+        address: form.address,
 
-  bedrooms: form.bedrooms ? Number(form.bedrooms) : null,
-  bathrooms: form.bathrooms ? Number(form.bathrooms) : null,
-  area: form.area ? Number(form.area) : null,
-  area_unit: "sqm",
+        bedrooms: form.bedrooms ? Number(form.bedrooms) : null,
+        bathrooms: form.bathrooms ? Number(form.bathrooms) : null,
+        area: form.area ? Number(form.area) : null,
+        area_unit: "sqm",
 
-  amenities,
+        amenities,
 
-  featured_image: images[0] ?? null,
-  images,
+        featured_image: images[0] ?? null,
+        images,
 
-  merchant_id: actualMerchantId,
+        merchant_id: actualMerchantId,
 
-  status,
-  is_featured: canFeature ? form.is_featured : false,
-  agent_id: form.agent_id || null,
+        status,
+        is_featured: canFeature ? form.is_featured : false,
+        agent_id: form.agent_id || null,
 
-  published_at:
-    status === "approved"
-      ? new Date().toISOString()
-      : null,
-};
+        published_at: status === "approved" ? new Date().toISOString() : null,
+      };
 
       if (property?.id) {
-        const { error } = await supabase
-          .from("properties")
-          .update(payload)
-          .eq("id", property.id);
-
+        const { error } = await supabase.from("properties").update(payload).eq("id", property.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase
-          .from("properties")
-          .insert(payload);
-
+        const { error } = await supabase.from("properties").insert(payload);
         if (error) throw error;
       }
 
@@ -262,55 +248,36 @@ const payload = {
       setBusy(false);
     }
   }
+
   return (
     <form
       onSubmit={(e) => {
-  e.preventDefault();
-
-  const status = canPublish
-    ? form.status
-    : "pending";
-
-  void submit(status);
-}}
+        e.preventDefault();
+        const status = canPublish ? form.status : "pending";
+        void submit(status);
+      }}
       className="surface-card grid gap-4 rounded-2xl p-6 sm:grid-cols-2"
     >
-      <Field
-        label="Title"
-        required
-        value={form.title}
-        onChange={update("title")}
-      />
+      <Field label="Title" required value={form.title} onChange={update("title")} />
 
-      <Field
-        label="Slug"
-        value={form.slug}
-        onChange={update("slug")}
-      />
+      <Field label="Slug" value={form.slug} onChange={update("slug")} />
 
-      <Field
-        label="Price"
-        type="number"
-        value={form.price}
-        onChange={update("price")}
-      />
-
-      <Field
-        label="Currency"
-        value={form.currency}
-        onChange={update("currency")}
-      />
+      <Field label="Price" type="number" value={form.price} onChange={update("price")} />
 
       <label>
-        <span className="mb-1 block text-xs font-semibold">
-          Listing Type
-        </span>
+        <span className="mb-1 block text-xs font-semibold">Currency</span>
+        <select className={selectClass} value={form.currency} onChange={update("currency")}>
+          {CURRENCIES.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+      </label>
 
-        <select
-          className={selectClass}
-          value={form.listing_type}
-          onChange={update("listing_type")}
-        >
+      <label>
+        <span className="mb-1 block text-xs font-semibold">Listing Type</span>
+        <select className={selectClass} value={form.listing_type} onChange={update("listing_type")}>
           <option value="buy">For Sale</option>
           <option value="rent">For Rent</option>
           <option value="shortlet">Shortlet</option>
@@ -318,20 +285,10 @@ const payload = {
       </label>
 
       <label>
-        <span className="mb-1 block text-xs font-semibold">
-          Property Type
-        </span>
-
-        <select
-          className={selectClass}
-          value={form.property_type}
-          onChange={update("property_type")}
-        >
+        <span className="mb-1 block text-xs font-semibold">Property Type</span>
+        <select className={selectClass} value={form.property_type} onChange={update("property_type")}>
           {propertyTypes.map((type) => (
-            <option
-              key={type}
-              value={type}
-            >
+            <option key={type} value={type}>
               {type}
             </option>
           ))}
@@ -339,71 +296,52 @@ const payload = {
       </label>
 
       <label>
-        <span className="mb-1 block text-xs font-semibold">
-          Country
-        </span>
-
-        <select
-          className={selectClass}
-          value={form.country}
-          onChange={update("country")}
-        >
+        <span className="mb-1 block text-xs font-semibold">Country</span>
+        <select className={selectClass} value={form.country} onChange={update("country")}>
           {COUNTRIES.map((c) => (
-            <option key={c} value={c}>{c}</option>
+            <option key={c} value={c}>
+              {c}
+            </option>
           ))}
         </select>
       </label>
 
-      <Field
-        label="State"
-        value={form.state}
-        onChange={update("state")}
-      />
+      <Field label="State" value={form.state} onChange={update("state")} />
 
-      <Field
-        label="City"
-        value={form.city}
-        onChange={update("city")}
-      />
+      <Field label="City" value={form.city} onChange={update("city")} />
 
-      <Field
-        label="Address"
-        value={form.address}
-        onChange={update("address")}
-      />
+      <Field label="Address" value={form.address} onChange={update("address")} />
 
-      <Field
-        label="Bedrooms"
-        type="number"
-        value={form.bedrooms}
-        onChange={update("bedrooms")}
-      />
+      <label>
+        <span className="mb-1 block text-xs font-semibold">Bedrooms</span>
+        <select className={selectClass} value={form.bedrooms} onChange={update("bedrooms")}>
+          <option value="">Select bedrooms</option>
+          {BEDROOM_OPTIONS.filter(Boolean).map((b) => (
+            <option key={b} value={b.replace("+", "")}>
+              {b}
+            </option>
+          ))}
+        </select>
+      </label>
 
-      <Field
-        label="Bathrooms"
-        type="number"
-        value={form.bathrooms}
-        onChange={update("bathrooms")}
-      />
+      <label>
+        <span className="mb-1 block text-xs font-semibold">Bathrooms</span>
+        <select className={selectClass} value={form.bathrooms} onChange={update("bathrooms")}>
+          <option value="">Select bathrooms</option>
+          {BATHROOM_OPTIONS.filter(Boolean).map((b) => (
+            <option key={b} value={b.replace("+", "")}>
+              {b}
+            </option>
+          ))}
+        </select>
+      </label>
 
-      <Field
-        label="Area (sqm)"
-        type="number"
-        value={form.area}
-        onChange={update("area")}
-      />
+      <Field label="Area (sqm)" type="number" value={form.area} onChange={update("area")} />
 
-      <Field
-        label="Amenities (comma separated)"
-        value={form.amenities}
-        onChange={update("amenities")}
-      />
+      <Field label="Amenities (comma separated)" value={form.amenities} onChange={update("amenities")} />
 
-            <label className="sm:col-span-2">
-        <span className="mb-1 block text-xs font-semibold">
-          Description
-        </span>
-
+      <label className="sm:col-span-2">
+        <span className="mb-1 block text-xs font-semibold">Description</span>
         <textarea
           rows={5}
           className="w-full rounded-2xl border border-border bg-secondary/60 p-4"
@@ -413,19 +351,12 @@ const payload = {
       </label>
 
       <label className="sm:col-span-2">
-        <span className="mb-1 block text-xs font-semibold">
-          Property Images
-        </span>
-
+        <span className="mb-1 block text-xs font-semibold">Property Images</span>
         <input
           type="file"
           multiple
           accept="image/*"
-          onChange={(e) =>
-            setFiles(
-              Array.from(e.target.files ?? [])
-            )
-          }
+          onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
           className="w-full rounded-2xl border border-border bg-secondary/60 p-3"
         />
       </label>
@@ -433,25 +364,11 @@ const payload = {
       {gallery.length > 0 && (
         <div className="sm:col-span-2 flex flex-wrap gap-3">
           {gallery.map((image) => (
-            <div
-              key={image}
-              className="relative"
-            >
-              <img
-                src={image}
-                alt=""
-                className="h-20 w-20 rounded-xl object-cover"
-              />
-
+            <div key={image} className="relative">
+              <img src={image} alt="" className="h-20 w-20 rounded-xl object-cover" />
               <button
                 type="button"
-                onClick={() =>
-                  setGallery((g) =>
-                    g.filter(
-                      (item) => item !== image
-                    )
-                  )
-                }
+                onClick={() => setGallery((g) => g.filter((item) => item !== image))}
                 className="absolute -right-2 -top-2 rounded-full bg-red-600 px-2 text-xs text-white"
               >
                 ×
@@ -462,25 +379,19 @@ const payload = {
       )}
 
       <label>
-        <span className="mb-1 block text-xs font-semibold">
-          Status
-        </span>
-
- <select
-  className={selectClass}
-  value={form.status}
-  onChange={update("status")}
-  disabled={!canPublish}
- >
-  {PROPERTY_STATUSES.map((status) => (
-    <option
-      key={status}
-      value={status}
-    >
-      {status}
-    </option>
-  ))}
-</select>
+        <span className="mb-1 block text-xs font-semibold">Status</span>
+        <select
+          className={selectClass}
+          value={form.status}
+          onChange={update("status")}
+          disabled={!canPublish}
+        >
+          {PROPERTY_STATUSES.map((status) => (
+            <option key={status} value={status}>
+              {status}
+            </option>
+          ))}
+        </select>
       </label>
 
       {canFeature && (
@@ -491,32 +402,19 @@ const payload = {
             onChange={(e) =>
               setForm((f) => ({
                 ...f,
-                is_featured:
-                  e.target.checked,
+                is_featured: e.target.checked,
               }))
             }
           />
-
           Featured Property
         </label>
       )}
 
-      {error && (
-        <p className="sm:col-span-2 text-sm text-destructive">
-          {error}
-        </p>
-      )}
+      {error && <p className="sm:col-span-2 text-sm text-destructive">{error}</p>}
 
-            <div className="sm:col-span-2 flex flex-wrap gap-3">
-        <PrimaryButton
-          type="submit"
-          disabled={busy}
-        >
-          {busy
-            ? "Saving..."
-            : property
-            ? "Save Changes"
-            : "Create Property"}
+      <div className="sm:col-span-2 flex flex-wrap gap-3">
+        <PrimaryButton type="submit" disabled={busy}>
+          {busy ? "Saving..." : property ? "Save Changes" : "Create Property"}
         </PrimaryButton>
 
         <button
@@ -531,18 +429,10 @@ const payload = {
         <button
           type="button"
           disabled={busy}
-          onClick={() =>
-            void submit(
-              canPublish
-                ? "approved"
-                : "pending"
-            )
-          }
+          onClick={() => void submit(canPublish ? "approved" : "pending")}
           className="inline-flex h-12 items-center rounded-full border border-border bg-card px-6 text-sm font-semibold"
         >
-          {canPublish
-            ? "Publish"
-            : "Submit for Review"}
+          {canPublish ? "Publish" : "Submit for Review"}
         </button>
 
         {onCancel && (
