@@ -276,6 +276,174 @@ function Index() {
         />
       </Section>
 
+      {/* Legal Team */}
+      <Section
+        title="Our Legal Team"
+        subtitle="Every property transaction deserves proper legal protection. Our standby legal team ensures your investment is safe."
+      >
+        <div className="grid gap-5 lg:grid-cols-[1fr_1fr]">
+          <div className="grid gap-4 sm:grid-cols-2">
+            {[
+              { icon: ShieldCheck, title: "Due Diligence", body: "Confirm ownership, encumbrances and government acquisition status before you commit." },
+              { icon: Landmark, title: "Title Verification", body: "Verification of C of O, governor's consent, deeds and survey plans." },
+              { icon: BadgeCheck, title: "Legal Agreements", body: "Drafting and review of bespoke property purchase and tenancy agreements." },
+              { icon: MapPin, title: "Property Search", body: "Searches at the land registry and relevant authorities on your behalf." },
+            ].map((item) => (
+              <div key={item.title} className="surface-card rounded-2xl p-5">
+                <item.icon className="size-5 text-primary" />
+                <p className="mt-3 text-sm font-semibold text-foreground">{item.title}</p>
+                <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{item.body}</p>
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-col justify-between gap-6 rounded-[1.75rem] bg-secondary/70 p-8">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Legal Services</p>
+              <h3 className="mt-3 text-2xl font-bold text-foreground sm:text-3xl">
+                Buy or sell with confidence & full legal cover
+              </h3>
+              <p className="mt-4 text-sm text-muted-foreground">
+                Our standby legal team is available for a reasonable professional fee. Reach out before you commit to any property transaction.
+              </p>
+            </div>
+            <Link
+              to="/legal-team"
+              className="inline-flex h-12 items-center justify-center gap-1.5 self-start rounded-full bg-ink px-7 text-sm font-semibold text-ink-foreground transition-opacity hover:opacity-90"
+            >
+              Meet our legal team <ArrowUpRight className="size-4" />
+            </Link>
+          </div>
+        </div>
+      </Section>
+
+      {/* Property Management */}
+      <Section
+        title="Property Management Services"
+        subtitle="Let us handle your investment. Professional property management that protects your asset and maximises returns."
+      >
+        <div className="grid gap-5 lg:grid-cols-[1fr_1fr]">
+          <div className="flex flex-col justify-between gap-6 rounded-[1.75rem] bg-ink px-8 py-10 text-ink-foreground">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-ink-foreground/60">Property Management</p>
+              <h3 className="mt-3 text-2xl font-bold sm:text-3xl">
+                We manage your property — you collect returns
+              </h3>
+              <p className="mt-4 text-sm text-ink-foreground/70">
+                From tenant sourcing and rent collection to maintenance and legal compliance — Tadman Homes handles it all so you don't have to.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                "Tenant Sourcing", "Rent Collection",
+                "Maintenance & Repairs", "Legal & Compliance",
+              ].map((item) => (
+                <div key={item} className="flex items-center gap-2 text-sm">
+                  <span className="size-1.5 rounded-full bg-primary" />
+                  {item}
+                </div>
+              ))}
+            </div>
+            <Link
+              to="/property-management"
+              className="inline-flex h-12 items-center justify-center gap-1.5 self-start rounded-full bg-ink-foreground px-7 text-sm font-semibold text-ink"
+            >
+              Learn more <ArrowUpRight className="size-4" />
+            </Link>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {[
+              { icon: Building2, title: "Facility Management", body: "Complete management of estates, commercial buildings and mixed-use facilities." },
+              { icon: Warehouse, title: "Commercial Property", body: "Management solutions for offices, shops, warehouses and mixed-use buildings." },
+              { icon: ShieldCheck, title: "Investment Advisory", body: "Strategies to improve rental income and long-term property value." },
+              { icon: Sparkles, title: "Regular Inspections", body: "Routine property inspections with detailed updates and condition reports." },
+            ].map((item) => (
+              <div key={item.title} className="surface-card rounded-2xl p-5">
+                <item.icon className="size-5 text-primary" />
+                <p className="mt-3 text-sm font-semibold text-foreground">{item.title}</p>
+                <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {/* Pricing Overview */}
+      <Section
+        title="Merchant Subscription Plans"
+        subtitle="Choose a plan to list your properties, manage enquiries and grow your real estate business."
+        action={
+          <Link
+            to="/pricing"
+            className="inline-flex items-center gap-1.5 self-start rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-secondary"
+          >
+            See full pricing <ArrowUpRight className="size-4" />
+          </Link>
+        }
+      >
+        <div className="grid gap-5 sm:grid-cols-3">
+          {[
+            {
+              name: "Starter",
+              price: "Affordable",
+              description: "Perfect for individual property owners listing a few properties.",
+              features: ["Up to 5 listings", "Dashboard access", "Enquiry management"],
+              highlight: false,
+            },
+            {
+              name: "Professional",
+              price: "Best Value",
+              description: "Ideal for agencies and developers with a larger property portfolio.",
+              features: ["Up to 20 listings", "Priority support", "Advanced analytics", "Featured listings"],
+              highlight: true,
+            },
+            {
+              name: "Enterprise",
+              price: "Unlimited",
+              description: "For large agencies and property developers with unlimited listings.",
+              features: ["Unlimited listings", "Dedicated support", "Custom branding", "API access"],
+              highlight: false,
+            },
+          ].map((plan) => (
+            <div
+              key={plan.name}
+              className={
+                plan.highlight
+                  ? "rounded-[1.75rem] bg-ink p-8 text-ink-foreground shadow-lift"
+                  : "surface-card rounded-[1.75rem] p-8"
+              }
+            >
+              <p className={plan.highlight ? "text-xs font-semibold uppercase tracking-widest text-ink-foreground/60" : "text-xs font-semibold uppercase tracking-widest text-primary"}>
+                {plan.name}
+              </p>
+              <p className={`mt-4 font-display text-3xl font-bold ${plan.highlight ? "" : "text-foreground"}`}>
+                {plan.price}
+              </p>
+              <p className={`mt-2 text-sm ${plan.highlight ? "text-ink-foreground/70" : "text-muted-foreground"}`}>
+                {plan.description}
+              </p>
+              <ul className="mt-6 space-y-2">
+                {plan.features.map((f) => (
+                  <li key={f} className={`flex items-center gap-2 text-sm ${plan.highlight ? "text-ink-foreground" : "text-foreground"}`}>
+                    <BadgeCheck className={`size-4 ${plan.highlight ? "text-ink-foreground/60" : "text-primary"}`} />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                to="/pricing"
+                className={
+                  plan.highlight
+                    ? "mt-8 inline-flex h-11 w-full items-center justify-center rounded-full bg-ink-foreground text-sm font-semibold text-ink"
+                    : "mt-8 inline-flex h-11 w-full items-center justify-center rounded-full bg-secondary text-sm font-semibold text-foreground transition-colors hover:bg-ink hover:text-ink-foreground"
+                }
+              >
+                View plans
+              </Link>
+            </div>
+          ))}
+        </div>
+      </Section>
+
       {/* Become a merchant */}
       <Section>
         <div className="grid items-center gap-8 rounded-[2rem] bg-ink px-6 py-12 text-ink-foreground sm:px-12 lg:grid-cols-2">
