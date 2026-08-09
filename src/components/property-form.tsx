@@ -141,7 +141,7 @@ const LOCATION_DATA: Record<
     },
     "Abu Dhabi": {
       "Abu Dhabi City": ["Al Reem Island", "Khalifa City", "Saadiyat Island"],
-      Al Ain: ["Al Jimi", "Al Hili", "Zakher"],
+      "Al Ain": ["Al Jimi", "Al Hili", "Zakher"],
     },
   },
   Rwanda: {
@@ -228,6 +228,11 @@ const CURRENCIES = ["NGN", "USD", "GBP", "EUR", "CAD", "KES", "ZAR", "GHS", "AED
 const BEDROOM_OPTIONS = ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"];
 const BATHROOM_OPTIONS = ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"];
 
+function withSelected(options: string[], selected: string) {
+  if (!selected || options.includes(selected)) return options;
+  return [selected, ...options];
+}
+
 function initialData(property?: PropertyRow | null): FormData {
   return {
     title: property?.title ?? "",
@@ -277,9 +282,16 @@ export function PropertyForm({
     Array.isArray(property?.images) ? property.images : []
   );
 
-  const states = Object.keys(LOCATION_DATA[form.country] ?? {});
-  const cities = Object.keys((LOCATION_DATA[form.country] ?? {})[form.state] ?? {});
-  const areas = ((LOCATION_DATA[form.country] ?? {})[form.state] ?? {})[form.city] ?? [];
+  const countries = withSelected(COUNTRIES, form.country);
+  const states = withSelected(Object.keys(LOCATION_DATA[form.country] ?? {}), form.state);
+  const cities = withSelected(
+    Object.keys((LOCATION_DATA[form.country] ?? {})[form.state] ?? {}),
+    form.city
+  );
+  const areas = withSelected(
+    ((LOCATION_DATA[form.country] ?? {})[form.state] ?? {})[form.city] ?? [],
+    form.area
+  );
 
   function update<K extends keyof FormData>(key: K) {
     return (
@@ -392,8 +404,7 @@ export function PropertyForm({
 
         bedrooms: form.bedrooms ? Number(form.bedrooms) : null,
         bathrooms: form.bathrooms ? Number(form.bathrooms) : null,
-        area: form.area ? Number(form.area) : null,
-        area_unit: "sqm",
+        area: form.area || null,
 
         amenities,
 
@@ -475,7 +486,7 @@ export function PropertyForm({
         <span className="mb-1 block text-xs font-semibold">Country</span>
         <select className={selectClass} value={form.country} onChange={update("country")}>
           <option value="">Select country</option>
-          {COUNTRIES.map((c) => (
+          {countries.map((c) => (
             <option key={c} value={c}>
               {c}
             </option>
