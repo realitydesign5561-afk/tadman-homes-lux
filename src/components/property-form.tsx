@@ -60,28 +60,168 @@ type FormData = {
 const selectClass =
   "h-11 w-full rounded-2xl border border-border bg-secondary/60 px-4 text-sm";
 
-const COUNTRIES = [
-  "Nigeria",
-  "Ghana",
-  "Kenya",
-  "South Africa",
-  "United Kingdom",
-  "United States",
-  "Canada",
-  "United Arab Emirates",
-  "Rwanda",
-  "Côte d'Ivoire",
-  "Senegal",
-  "Tanzania",
-  "Uganda",
-  "Gambia",
-  "Sierra Leone",
-  "Liberia",
-  "Benin",
-  "Togo",
-  "Cameroon",
-  "Other",
-];
+const LOCATION_DATA: Record<
+  string,
+  Record<string, Record<string, string[]>>
+> = {
+  Nigeria: {
+    Lagos: {
+      "Lagos Island": ["Ikoyi", "Victoria Island", "Lekki Phase 1"],
+      "Lagos Mainland": ["Yaba", "Surulere", "Ikeja"],
+    },
+    Abuja: {
+      "Municipal Area Council": ["Maitama", "Wuse", "Garki"],
+      "Bwari Area Council": ["Kubwa", "Bwari Town", "Dutse"],
+    },
+  },
+  "United States": {
+    California: {
+      "Los Angeles County": ["Beverly Hills", "Santa Monica", "Pasadena"],
+      "San Francisco County": ["SOMA", "Mission District", "Sunset District"],
+    },
+    Texas: {
+      "Harris County": ["Houston Downtown", "Katy", "The Woodlands"],
+      "Dallas County": ["Downtown Dallas", "Irving", "Richardson"],
+    },
+  },
+  "United Kingdom": {
+    England: {
+      London: ["Chelsea", "Canary Wharf", "Greenwich"],
+      Manchester: ["Didsbury", "Salford", "Stockport"],
+    },
+    Scotland: {
+      Edinburgh: ["Leith", "New Town", "Morningside"],
+      Glasgow: ["West End", "Merchant City", "Southside"],
+    },
+  },
+  Canada: {
+    Ontario: {
+      Toronto: ["Downtown", "North York", "Scarborough"],
+      Ottawa: ["Kanata", "Nepean", "Orleans"],
+    },
+    Alberta: {
+      Calgary: ["Beltline", "Bridgeland", "Auburn Bay"],
+      Edmonton: ["Downtown", "Strathcona", "Windermere"],
+    },
+  },
+  Ghana: {
+    "Greater Accra": {
+      Accra: ["Airport Residential", "East Legon", "Osu"],
+      Tema: ["Community 1", "Community 18", "Sakumono"],
+    },
+    Ashanti: {
+      Kumasi: ["Adum", "Asokwa", "Suame"],
+      Obuasi: ["Tutuka", "Anyinam", "New Town"],
+    },
+  },
+  Kenya: {
+    Nairobi: {
+      Nairobi: ["Westlands", "Kilimani", "Karen"],
+      Kiambu: ["Ruiru", "Thika", "Juja"],
+    },
+    Mombasa: {
+      Mombasa: ["Nyali", "Bamburi", "Likoni"],
+      Kilifi: ["Malindi", "Watamu", "Kilifi Town"],
+    },
+  },
+  "South Africa": {
+    Gauteng: {
+      Johannesburg: ["Sandton", "Rosebank", "Soweto"],
+      Pretoria: ["Centurion", "Hatfield", "Brooklyn"],
+    },
+    "Western Cape": {
+      "Cape Town": ["Sea Point", "Bellville", "Stellenbosch"],
+      George: ["Fancourt", "George Central", "Thembalethu"],
+    },
+  },
+  "United Arab Emirates": {
+    Dubai: {
+      Dubai: ["Downtown Dubai", "Marina", "Jumeirah"],
+      "Dubai South": ["Emaar South", "Dubai Investment Park", "Expo City"],
+    },
+    "Abu Dhabi": {
+      "Abu Dhabi City": ["Al Reem Island", "Khalifa City", "Saadiyat Island"],
+      Al Ain: ["Al Jimi", "Al Hili", "Zakher"],
+    },
+  },
+  Rwanda: {
+    Kigali: {
+      Gasabo: ["Kimironko", "Remera", "Kacyiru"],
+      Kicukiro: ["Niboye", "Gahanga", "Kagarama"],
+    },
+  },
+  "Côte d'Ivoire": {
+    Abidjan: {
+      Cocody: ["Riviera", "Deux Plateaux", "Angré"],
+      Yopougon: ["Niangon", "Sicogi", "Andokoi"],
+    },
+  },
+  Senegal: {
+    Dakar: {
+      Dakar: ["Plateau", "Ngor", "Yoff"],
+      Pikine: ["Thiaroye", "Dalifort", "Guédiawaye"],
+    },
+  },
+  Tanzania: {
+    "Dar es Salaam": {
+      Kinondoni: ["Masaki", "Mikocheni", "Sinza"],
+      Ilala: ["Upanga", "Kariakoo", "Tabata"],
+    },
+  },
+  Uganda: {
+    Central: {
+      Kampala: ["Kololo", "Ntinda", "Muyenga"],
+      Wakiso: ["Entebbe", "Kira", "Nansana"],
+    },
+  },
+  Gambia: {
+    Banjul: {
+      Banjul: ["Half-Die", "Mccarthy Square", "Campama"],
+      "Kanifing Municipal": ["Serrekunda", "Bakau", "Fajara"],
+    },
+  },
+  "Sierra Leone": {
+    "Western Area": {
+      Freetown: ["Aberdeen", "Lumley", "Congo Cross"],
+      Waterloo: ["Hastings", "Masiaka", "Kissy"],
+    },
+  },
+  Liberia: {
+    Montserrado: {
+      Monrovia: ["Sinkor", "Mamba Point", "Congo Town"],
+      Paynesville: ["Red Light", "Duport Road", "ELWA"],
+    },
+  },
+  Benin: {
+    Littoral: {
+      Cotonou: ["Cadjehoun", "Ganhi", "Akpakpa"],
+      PortoNovo: ["Adjarra", "Djassin", "Ouando"],
+    },
+  },
+  Togo: {
+    Maritime: {
+      Lomé: ["Tokoin", "Bè", "Agoè"],
+      Aného: ["Gbodjomé", "Glidji", "Aklakou"],
+    },
+  },
+  Cameroon: {
+    Centre: {
+      Yaoundé: ["Bastos", "Mvog-Ada", "Essos"],
+      Mbalmayo: ["Nkolnguet", "Nkolmefou", "Minkama"],
+    },
+    Littoral: {
+      Douala: ["Bonanjo", "Akwa", "Bonamoussadi"],
+      Edea: ["Pongo", "Mouanko", "Dizangué"],
+    },
+  },
+  Other: {
+    Other: {
+      Other: ["Other"],
+    },
+  },
+};
+
+const COUNTRIES = Object.keys(LOCATION_DATA);
 
 const CURRENCIES = ["NGN", "USD", "GBP", "EUR", "CAD", "KES", "ZAR", "GHS", "AED"];
 
@@ -137,6 +277,10 @@ export function PropertyForm({
     Array.isArray(property?.images) ? property.images : []
   );
 
+  const states = Object.keys(LOCATION_DATA[form.country] ?? {});
+  const cities = Object.keys((LOCATION_DATA[form.country] ?? {})[form.state] ?? {});
+  const areas = ((LOCATION_DATA[form.country] ?? {})[form.state] ?? {})[form.city] ?? [];
+
   function update<K extends keyof FormData>(key: K) {
     return (
       e:
@@ -144,9 +288,41 @@ export function PropertyForm({
         | React.ChangeEvent<HTMLTextAreaElement>
         | React.ChangeEvent<HTMLSelectElement>
     ) => {
+      const value = e.target.value;
+
+      if (key === "country") {
+        setForm((prev) => ({
+          ...prev,
+          country: value,
+          state: "",
+          city: "",
+          area: "",
+        }));
+        return;
+      }
+
+      if (key === "state") {
+        setForm((prev) => ({
+          ...prev,
+          state: value,
+          city: "",
+          area: "",
+        }));
+        return;
+      }
+
+      if (key === "city") {
+        setForm((prev) => ({
+          ...prev,
+          city: value,
+          area: "",
+        }));
+        return;
+      }
+
       setForm((prev) => ({
         ...prev,
-        [key]: e.target.value,
+        [key]: value,
       }));
     };
   }
@@ -298,6 +474,7 @@ export function PropertyForm({
       <label>
         <span className="mb-1 block text-xs font-semibold">Country</span>
         <select className={selectClass} value={form.country} onChange={update("country")}>
+          <option value="">Select country</option>
           {COUNTRIES.map((c) => (
             <option key={c} value={c}>
               {c}
@@ -306,11 +483,58 @@ export function PropertyForm({
         </select>
       </label>
 
-      <Field label="State" value={form.state} onChange={update("state")} />
+      <label>
+        <span className="mb-1 block text-xs font-semibold">State</span>
+        <select
+          className={selectClass}
+          value={form.state}
+          onChange={update("state")}
+          disabled={!form.country}
+        >
+          <option value="">Select state</option>
+          {states.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+      </label>
 
-      <Field label="City" value={form.city} onChange={update("city")} />
+      <label>
+        <span className="mb-1 block text-xs font-semibold">City</span>
+        <select
+          className={selectClass}
+          value={form.city}
+          onChange={update("city")}
+          disabled={!form.state}
+        >
+          <option value="">Select city</option>
+          {cities.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+      </label>
 
       <Field label="Address" value={form.address} onChange={update("address")} />
+
+      <label>
+        <span className="mb-1 block text-xs font-semibold">Area</span>
+        <select
+          className={selectClass}
+          value={form.area}
+          onChange={update("area")}
+          disabled={!form.city}
+        >
+          <option value="">Select area</option>
+          {areas.map((a) => (
+            <option key={a} value={a}>
+              {a}
+            </option>
+          ))}
+        </select>
+      </label>
 
       <label>
         <span className="mb-1 block text-xs font-semibold">Bedrooms</span>
@@ -335,8 +559,6 @@ export function PropertyForm({
           ))}
         </select>
       </label>
-
-      <Field label="Area (sqm)" type="number" value={form.area} onChange={update("area")} />
 
       <Field label="Amenities (comma separated)" value={form.amenities} onChange={update("amenities")} />
 
