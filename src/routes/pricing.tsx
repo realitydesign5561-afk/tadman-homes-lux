@@ -21,6 +21,7 @@ export const Route = createFileRoute("/pricing")({
 });
 
 function formatAmount(price: number, currency: string) {
+  if (currency === "NGN") return `#${price.toLocaleString()}`;
   try {
     return new Intl.NumberFormat("en-US", {
       style: "currency",

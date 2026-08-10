@@ -22,7 +22,7 @@ const plans = [
   {
     id: "basic",
     name: "Basic",
-    price: "₦10,000/month",
+    price: "#10,000/month",
     features: [
       "List properties",
       "Merchant dashboard",
@@ -33,7 +33,7 @@ const plans = [
   {
     id: "premium",
     name: "Premium",
-    price: "₦25,000/month",
+    price: "#25,000/month",
     featured: true,
     features: [
       "Unlimited listings",
@@ -46,7 +46,7 @@ const plans = [
   {
     id: "enterprise",
     name: "Enterprise",
-    price: "₦50,000/month",
+    price: "#50,000/month",
     features: [
       "Multiple agents",
       "Advanced management",
