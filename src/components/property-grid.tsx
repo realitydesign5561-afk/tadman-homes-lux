@@ -29,7 +29,7 @@ export function PropertyGrid({
     );
   }
   if (error) {
-    return <p className="text-sm text-destructive">Properties could not be loaded right now.</p>;
+    return <p className="text-sm text-muted-foreground">Properties not available right now. Please check back soon.</p>;
   }
   const properties = data ?? [];
   if (properties.length === 0) {
