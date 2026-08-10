@@ -243,8 +243,8 @@ function Index() {
           {categories.map((c) => (
             <Link
               key={c.label}
-              to="/properties"
-              search={{ type: c.slug }}
+              to="/categories/$category"
+              params={{ category: c.slug }}
               className="surface-card flex flex-col items-center gap-2 rounded-2xl p-5 text-center transition-all hover:-translate-y-1 hover:shadow-lift"
             >
               <span className="flex size-11 items-center justify-center rounded-full bg-secondary text-primary">
@@ -384,21 +384,24 @@ function Index() {
           {[
             {
               name: "Starter",
-              price: "Affordable",
+              price: "#10,000",
+              period: "/month",
               description: "Perfect for individual property owners listing a few properties.",
               features: ["Up to 5 listings", "Dashboard access", "Enquiry management"],
               highlight: false,
             },
             {
               name: "Professional",
-              price: "Best Value",
+              price: "#25,000",
+              period: "/month",
               description: "Ideal for agencies and developers with a larger property portfolio.",
               features: ["Up to 20 listings", "Priority support", "Advanced analytics", "Featured listings"],
               highlight: true,
             },
             {
               name: "Enterprise",
-              price: "Unlimited",
+              price: "#50,000",
+              period: "/month",
               description: "For large agencies and property developers with unlimited listings.",
               features: ["Unlimited listings", "Dedicated support", "Custom branding", "API access"],
               highlight: false,
@@ -416,7 +419,7 @@ function Index() {
                 {plan.name}
               </p>
               <p className={`mt-4 font-display text-3xl font-bold ${plan.highlight ? "" : "text-foreground"}`}>
-                {plan.price}
+                {plan.price}<span className="text-sm font-medium opacity-70">{plan.period}</span>
               </p>
               <p className={`mt-2 text-sm ${plan.highlight ? "text-ink-foreground/70" : "text-muted-foreground"}`}>
                 {plan.description}
